@@ -7,10 +7,6 @@ format:
     toc-depth: 3
     number-sections: false
     theme: cosmo
-  #pdf:
-  #  toc: true
-  #  number-sections: true
-  #  geometry: margin=2.5cm
 ---
 
 ## Introduction
@@ -81,7 +77,7 @@ by the scanner sensitivity $\sum_i a_{ij}$.
 ### The full-rank assumption
 
 We assume throughout that $A$ has **full column rank**, meaning no non-zero
-vector $\mathbf{v} \geq \mathbf{0}$ satisfies $A\mathbf{v} = \mathbf{0}$.
+vector $\mathbf{v} \neq \mathbf{0}$ satisfies $A\mathbf{v} = \mathbf{0}$.
 Practically this means:
 
 1. Every voxel contributes to at least one detector bin ($\sum_i a_{ij} > 0$ for all $j$).
@@ -169,7 +165,7 @@ This is the most important step, and it uses the **EM (Expectation–Maximisatio
 ### The complete-data idea
 
 Maximising $\mathcal{L}(\mathbf{x})$ directly is hard because the log contains
-a *sum* over all voxels, $\log \bar{y}_i = \log(\sum_j A_{ij} x_j + b_i)$,
+a *sum* over all voxels, $\log \bar{y}_i = \log(\sum_j a_{ij} x_j + b_i)$,
 which couples all unknowns together.
 
 The EM trick is to imagine that we could observe *more* data than we actually
@@ -312,7 +308,7 @@ We now show that $\mathcal{S}$ is bounded (and therefore compact).
 The log-likelihood contains the term $-\sum_i \bar{y}_i(\mathbf{x}) = -\mathbf{1}^T A\mathbf{x} - \mathbf{1}^T\mathbf{b}$.
 When $\mathbf{x} \geq \mathbf{0}$ and $\|\mathbf{x}\| \to \infty$, at least one
 component $x_j \to \infty$. Because $A$ has full column rank, the column
-$A_{\cdot j}$ is not zero, so $\sum_i A_{ij} x_j \to \infty$. Therefore
+$a_{\cdot j}$ is not zero, so $\sum_i a_{ij} x_j \to \infty$. Therefore
 $\sum_i \bar{y}_i(\mathbf{x}) \to \infty$, which drives $\mathcal{L}(\mathbf{x}) \to -\infty$.
 
 Since $\mathcal{L}(\mathbf{x}) \to -\infty$ for large $\|\mathbf{x}\|$ and
