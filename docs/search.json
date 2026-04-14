@@ -1,0 +1,9 @@
+[
+  {
+    "objectID": "hello.html",
+    "href": "hello.html",
+    "title": "Quarto Basics",
+    "section": "",
+    "text": "My demo\nSome markdown text here. More text to come.\nSome formulas here.\n\\[\\int f(x) dx = I_\\alpha\\]\n\n\nWe know from the first fundamental theorem of calculus that for \\(x\\) in \\([a, b]\\):\n\\[\\frac{d}{dx}\\left( \\int_{a}^{x} f(u)\\,du\\right)=f(x).\\]\nSome interactive python cells here."
+  }
+]
