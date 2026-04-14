@@ -4,6 +4,6 @@
     "href": "hello.html",
     "title": "Quarto Basics",
     "section": "",
-    "text": "My demo\nSome markdown text here. More text to come.\nSome formulas here.\n\\[\\int f(x) dx = I_\\alpha\\]\n\n\nWe know from the first fundamental theorem of calculus that for \\(x\\) in \\([a, b]\\):\n\\[\\frac{d}{dx}\\left( \\int_{a}^{x} f(u)\\,du\\right)=f(x).\\]\nSome interactive python cells here."
+    "text": "My demo\nSome markdown text here. See Figure 1 for details.\nA figure here\n\nCode\nimport matplotlib.pyplot as plt\nfig, ax = plt.subplots(1, 1, figsize=(5, 5))\nax.plot([1,23,2,4])\nfig2, ax2 = plt.subplots(1, 1, figsize=(5, 5))\nax2.plot([8,65,23,90])\n\n\n\n\n\n\n\n\n\n\n\n\n(a) First\n\n\n\n\n\n\n\n\n\n\n\n(b) Second\n\n\n\n\n\n\n\nFigure 1: Charts\n\n\n\nSome formulas here.\n\\[\\int f(x) dx = I_\\alpha\\]\n\n\nWe know from the first fundamental theorem of calculus that for \\(x\\) in \\([a, b]\\):\n\\[\\frac{d}{dx}\\left( \\int_{a}^{x} f(u)\\,du\\right)=f(x).\\]\nSome interactive python cells here."
   }
 ]

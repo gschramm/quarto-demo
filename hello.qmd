@@ -1,6 +1,8 @@
 ---
 title: "Quarto Basics"
-format: live-html
+format: 
+    live-html:
+        code-fold: true
 jupyter: python3
 pyodide:
   packages:
@@ -12,7 +14,23 @@ pyodide:
 
 # My demo
 
-Some markdown text here. More text to come.
+Some markdown text here. See @fig-charts for details.
+
+A figure here
+```{python}
+#| label: fig-charts
+#| fig-cap: "Charts"
+#| fig-subcap: 
+#|   - "First"
+#|   - "Second"
+#| layout-ncol: 2
+
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(1, 1, figsize=(5, 5))
+ax.plot([1,23,2,4])
+fig2, ax2 = plt.subplots(1, 1, figsize=(5, 5))
+ax2.plot([8,65,23,90])
+```
 
 Some formulas here.
 
@@ -27,17 +45,20 @@ $$\frac{d}{dx}\left( \int_{a}^{x} f(u)\,du\right)=f(x).$$
 Some interactive python cells here.
 
 ```{pyodide}
-#| autorun: true
 import numpy as np
+
+def square(x):
+    return x**2
+
 x = np.arange(3)
-print(x)
-print(x**2)
+print(f"x = {x}")
+print(f"square(x) = {square(x)}")
 ```
 
 ```{pyodide}
-#| autorun: true
 y = x + 2
-print(y)
+print(f"y = {y}")
+print(f"square(y) = {square(y)}")
 ```
 
 
