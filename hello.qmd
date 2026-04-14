@@ -1,0 +1,43 @@
+---
+title: "Quarto Basics"
+format: live-html
+jupyter: python3
+pyodide:
+  packages:
+    - matplotlib
+    - numpy
+    - scipy
+    - pandas
+---
+
+# My demo
+
+Some markdown text here. More text to come.
+
+Some formulas here.
+
+$$\int f(x) dx = I_\alpha$$
+
+::: {.column-margin}
+We know from *the first fundamental theorem of calculus* that for $x$ in $[a, b]$:
+
+$$\frac{d}{dx}\left( \int_{a}^{x} f(u)\,du\right)=f(x).$$
+:::
+
+Some interactive python cells here.
+
+```{pyodide}
+#| autorun: true
+import numpy as np
+x = np.arange(3)
+print(x)
+print(x**2)
+```
+
+```{pyodide}
+#| autorun: true
+y = x + 2
+print(y)
+```
+
+
