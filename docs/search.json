@@ -68,5 +68,26 @@
     "title": "Why MLEM Converges to the Maximum Likelihood Solution",
     "section": "Summary",
     "text": "Summary\n\n\n\n\n\n\nNoteConvergence theorem\n\n\n\nLet \\(y_i \\sim \\operatorname{Poisson}((A\\mathbf{x}+\\mathbf{b})_i)\\) with \\(A\\) having full column rank and \\(b_i \\geq 0\\). Starting from any \\(\\mathbf{x}^0 &gt; \\mathbf{0}\\), the MLEM iterates \\(\\mathbf{x}^k\\) converge to the unique global maximiser \\(\\hat{\\mathbf{x}}\\) of the Poisson log-likelihood over \\(\\mathbf{x} \\geq \\mathbf{0}\\).\n\n\nThe proof proceeded in five steps:\n\n\n\n\n\n\n\n\nStep\nWhat we showed\nKey tool\n\n\n\n\n1\n\\(\\mathcal{L}(\\mathbf{x})\\) is bounded above\n\\(\\log u \\leq u - 1\\)\n\n\n2\n\\(\\mathbf{x}^k \\geq \\mathbf{0}\\) for all \\(k\\)\nMLEM formula\n\n\n3\n\\(\\mathcal{L}(\\mathbf{x}^{k+1}) \\geq \\mathcal{L}(\\mathbf{x}^k)\\)\nEM framework (Q function + KL \\(\\geq 0\\))\n\n\n4\n\\(\\{\\mathbf{x}^k\\}\\) stays bounded\nFull rank \\(\\Rightarrow\\) compact level sets\n\n\n5\n\\(\\mathbf{x}^k \\to \\hat{\\mathbf{x}}\\) (constrained ML solution)\nBolzano–Weierstrass + strict concavity (full rank)\n\n\n\nThe most important step is Step 3: the EM framework shows that MLEM always makes progress, and the KL divergence is the reason why. Steps 4 and 5 guarantee that this progress is not wasted — the algorithm does not wander off to infinity and the improvements accumulate to reach the true answer."
+  },
+  {
+    "objectID": "cond_exp.html",
+    "href": "cond_exp.html",
+    "title": "WIP",
+    "section": "",
+    "text": "The conditional expectation via Poisson splitting\nSetup. In the complete-data model each voxel \\(j\\) contributes independently to detector bin \\(i\\): \\(n_{ij} \\sim \\operatorname{Poisson}(a_{ij}x_j)\\), and the observed count is the total \\(y_i = \\sum_j n_{ij}\\).\nPoisson splitting property. Let \\(N_1, \\ldots, N_J\\) be independent Poisson random variables with means \\(\\lambda_1, \\ldots, \\lambda_J\\), and let \\(N = N_1 + \\cdots + N_J \\sim \\operatorname{Poisson}(\\lambda)\\), \\(\\lambda = \\sum_j \\lambda_j\\). Then the conditional distribution of \\((N_1, \\ldots, N_J)\\) given \\(N = n\\) is multinomial:\n\\[(N_1, \\ldots, N_J) \\mid N = n \\;\\sim\\;\n\\operatorname{Multinomial}\\!\\left(n;\\;\n\\frac{\\lambda_1}{\\lambda}, \\ldots, \\frac{\\lambda_J}{\\lambda}\\right).\\]\n\nProof. The joint probability of \\((N_1 = n_1, \\ldots, N_J = n_J)\\) with \\(\\sum_j n_j = n\\) factors as a product of Poisson probabilities:\n\\[P(N_1 = n_1, \\ldots, N_J = n_J)\n= \\prod_j \\frac{e^{-\\lambda_j} \\lambda_j^{n_j}}{n_j!}\n= e^{-\\lambda} \\frac{\\prod_j \\lambda_j^{n_j}}{\\prod_j n_j!}.\\]\nDividing by \\(P(N = n) = e^{-\\lambda}\\lambda^n / n!\\) gives:\n\\[P(N_1 = n_1, \\ldots, N_J = n_J \\mid N = n)\n= \\frac{n!}{\\prod_j n_j!} \\prod_j \\left(\\frac{\\lambda_j}{\\lambda}\\right)^{n_j},\\]\nwhich is the \\(\\operatorname{Multinomial}(n;\\, \\lambda_1/\\lambda, \\ldots, \\lambda_J/\\lambda)\\) probability mass function.\n\nApplication. At iteration \\(k\\), set \\(\\lambda_j = a_{ij}x_j^k\\) as the predicted Poisson mean for the contribution of voxel \\(j\\) to bin \\(i\\). By the splitting property, conditioned on the observed count \\(y_i\\):\n\\[(n_{i1}, \\ldots, n_{iJ}) \\mid y_i,\\, \\mathbf{x}^k\n\\;\\sim\\;\n\\operatorname{Multinomial}\\!\\left(y_i;\\;\n\\frac{a_{i1}x_1^k}{\\bar{y}_i(\\mathbf{x}^k)},\n\\ldots,\n\\frac{a_{iJ}x_J^k}{\\bar{y}_i(\\mathbf{x}^k)}\\right),\\]\nwhere \\(\\bar{y}_i(\\mathbf{x}^k) = \\sum_j a_{ij}x_j^k + b_i\\). Using the fact that \\(E[N_j \\mid N = n] = n \\cdot p_j\\) for a multinomial:\n\\[\\boxed{\\hat{n}_{ij}^k \\;:=\\; E[n_{ij} \\mid y_i,\\, \\mathbf{x}^k]\n\\;=\\; \\frac{a_{ij}\\,x_j^k}{\\bar{y}_i(\\mathbf{x}^k)}\\,y_i.}\\]\n\n\n\n\n\n\nNoteInterpretation\n\n\n\nThe formula apportions the observed count \\(y_i\\) among voxels in proportion to their predicted contributions \\(a_{ij}x_j^k\\). If voxel \\(j\\) is predicted to account for 30 % of the expected signal in bin \\(i\\), it is credited with 30 % of the observed photons — a probabilistic bookkeeping step that underpins every EM-type reconstruction algorithm.\n\n\n\n\n\n\n\n\nTipBackground term \\(b_i\\)\n\n\n\nIf the background (scatter, randoms) is modelled as an additional independent Poisson source with known mean \\(b_i\\), it simply adds one more component to the multinomial split. Because \\(b_i\\) is a known constant rather than an unknown to be estimated, its component does not appear in \\(Q\\), and the formula above for the image voxels is unchanged."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "mlem_proof",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site"
   }
 ]

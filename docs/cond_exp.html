@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>mlem_proof</title>
+<title>WIP – mlem_proof</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -71,6 +71,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -93,7 +122,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -115,15 +144,21 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-conditional-expectation-via-poisson-splitting" id="toc-the-conditional-expectation-via-poisson-splitting" class="nav-link active" data-scroll-target="#the-conditional-expectation-via-poisson-splitting">The conditional expectation via Poisson splitting</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="cond_exp.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">mlem_proof</h1>
+<h1 class="title">WIP</h1>
 </div>
 
 
@@ -140,10 +175,62 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This is a Quarto website.</p>
-<p>To learn more about Quarto websites visit <a href="https://quarto.org/docs/websites" class="uri">https://quarto.org/docs/websites</a>.</p>
+<section id="the-conditional-expectation-via-poisson-splitting" class="level3">
+<h3 class="anchored" data-anchor-id="the-conditional-expectation-via-poisson-splitting">The conditional expectation via Poisson splitting</h3>
+<p><strong>Setup.</strong> In the complete-data model each voxel <span class="math inline">\(j\)</span> contributes independently to detector bin <span class="math inline">\(i\)</span>: <span class="math inline">\(n_{ij} \sim \operatorname{Poisson}(a_{ij}x_j)\)</span>, and the observed count is the total <span class="math inline">\(y_i = \sum_j n_{ij}\)</span>.</p>
+<p><strong>Poisson splitting property.</strong> Let <span class="math inline">\(N_1, \ldots, N_J\)</span> be independent Poisson random variables with means <span class="math inline">\(\lambda_1, \ldots, \lambda_J\)</span>, and let <span class="math inline">\(N = N_1 + \cdots + N_J \sim \operatorname{Poisson}(\lambda)\)</span>, <span class="math inline">\(\lambda = \sum_j \lambda_j\)</span>. Then the conditional distribution of <span class="math inline">\((N_1, \ldots, N_J)\)</span> given <span class="math inline">\(N = n\)</span> is <strong>multinomial</strong>:</p>
+<p><span class="math display">\[(N_1, \ldots, N_J) \mid N = n \;\sim\;
+\operatorname{Multinomial}\!\left(n;\;
+\frac{\lambda_1}{\lambda}, \ldots, \frac{\lambda_J}{\lambda}\right).\]</span></p>
+<div class="proof">
+<p><span class="proof-title"><em>Proof</em>. </span>The joint probability of <span class="math inline">\((N_1 = n_1, \ldots, N_J = n_J)\)</span> with <span class="math inline">\(\sum_j n_j = n\)</span> factors as a product of Poisson probabilities:</p>
+<p><span class="math display">\[P(N_1 = n_1, \ldots, N_J = n_J)
+= \prod_j \frac{e^{-\lambda_j} \lambda_j^{n_j}}{n_j!}
+= e^{-\lambda} \frac{\prod_j \lambda_j^{n_j}}{\prod_j n_j!}.\]</span></p>
+<p>Dividing by <span class="math inline">\(P(N = n) = e^{-\lambda}\lambda^n / n!\)</span> gives:</p>
+<p><span class="math display">\[P(N_1 = n_1, \ldots, N_J = n_J \mid N = n)
+= \frac{n!}{\prod_j n_j!} \prod_j \left(\frac{\lambda_j}{\lambda}\right)^{n_j},\]</span></p>
+<p>which is the <span class="math inline">\(\operatorname{Multinomial}(n;\, \lambda_1/\lambda, \ldots, \lambda_J/\lambda)\)</span> probability mass function.</p>
+</div>
+<p><strong>Application.</strong> At iteration <span class="math inline">\(k\)</span>, set <span class="math inline">\(\lambda_j = a_{ij}x_j^k\)</span> as the predicted Poisson mean for the contribution of voxel <span class="math inline">\(j\)</span> to bin <span class="math inline">\(i\)</span>. By the splitting property, conditioned on the observed count <span class="math inline">\(y_i\)</span>:</p>
+<p><span class="math display">\[(n_{i1}, \ldots, n_{iJ}) \mid y_i,\, \mathbf{x}^k
+\;\sim\;
+\operatorname{Multinomial}\!\left(y_i;\;
+\frac{a_{i1}x_1^k}{\bar{y}_i(\mathbf{x}^k)},
+\ldots,
+\frac{a_{iJ}x_J^k}{\bar{y}_i(\mathbf{x}^k)}\right),\]</span></p>
+<p>where <span class="math inline">\(\bar{y}_i(\mathbf{x}^k) = \sum_j a_{ij}x_j^k + b_i\)</span>. Using the fact that <span class="math inline">\(E[N_j \mid N = n] = n \cdot p_j\)</span> for a multinomial:</p>
+<p><span class="math display">\[\boxed{\hat{n}_{ij}^k \;:=\; E[n_{ij} \mid y_i,\, \mathbf{x}^k]
+\;=\; \frac{a_{ij}\,x_j^k}{\bar{y}_i(\mathbf{x}^k)}\,y_i.}\]</span></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Interpretation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The formula apportions the observed count <span class="math inline">\(y_i\)</span> among voxels in proportion to their <em>predicted</em> contributions <span class="math inline">\(a_{ij}x_j^k\)</span>. If voxel <span class="math inline">\(j\)</span> is predicted to account for 30 % of the expected signal in bin <span class="math inline">\(i\)</span>, it is credited with 30 % of the observed photons — a probabilistic bookkeeping step that underpins every EM-type reconstruction algorithm.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Background term <span class="math inline">\(b_i\)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If the background (scatter, randoms) is modelled as an additional independent Poisson source with known mean <span class="math inline">\(b_i\)</span>, it simply adds one more component to the multinomial split. Because <span class="math inline">\(b_i\)</span> is a <em>known</em> constant rather than an unknown to be estimated, its component does not appear in <span class="math inline">\(Q\)</span>, and the formula above for the image voxels is unchanged.</p>
+</div>
+</div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

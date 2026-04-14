@@ -1,3 +1,24 @@
 project:
   type: website
   output-dir: docs
+
+website:
+  title: "mlem_proof"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: hello.qmd
+        text: Hello
+      - about.qmd
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+    css: styles.css
+    toc: true
+
+
+
