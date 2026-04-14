@@ -3,14 +3,11 @@ project:
   output-dir: docs
 
 website:
-  title: "mlem_proof"
+  title: "MLEM proofs"
   navbar:
     left:
-      - href: index.qmd
-        text: Home
-      - href: hello.qmd
-        text: Hello
-      - about.qmd
+      - text: "MLEM proof"
+        href: index.qmd
 
 format:
   html:
