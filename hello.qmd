@@ -1,96 +1,441 @@
 ---
-title: "Quarto Basics"
-format: 
-    live-html:
-        code-fold: true
-jupyter: python3
-pyodide:
-  packages:
-    - matplotlib
-    - numpy
-    - scipy
-    - pandas
-author:
-  - name: Georg Schramm
-    id: gs
-    orcid: 0000-0002-2251-3195
-    affiliation: 
-      - name: KU Leuven
-bibliography: references.bib
+title: "Convergence proof of MLEM"
+subtitle: "A self-contained proof for $y \\sim \\operatorname{Poisson}(A\\mathbf{x} + \\mathbf{b})$"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: false
+    theme: cosmo
+  #pdf:
+  #  toc: true
+  #  number-sections: true
+  #  geometry: margin=2.5cm
 ---
 
-# My demo
+## Introduction
 
-Some markdown text here. See @fig-charts or [@ehrhardt2025fast] for details.
+The MLEM (Maximum Likelihood Expectation Maximisation) algorithm is the
+standard reconstruction method in emission tomography (PET, SPECT). It
+produces non-negative images and steadily improves the fit to the measured
+data at every iteration. But does it always find the non-negative image with 
+highest Poisson log-likelihood? And if so, why?
 
-A figure here
-```{python}
-#| label: fig-charts
-#| fig-cap: "Charts"
-#| fig-subcap: 
-#|   - "First"
-#|   - "Second"
-#| layout-ncol: 2
+This document gives a complete, self-contained proof that MLEM converges to
+the unique non-negative image that maximises the Poisson log-likelihood. We
+assume only basic calculus and probability. Every mathematical step is
+explained.
 
-import matplotlib.pyplot as plt
-fig, ax = plt.subplots(1, 1, figsize=(5, 5))
-ax.plot([1,23,2,4])
-fig2, ax2 = plt.subplots(1, 1, figsize=(5, 5))
-ax2.plot([8,65,23,90])
-```
+---
 
-Some formulas here.
+## Setup {#sec-setup}
 
-$$
-\int f(x) dx = I_\alpha
-$$ {#eq-int}
+### The forward model
 
-As shown in equation @eq-int, the integral of $f(x)$ is equal to $I_\alpha$.
+We measure $I$ detector counts $y_1, \ldots, y_I \in \{0, 1, 2, \ldots\}$
+(the emission sinogram or histogram). 
+The image to be recovered has $J$ voxels with (unknown)
+activities $x_1, \ldots, x_J \geq 0$, collected into a column vector
+$\mathbf{x} \in \mathbb{R}^J$.
 
-::: {.column-margin}
-We know from *the first fundamental theorem of calculus* that for $x$ in $[a, b]$:
+The **forward model** relates image to expected counts:
 
-$$\frac{d}{dx}\left( \int_{a}^{x} f(u)\,du\right)=f(x).$$
+$$\bar{y}_i(\mathbf{x}) = \sum_{j=1}^{J} a_{ij}\, x_j + b_i = (A\mathbf{x} + \mathbf{b})_i, \qquad i = 1,\ldots,I,$$
+
+where:
+
+- $A \in \mathbb{R}^{I \times J}_{\geq 0}$ is the **system matrix**. Entry $a_{ij}$ is the probability
+  that an event emitted in voxel $j$ is detected in bin $i$.
+- $\mathbf{b} \in \mathbb{R}^I_{\geq 0}$ is the **background counts** with known
+mean (e.g. randoms and scatter estimate in PET).
+
+We model each detector bin as an independent Poisson random variable:
+
+$$y_i \sim \operatorname{Poisson}\!\bigl(\bar{y}_i(\mathbf{x})\bigr), \quad \text{independently for all } i.$$
+
+### The log-likelihood
+
+The probability of observing count $y_i$ when the expected count is
+$\bar{y}_i$ is $P(y_i) = e^{-\bar{y}_i}\,\bar{y}_i^{y_i}/y_i!$.
+Taking the logarithm and summing over all bins (and dropping terms that do
+not depend on $\mathbf{x}$) gives the **Poisson log-likelihood**:
+
+$$\mathcal{L}(\mathbf{x}) = \sum_{i=1}^{I} \Bigl[y_i \log \bar{y}_i(\mathbf{x}) - \bar{y}_i(\mathbf{x})\Bigr].$$
+
+Our goal is to find the image $\hat{\mathbf{x}}$ that maximises
+$\mathcal{L}(\mathbf{x})$ subject to $\mathbf{x} \geq \mathbf{0}$ (non-negativity).
+
+### The MLEM update
+
+Starting from an initial image $\mathbf{x}^0 > \mathbf{0}$, MLEM produces a sequence
+of images $\mathbf{x}^0, \mathbf{x}^1, \mathbf{x}^2, \ldots$ via the update rule:
+
+$$\boxed{x_j^{k+1} = \frac{x_j^k}{\displaystyle\sum_i a_{ij}} \sum_{i=1}^{I} a_{ij}\, \frac{y_i}{\bar{y}_i(\mathbf{x}^k)}, \qquad j = 1,\ldots,J.}$$
+
+The ratio $y_i / \bar{y}_i(\mathbf{x}^k)$ compares measured to predicted counts
+in bin $i$: it equals 1 when the current estimate is perfect, is greater than
+1 when the model under-predicts, and is less than 1 when it over-predicts.
+These correction factors are back-projected into image space and normalised
+by the scanner sensitivity $\sum_i a_{ij}$.
+
+### The full-rank assumption
+
+We assume throughout that $A$ has **full column rank**, meaning no non-zero
+vector $\mathbf{v} \geq \mathbf{0}$ satisfies $A\mathbf{v} = \mathbf{0}$.
+Practically this means:
+
+1. Every voxel contributes to at least one detector bin ($\sum_i a_{ij} > 0$ for all $j$).
+2. No two voxels have identical detection patterns.
+
+---
+
+## Proof Roadmap {#sec-roadmap}
+
+The proof consists of five steps, each building on the previous.
+
+::: {.callout-note icon=false}
+## The five things we need to show
+
+1. **Bounded above:** The log-likelihood $\mathcal{L}(\mathbf{x})$ has a finite
+   maximum over $\mathbf{x} \geq \mathbf{0}$.
+
+2. **Non-negativity preserved:** If $\mathbf{x}^k \geq \mathbf{0}$, then
+   $\mathbf{x}^{k+1} \geq \mathbf{0}$.
+
+3. **Monotonic increase:** Each MLEM update satisfies
+   $\mathcal{L}(\mathbf{x}^{k+1}) \geq \mathcal{L}(\mathbf{x}^k)$.
+
+4. **Bounded iterates:** The sequence $\{\mathbf{x}^k\}$ stays within a bounded
+   region (i.e. the images do not grow without bound).
+
+5. **Convergence to the ML solution:** The sequence $\mathbf{x}^k$ converges
+   to the unique maximiser $\hat{\mathbf{x}}$ of $\mathcal{L}$.
 :::
 
-A table here
+Steps 1–3 together imply that $\mathcal{L}(\mathbf{x}^k)$ is a monotonically
+increasing sequence with an upper bound, so it converges to some value
+$\mathcal{L}^*$. Steps 4 and 5 then show that the *iterates themselves*
+converge, and that their limit is the correct answer.
 
-| Col1 | Col2 | Col3 |
-|------|------|------|
-| A    | B    | C    |
-| E    | F    | G    |
-| A    | G    | G    |
+---
 
-: My Caption {#tbl-letters}
+## Step 1: The Log-Likelihood is Bounded Above {#sec-bounded}
 
-See @tbl-letters.
+The Poisson log-likelihood can be rewritten as:
+ 
+$$\mathcal{L}(\mathbf{x}) = \sum_i \Bigl[y_i \log \bar{y}_i - \bar{y}_i\Bigr]
+= \sum_i \bigl(y_i \log y_i - y_i\bigr) - \underbrace{\sum_i \Bigl[y_i \log\tfrac{y_i}{\bar{y}_i} + \bar{y}_i - y_i\Bigr]}_{\geq\; 0}.$$
+ 
+To see this, write $y_i \log \bar{y}_i = y_i \log y_i - y_i\log(y_i/\bar{y}_i)$
+and rearrange. The underlined term is a sum of **generalised Kullback–Leibler divergences**
+$d(y_i, \bar{y}_i) = y_i \log(y_i/\bar{y}_i) + \bar{y}_i - y_i$,
+each of which is non-negative.
+ 
+$$\mathcal{L}(\mathbf{x}) \leq \sum_i \bigl(y_i \log y_i - y_i\bigr) =: \mathcal{L}_{\max} < \infty.$$
+ 
+The upper bound $\mathcal{L}_{\max}$ is finite and is achieved only when
+$\bar{y}_i = y_i$ for all $i$ — i.e. when the predicted counts exactly
+match the measurements. $\square$
+ 
+::: {.callout-tip icon=false}
+## Convention: $0 \log 0 = 0$
+ 
+If $y_i = 0$, the term
+$y_i \log y_i$ in $\mathcal{L}_{\max}$ is formally $0 \cdot (-\infty)$.
+We adopt the standard convention
+ 
+$$0 \log 0 := 0,$$
+ 
+justified by the fact that $\lim_{y \to 0^+} y \log y = 0$ (the function
+is continuous from the right at zero). 
 
-Some interactive python cells here.
+:::
 
-```{pyodide}
-import numpy as np
+---
 
-def square(x):
-    return x**2
+## Step 2: MLEM Preserves Non-Negativity {#sec-nonneg}
 
-x = np.arange(5)
-print(f"x = {x}")
-print(f"square(x) = {square(x)}")
-```
+Inspect the update formula: if $x_j^k \geq 0$ and all $a_{ij} \geq 0$ and
+$y_i \geq 0$, then every factor in the product is non-negative, so
+$x_j^{k+1} \geq 0$. Since we start with $\mathbf{x}^0 \geq \mathbf{0}$, all
+iterates satisfy $\mathbf{x}^k \geq \mathbf{0}$ by induction. $\square$
 
-```{pyodide}
-import matplotlib.pyplot as plt
+---
 
-y = x + 2
-print(f"y = {y}")
-print(f"square(y) = {square(y)}")
+## Step 3: Each MLEM Update Increases the Log-Likelihood {#sec-monotone}
 
-fig3, ax3 = plt.subplots(1, 1, figsize=(5, 3), layout='constrained')
-ax3.plot(y, square(y), '.-')
-ax3.set_xlabel('y')
-ax3.set_ylabel('f(y) = y*y')
-ax3.grid(ls = ':')
-plt.show()
-```
+This is the most important step, and it uses the **EM (Expectation–Maximisation) framework**.
 
+### The complete-data idea
 
+Maximising $\mathcal{L}(\mathbf{x})$ directly is hard because the log contains
+a *sum* over all voxels, $\log \bar{y}_i = \log(\sum_j A_{ij} x_j + b_i)$,
+which couples all unknowns together.
+
+The EM trick is to imagine that we could observe *more* data than we actually
+do. In PET/SPECT, every detected event originated from *some* voxel $j$, but
+the detector only tells us the bin $i$ — not the voxel. If we also knew the
+voxel of origin, the problem would factor into independent sub-problems, one
+per voxel.
+
+Define the **complete data** $n_{ij}$ as the (hypothetical, unobserved) number
+of events detected in bin $i$ that originated from voxel $j$, plus
+$n_{i0}$ for background events in bin $i$. These satisfy:
+
+$$n_{ij} \sim \operatorname{Poisson}(a_{ij}\, x_j), \quad j \geq 1, \qquad
+n_{i0} \sim \operatorname{Poisson}(b_i), \qquad \text{all independent,}$$
+
+and they sum to the observed data: $y_i = \sum_{j=0}^{J} n_{ij}$.
+
+The **complete-data log-likelihood** is much simpler than $\mathcal{L}$:
+
+$$\log p(\mathbf{n} \mid \mathbf{x}) = \sum_{j=1}^{J} \left[\log x_j \underbrace{\sum_i n_{ij}}_{\text{counts from voxel }j} - x_j \underbrace{\sum_i a_{ij}}_{s_j}\right] + \text{const},$$
+
+which is a **sum over voxels** — each $x_j$ appears independently.
+
+### The $Q$ function
+
+Since $\mathbf{n}$ is not observed, we cannot use $\log p(\mathbf{n}\mid\mathbf{x})$
+directly. Instead, EM uses its **conditional expectation** given the
+observed data $\mathbf{y}$ and the current estimate $\mathbf{x}^k$:
+
+$$Q(\mathbf{x} \mid \mathbf{x}^k) = E\!\left[\log p(\mathbf{n}\mid\mathbf{x}) \;\Big|\; \mathbf{y},\, \mathbf{x}^k\right].$$
+
+**Reading the notation:** $E[\,\cdot\mid \mathbf{y}, \mathbf{x}^k]$ means
+"the average value of $(\cdot)$, computed over all possible complete-data
+configurations $\mathbf{n}$ that are consistent with the observed counts
+$\mathbf{y}$, weighted by how probable each configuration is under the
+current image estimate $\mathbf{x}^k$." In short: we average out the
+unknown $\mathbf{n}$ using our best current guess $\mathbf{x}^k$.
+
+To evaluate $Q$ we need the conditional expectation of $n_{ij}$. One can
+show (using the Poisson splitting property) that:
+
+$$E[n_{ij} \mid y_i, \mathbf{x}^k] = \frac{a_{ij}\, x_j^k}{\bar{y}_i(\mathbf{x}^k)}\, y_i =: \hat{n}_{ij}^k.$$
+
+Intuitively: the $y_i$ observed events in bin $i$ are distributed among
+voxels proportionally to each voxel's contribution to the expected counts
+$\bar{y}_i(\mathbf{x}^k)$. Substituting:
+
+$$Q(\mathbf{x} \mid \mathbf{x}^k) = \sum_{j=1}^{J} \left[\hat{n}_j^k \log x_j - s_j x_j\right] + \text{const},
+\qquad \hat{n}_j^k = \sum_i \hat{n}_{ij}^k.$$
+
+This is again separable in the $x_j$, so the maximisation over $\mathbf{x}$
+can be done voxel by voxel.
+
+### The fundamental identity
+
+Using Bayes' theorem, we can write the joint distribution of $\mathbf{n}$ in
+two ways:
+
+$$p(\mathbf{n} \mid \mathbf{x}) = p(\mathbf{y} \mid \mathbf{x}) \cdot p(\mathbf{n} \mid \mathbf{y}, \mathbf{x}).$$
+
+Taking logarithms:
+
+$$\log p(\mathbf{n}\mid\mathbf{x}) = \underbrace{\log p(\mathbf{y}\mid\mathbf{x})}_{\mathcal{L}(\mathbf{x})} + \log p(\mathbf{n}\mid\mathbf{y},\mathbf{x}).$$
+
+Now take the conditional expectation $E[\,\cdot\mid\mathbf{y},\mathbf{x}^k]$ of
+both sides. Since $\mathcal{L}(\mathbf{x}) = \log p(\mathbf{y}\mid\mathbf{x})$
+does not involve $\mathbf{n}$, its expectation is just itself. Defining
+$H(\mathbf{x}\mid\mathbf{x}^k) = E[\log p(\mathbf{n}\mid\mathbf{y},\mathbf{x})\mid\mathbf{y},\mathbf{x}^k]$:
+
+$$Q(\mathbf{x}\mid\mathbf{x}^k) = \mathcal{L}(\mathbf{x}) + H(\mathbf{x}\mid\mathbf{x}^k).$$
+
+Rearranging gives the **fundamental identity**:
+
+$$\boxed{\mathcal{L}(\mathbf{x}) = Q(\mathbf{x}\mid\mathbf{x}^k) - H(\mathbf{x}\mid\mathbf{x}^k).}$$
+
+### The EM guarantee
+
+Each EM iteration sets $\mathbf{x}^{k+1} = \arg\max_{\mathbf{x} \geq 0}\, Q(\mathbf{x}\mid\mathbf{x}^k)$
+(shown below to give exactly the MLEM formula). We want to show
+$\mathcal{L}(\mathbf{x}^{k+1}) \geq \mathcal{L}(\mathbf{x}^k)$.
+
+Using the fundamental identity at both $\mathbf{x}^{k+1}$ and $\mathbf{x}^k$:
+
+$$\mathcal{L}(\mathbf{x}^{k+1}) - \mathcal{L}(\mathbf{x}^k)
+= \underbrace{\bigl[Q(\mathbf{x}^{k+1}\mid\mathbf{x}^k) - Q(\mathbf{x}^k\mid\mathbf{x}^k)\bigr]}_{\text{Term A}} + \underbrace{\bigl[H(\mathbf{x}^k\mid\mathbf{x}^k) - H(\mathbf{x}^{k+1}\mid\mathbf{x}^k)\bigr]}_{\text{Term B}}.$$
+
+**Term A $\geq 0$:** By definition, $\mathbf{x}^{k+1}$ maximises $Q(\cdot\mid\mathbf{x}^k)$,
+so $Q(\mathbf{x}^{k+1}\mid\mathbf{x}^k) \geq Q(\mathbf{x}^k\mid\mathbf{x}^k)$.
+
+**Term B $\geq 0$:** Expanding the difference:
+
+$$H(\mathbf{x}^k\mid\mathbf{x}^k) - H(\mathbf{x}\mid\mathbf{x}^k)
+= E\!\left[\log \frac{p(\mathbf{n}\mid\mathbf{y},\mathbf{x}^k)}{p(\mathbf{n}\mid\mathbf{y},\mathbf{x})}\;\Bigg|\;\mathbf{y},\mathbf{x}^k\right]
+= \underbrace{D_{\mathrm{KL}}\!\bigl(p(\mathbf{n}\mid\mathbf{y},\mathbf{x}^k)\;\|\;p(\mathbf{n}\mid\mathbf{y},\mathbf{x})\bigr)}_{\geq\; 0}.$$
+
+The **Kullback–Leibler (KL) divergence** $D_{\mathrm{KL}}(p\|q) = \sum_{\mathbf{n}} p(\mathbf{n}) \log \frac{p(\mathbf{n})}{q(\mathbf{n})}$
+is always $\geq 0$, with equality only when $p = q$.
+
+Therefore $\mathcal{L}(\mathbf{x}^{k+1}) - \mathcal{L}(\mathbf{x}^k) \geq 0$, i.e.
+**the log-likelihood never decreases**. $\square$
+
+::: {.callout-note icon=false}
+## Why the KL divergence is non-negative
+
+For any two probability distributions $p$ and $q$, the KL divergence satisfies:
+
+$$D_{\mathrm{KL}}(p\|q) = \sum_{\mathbf{n}} p(\mathbf{n})\log\frac{p(\mathbf{n})}{q(\mathbf{n})} \geq 0.$$
+
+This follows from Jensen's inequality applied to the concave function $\log$:
+
+$$D_{\mathrm{KL}}(p\|q) = -\sum_{\mathbf{n}} p(\mathbf{n})\log\frac{q(\mathbf{n})}{p(\mathbf{n})} \geq -\log\!\left(\sum_{\mathbf{n}} p(\mathbf{n})\cdot\frac{q(\mathbf{n})}{p(\mathbf{n})}\right) = -\log 1 = 0.$$
+:::
+
+### The M-step gives the MLEM update
+
+Maximise $Q(\mathbf{x}\mid\mathbf{x}^k) = \sum_j [\hat{n}_j^k \log x_j - s_j x_j] + \text{const}$
+over $x_j \geq 0$. Setting the derivative to zero:
+
+$$\frac{\partial Q}{\partial x_j} = \frac{\hat{n}_j^k}{x_j} - s_j = 0
+\quad\Longrightarrow\quad
+x_j^{k+1} = \frac{\hat{n}_j^k}{s_j}
+= \frac{\displaystyle\sum_i \hat{n}_{ij}^k}{\displaystyle\sum_i a_{ij}}
+= \frac{x_j^k}{\displaystyle\sum_i a_{ij}} \sum_i a_{ij}\,\frac{y_i}{\bar{y}_i(\mathbf{x}^k)}.$$
+
+This is exactly the MLEM formula, confirming that MLEM is an EM algorithm. $\square$
+
+---
+
+## Step 4: The Iterates Are Bounded {#sec-bounded-iterates}
+
+Steps 1–3 tell us that $\mathcal{L}(\mathbf{x}^k)$ is a monotonically increasing
+sequence with $\mathcal{L}(\mathbf{x}^k) \leq \mathcal{L}_{\max}$. In particular, all
+iterates lie in the **sub-level set**:
+
+$$\mathcal{S} = \{\mathbf{x} \geq \mathbf{0} : \mathcal{L}(\mathbf{x}) \geq \mathcal{L}(\mathbf{x}^0)\}.$$
+
+We now show that $\mathcal{S}$ is bounded (and therefore compact).
+
+**Why $\mathcal{L}(\mathbf{x}) \to -\infty$ as $\|\mathbf{x}\| \to \infty$:**
+The log-likelihood contains the term $-\sum_i \bar{y}_i(\mathbf{x}) = -\mathbf{1}^T A\mathbf{x} - \mathbf{1}^T\mathbf{b}$.
+When $\mathbf{x} \geq \mathbf{0}$ and $\|\mathbf{x}\| \to \infty$, at least one
+component $x_j \to \infty$. Because $A$ has full column rank, the column
+$A_{\cdot j}$ is not zero, so $\sum_i A_{ij} x_j \to \infty$. Therefore
+$\sum_i \bar{y}_i(\mathbf{x}) \to \infty$, which drives $\mathcal{L}(\mathbf{x}) \to -\infty$.
+
+Since $\mathcal{L}(\mathbf{x}) \to -\infty$ for large $\|\mathbf{x}\|$ and
+$\mathcal{S}$ requires $\mathcal{L}(\mathbf{x}) \geq \mathcal{L}(\mathbf{x}^0) > -\infty$,
+the set $\mathcal{S}$ must be bounded.
+
+**Conclusion:** All iterates $\mathbf{x}^k$ lie in the bounded set $\mathcal{S}$.
+In particular, no voxel value can grow without bound. $\square$
+
+---
+
+## Step 5: Convergence to the ML Solution {#sec-convergence}
+
+We now combine all previous steps to show that $\mathbf{x}^k$ converges to
+the unique ML solution.
+
+### The log-likelihood values converge
+
+From Steps 1 and 3: $\{\mathcal{L}(\mathbf{x}^k)\}$ is monotonically increasing
+and bounded above. By the **monotone convergence theorem** (a real-analysis
+result for sequences of real numbers), it converges:
+
+$$\mathcal{L}(\mathbf{x}^k) \;\longrightarrow\; \mathcal{L}^* \;\leq\; \mathcal{L}_{\max}.$$
+
+### A convergent subsequence exists
+
+From Step 4, all iterates lie in the bounded set $\mathcal{S} \subset \mathbb{R}^J$.
+By the **Bolzano–Weierstrass theorem** (every bounded sequence in $\mathbb{R}^J$
+has a convergent subsequence), there exists a subsequence
+$\mathbf{x}^{k_1}, \mathbf{x}^{k_2}, \ldots$ converging to some limit point $\mathbf{x}^*$:
+
+$$\mathbf{x}^{k_m} \;\longrightarrow\; \mathbf{x}^* \quad \text{as } m \to \infty.$$
+
+Since $\mathcal{L}$ is continuous and $\mathcal{L}(\mathbf{x}^k) \to \mathcal{L}^*$:
+
+$$\mathcal{L}(\mathbf{x}^*) = \lim_{m\to\infty} \mathcal{L}(\mathbf{x}^{k_m}) = \mathcal{L}^*.$$
+
+### The limit is the global ML solution
+
+**Claim:** $\mathbf{x}^*$ is a fixed point of MLEM — that is, the MLEM update
+applied to $\mathbf{x}^*$ returns $\mathbf{x}^*$ unchanged.
+
+**Proof by contradiction:** Suppose $\mathbf{x}^*$ is *not* a fixed point.
+Then $\mathbf{x}^{k+1} = F(\mathbf{x}^k) \neq \mathbf{x}^k$ at $\mathbf{x}^k = \mathbf{x}^*$,
+and by the strict EM inequality (Term A is strictly positive when
+$\mathbf{x}^{k+1} \neq \mathbf{x}^k$, because $Q$ is strictly concave under
+full rank):
+
+$$\mathcal{L}(F(\mathbf{x}^*)) > \mathcal{L}(\mathbf{x}^*) = \mathcal{L}^*.$$
+
+But the MLEM map $F$ is continuous (all operations in the update are
+continuous away from zero), so:
+
+$$\mathcal{L}(\mathbf{x}^{k_m + 1}) = \mathcal{L}(F(\mathbf{x}^{k_m})) \;\longrightarrow\; \mathcal{L}(F(\mathbf{x}^*)) > \mathcal{L}^*.$$
+
+This contradicts $\mathcal{L}(\mathbf{x}^k) \to \mathcal{L}^*$ (since
+$\mathbf{x}^{k_m+1}$ is a subsequence of $\{\mathbf{x}^k\}$). Therefore
+$\mathbf{x}^*$ must be a fixed point. $\square$
+
+**What does a fixed point imply?** At a fixed point $F(\mathbf{x}^*) = \mathbf{x}^*$,
+the MLEM formula reads:
+
+$$x_j^* = x_j^* \cdot \frac{\displaystyle\sum_i a_{ij}\, \frac{y_i}{\bar{y}_i(\mathbf{x}^*)}}{\displaystyle\sum_i a_{ij}}.$$
+
+For each voxel $j$, either $x_j^* > 0$ or $x_j^* = 0$:
+
+- If $x_j^* > 0$: dividing both sides by $x_j^*$ gives
+  $\displaystyle\frac{\partial \mathcal{L}}{\partial x_j}\bigg|_{\mathbf{x}^*} = \sum_i a_{ij}\frac{y_i}{\bar{y}_i(\mathbf{x}^*)} - \sum_i a_{ij} = 0$.
+- If $x_j^* = 0$: $x_j^*$ is at the non-negativity boundary.
+
+These are precisely the **Karush–Kuhn–Tucker (KKT) optimality conditions**
+for the constrained problem $\max_{\mathbf{x} \geq 0} \mathcal{L}(\mathbf{x})$: at
+the optimum, the gradient must be zero for any active (positive) variable,
+and non-positive for any variable sitting at its lower bound.
+
+Because $\mathcal{L}$ is **concave** in $\mathbf{x}$ (its Hessian
+$\nabla^2 \mathcal{L} = -A^\top \operatorname{diag}(y_i / \bar{y}_i^2) A$
+is negative semi-definite), the KKT conditions are not just necessary but
+also **sufficient** for global optimality. Therefore $\mathbf{x}^*$ is a
+global maximum of $\mathcal{L}$ over $\mathbf{x} \geq \mathbf{0}$, and
+$\mathcal{L}^* = \mathcal{L}_{\max}$.
+
+### The full sequence converges (not just the subsequence)
+
+Under the full-rank assumption, $\mathcal{L}$ is **strictly concave**:
+its Hessian $\nabla^2\mathcal{L} = -A^\top D A$ (with
+$D = \operatorname{diag}(y_i/\bar{y}_i^2) > 0$) is negative *definite*
+because $A$ has full column rank. A strictly concave function over a convex
+set has **at most one** global maximum. Since we have shown that $\mathbf{x}^*$
+is a global maximum, it is the *unique* global maximum $\hat{\mathbf{x}}$.
+
+Now consider any convergent subsequence of $\{\mathbf{x}^k\}$. By the same
+argument as above, its limit must also be a fixed point and therefore a global
+maximum. By uniqueness, every convergent subsequence must converge to the same
+point $\hat{\mathbf{x}}$. Since the sequence is bounded (Step 4), this implies
+the **full sequence** converges:
+
+$$\mathbf{x}^k \;\longrightarrow\; \hat{\mathbf{x}} \quad \text{as } k \to \infty. \quad \square$$
+
+---
+
+## Summary
+
+::: {.callout-note icon=false}
+## Convergence theorem
+
+Let $y_i \sim \operatorname{Poisson}((A\mathbf{x}+\mathbf{b})_i)$ with $A$ having full
+column rank and $b_i \geq 0$. Starting from any $\mathbf{x}^0 > \mathbf{0}$,
+the MLEM iterates $\mathbf{x}^k$ converge to the unique global maximiser
+$\hat{\mathbf{x}}$ of the Poisson log-likelihood over $\mathbf{x} \geq \mathbf{0}$.
+:::
+
+The proof proceeded in five steps:
+
+| Step | What we showed | Key tool |
+|------|---------------|----------|
+| 1 | $\mathcal{L}(\mathbf{x})$ is bounded above | $\log u \leq u - 1$ |
+| 2 | $\mathbf{x}^k \geq \mathbf{0}$ for all $k$ | MLEM formula |
+| 3 | $\mathcal{L}(\mathbf{x}^{k+1}) \geq \mathcal{L}(\mathbf{x}^k)$ | EM framework (Q function + KL $\geq 0$) |
+| 4 | $\{\mathbf{x}^k\}$ stays bounded | Full rank $\Rightarrow$ compact level sets |
+| 5 | $\mathbf{x}^k \to \hat{\mathbf{x}}$ (global ML solution) | Bolzano–Weierstrass + strict concavity |
+
+The most important step is Step 3: the EM framework shows that MLEM always
+makes progress, and the KL divergence is the reason why. Steps 4 and 5
+guarantee that this progress is not wasted — the algorithm does not wander
+off to infinity and the improvements accumulate to reach the true answer.

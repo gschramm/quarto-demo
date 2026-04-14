@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Georg Schramm">
 
-<title>Quarto Basics</title>
+<title>Convergence proof of MLEM</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -24,61 +23,7 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -96,9 +41,7 @@ div.csl-indent {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-45431c2918bd31147ddb3fa7038bb99f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
-<script src="site_libs/quarto-contrib/live-runtime/live-runtime.js" type="module"></script>
-<link href="site_libs/quarto-contrib/live-runtime/live-runtime.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-158031087360bce0ff56dc785ce39e06.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -126,8 +69,6 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script>
-<script type="module" src="site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
-<link href="site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -168,35 +109,56 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#sec-setup" id="toc-sec-setup" class="nav-link" data-scroll-target="#sec-setup">Setup</a>
+  <ul class="collapse">
+  <li><a href="#the-forward-model" id="toc-the-forward-model" class="nav-link" data-scroll-target="#the-forward-model">The forward model</a></li>
+  <li><a href="#the-log-likelihood" id="toc-the-log-likelihood" class="nav-link" data-scroll-target="#the-log-likelihood">The log-likelihood</a></li>
+  <li><a href="#the-mlem-update" id="toc-the-mlem-update" class="nav-link" data-scroll-target="#the-mlem-update">The MLEM update</a></li>
+  <li><a href="#the-full-rank-assumption" id="toc-the-full-rank-assumption" class="nav-link" data-scroll-target="#the-full-rank-assumption">The full-rank assumption</a></li>
+  </ul></li>
+  <li><a href="#sec-roadmap" id="toc-sec-roadmap" class="nav-link" data-scroll-target="#sec-roadmap">Proof Roadmap</a></li>
+  <li><a href="#sec-bounded" id="toc-sec-bounded" class="nav-link" data-scroll-target="#sec-bounded">Step 1: The Log-Likelihood is Bounded Above</a></li>
+  <li><a href="#sec-nonneg" id="toc-sec-nonneg" class="nav-link" data-scroll-target="#sec-nonneg">Step 2: MLEM Preserves Non-Negativity</a></li>
+  <li><a href="#sec-monotone" id="toc-sec-monotone" class="nav-link" data-scroll-target="#sec-monotone">Step 3: Each MLEM Update Increases the Log-Likelihood</a>
+  <ul class="collapse">
+  <li><a href="#the-complete-data-idea" id="toc-the-complete-data-idea" class="nav-link" data-scroll-target="#the-complete-data-idea">The complete-data idea</a></li>
+  <li><a href="#the-q-function" id="toc-the-q-function" class="nav-link" data-scroll-target="#the-q-function">The <span class="math inline">\(Q\)</span> function</a></li>
+  <li><a href="#the-fundamental-identity" id="toc-the-fundamental-identity" class="nav-link" data-scroll-target="#the-fundamental-identity">The fundamental identity</a></li>
+  <li><a href="#the-em-guarantee" id="toc-the-em-guarantee" class="nav-link" data-scroll-target="#the-em-guarantee">The EM guarantee</a></li>
+  <li><a href="#the-m-step-gives-the-mlem-update" id="toc-the-m-step-gives-the-mlem-update" class="nav-link" data-scroll-target="#the-m-step-gives-the-mlem-update">The M-step gives the MLEM update</a></li>
+  </ul></li>
+  <li><a href="#sec-bounded-iterates" id="toc-sec-bounded-iterates" class="nav-link" data-scroll-target="#sec-bounded-iterates">Step 4: The Iterates Are Bounded</a></li>
+  <li><a href="#sec-convergence" id="toc-sec-convergence" class="nav-link" data-scroll-target="#sec-convergence">Step 5: Convergence to the ML Solution</a>
+  <ul class="collapse">
+  <li><a href="#the-log-likelihood-values-converge" id="toc-the-log-likelihood-values-converge" class="nav-link" data-scroll-target="#the-log-likelihood-values-converge">The log-likelihood values converge</a></li>
+  <li><a href="#a-convergent-subsequence-exists" id="toc-a-convergent-subsequence-exists" class="nav-link" data-scroll-target="#a-convergent-subsequence-exists">A convergent subsequence exists</a></li>
+  <li><a href="#the-limit-is-the-global-ml-solution" id="toc-the-limit-is-the-global-ml-solution" class="nav-link" data-scroll-target="#the-limit-is-the-global-ml-solution">The limit is the global ML solution</a></li>
+  <li><a href="#the-full-sequence-converges-not-just-the-subsequence" id="toc-the-full-sequence-converges-not-just-the-subsequence" class="nav-link" data-scroll-target="#the-full-sequence-converges-not-just-the-subsequence">The full sequence converges (not just the subsequence)</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content page-columns page-full" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Quarto Basics</h1>
+<h1 class="title">Convergence proof of MLEM</h1>
+<p class="subtitle lead">A self-contained proof for <span class="math inline">\(y \sim \operatorname{Poisson}(A\mathbf{x} + \mathbf{b})\)</span></p>
 </div>
 
 
-<div class="quarto-title-meta-author">
-  <div class="quarto-title-meta-heading">Author</div>
-  <div class="quarto-title-meta-heading">Affiliation</div>
-  
-    <div class="quarto-title-meta-contents">
-    <p class="author">Georg Schramm <a href="https://orcid.org/0000-0002-2251-3195" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
-  </div>
-  <div class="quarto-title-meta-contents">
-        <p class="affiliation">
-            KU Leuven
-          </p>
-      </div>
-  </div>
 
 <div class="quarto-title-meta">
 
-      
+    
   
     
   </div>
@@ -206,154 +168,298 @@ window.Quarto = {
 </header>
 
 
-<section id="my-demo" class="level1 page-columns page-full">
-<h1>My demo</h1>
-<p>Some markdown text here. See <a href="#fig-charts" class="quarto-xref">Figure&nbsp;1</a> or <span class="citation" data-cites="ehrhardt2025fast">(<a href="#ref-ehrhardt2025fast" role="doc-biblioref">Ehrhardt et al. 2025</a>)</span> for details.</p>
-<p>A figure here</p>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="dv">5</span>))</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>ax.plot([<span class="dv">1</span>,<span class="dv">23</span>,<span class="dv">2</span>,<span class="dv">4</span>])</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>fig2, ax2 <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="dv">5</span>))</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>ax2.plot([<span class="dv">8</span>,<span class="dv">65</span>,<span class="dv">23</span>,<span class="dv">90</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div id="fig-charts" class="quarto-layout-panel">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-charts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-layout-row">
-<div class="cell-output cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-charts" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div id="fig-charts-1" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-subfloat-fig figure">
-<div aria-describedby="fig-charts-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="hello_files/figure-html/fig-charts-output-1.png" data-ref-parent="fig-charts" width="418" height="411" class="figure-img">
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>The MLEM (Maximum Likelihood Expectation Maximisation) algorithm is the standard reconstruction method in emission tomography (PET, SPECT). It produces non-negative images and steadily improves the fit to the measured data at every iteration. But does it always find the non-negative image with highest Poisson log-likelihood? And if so, why?</p>
+<p>This document gives a complete, self-contained proof that MLEM converges to the unique non-negative image that maximises the Poisson log-likelihood. We assume only basic calculus and probability. Every mathematical step is explained.</p>
+<hr>
+</section>
+<section id="sec-setup" class="level2">
+<h2 class="anchored" data-anchor-id="sec-setup">Setup</h2>
+<section id="the-forward-model" class="level3">
+<h3 class="anchored" data-anchor-id="the-forward-model">The forward model</h3>
+<p>We measure <span class="math inline">\(I\)</span> detector counts <span class="math inline">\(y_1, \ldots, y_I \in \{0, 1, 2, \ldots\}\)</span> (the emission sinogram or histogram). The image to be recovered has <span class="math inline">\(J\)</span> voxels with (unknown) activities <span class="math inline">\(x_1, \ldots, x_J \geq 0\)</span>, collected into a column vector <span class="math inline">\(\mathbf{x} \in \mathbb{R}^J\)</span>.</p>
+<p>The <strong>forward model</strong> relates image to expected counts:</p>
+<p><span class="math display">\[\bar{y}_i(\mathbf{x}) = \sum_{j=1}^{J} a_{ij}\, x_j + b_i = (A\mathbf{x} + \mathbf{b})_i, \qquad i = 1,\ldots,I,\]</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(A \in \mathbb{R}^{I \times J}_{\geq 0}\)</span> is the <strong>system matrix</strong>. Entry <span class="math inline">\(a_{ij}\)</span> is the probability that an event emitted in voxel <span class="math inline">\(j\)</span> is detected in bin <span class="math inline">\(i\)</span>.</li>
+<li><span class="math inline">\(\mathbf{b} \in \mathbb{R}^I_{\geq 0}\)</span> is the <strong>background counts</strong> with known mean (e.g.&nbsp;randoms and scatter estimate in PET).</li>
+</ul>
+<p>We model each detector bin as an independent Poisson random variable:</p>
+<p><span class="math display">\[y_i \sim \operatorname{Poisson}\!\bigl(\bar{y}_i(\mathbf{x})\bigr), \quad \text{independently for all } i.\]</span></p>
+</section>
+<section id="the-log-likelihood" class="level3">
+<h3 class="anchored" data-anchor-id="the-log-likelihood">The log-likelihood</h3>
+<p>The probability of observing count <span class="math inline">\(y_i\)</span> when the expected count is <span class="math inline">\(\bar{y}_i\)</span> is <span class="math inline">\(P(y_i) = e^{-\bar{y}_i}\,\bar{y}_i^{y_i}/y_i!\)</span>. Taking the logarithm and summing over all bins (and dropping terms that do not depend on <span class="math inline">\(\mathbf{x}\)</span>) gives the <strong>Poisson log-likelihood</strong>:</p>
+<p><span class="math display">\[\mathcal{L}(\mathbf{x}) = \sum_{i=1}^{I} \Bigl[y_i \log \bar{y}_i(\mathbf{x}) - \bar{y}_i(\mathbf{x})\Bigr].\]</span></p>
+<p>Our goal is to find the image <span class="math inline">\(\hat{\mathbf{x}}\)</span> that maximises <span class="math inline">\(\mathcal{L}(\mathbf{x})\)</span> subject to <span class="math inline">\(\mathbf{x} \geq \mathbf{0}\)</span> (non-negativity).</p>
+</section>
+<section id="the-mlem-update" class="level3">
+<h3 class="anchored" data-anchor-id="the-mlem-update">The MLEM update</h3>
+<p>Starting from an initial image <span class="math inline">\(\mathbf{x}^0 &gt; \mathbf{0}\)</span>, MLEM produces a sequence of images <span class="math inline">\(\mathbf{x}^0, \mathbf{x}^1, \mathbf{x}^2, \ldots\)</span> via the update rule:</p>
+<p><span class="math display">\[\boxed{x_j^{k+1} = \frac{x_j^k}{\displaystyle\sum_i a_{ij}} \sum_{i=1}^{I} a_{ij}\, \frac{y_i}{\bar{y}_i(\mathbf{x}^k)}, \qquad j = 1,\ldots,J.}\]</span></p>
+<p>The ratio <span class="math inline">\(y_i / \bar{y}_i(\mathbf{x}^k)\)</span> compares measured to predicted counts in bin <span class="math inline">\(i\)</span>: it equals 1 when the current estimate is perfect, is greater than 1 when the model under-predicts, and is less than 1 when it over-predicts. These correction factors are back-projected into image space and normalised by the scanner sensitivity <span class="math inline">\(\sum_i a_{ij}\)</span>.</p>
+</section>
+<section id="the-full-rank-assumption" class="level3">
+<h3 class="anchored" data-anchor-id="the-full-rank-assumption">The full-rank assumption</h3>
+<p>We assume throughout that <span class="math inline">\(A\)</span> has <strong>full column rank</strong>, meaning no non-zero vector <span class="math inline">\(\mathbf{v} \geq \mathbf{0}\)</span> satisfies <span class="math inline">\(A\mathbf{v} = \mathbf{0}\)</span>. Practically this means:</p>
+<ol type="1">
+<li>Every voxel contributes to at least one detector bin (<span class="math inline">\(\sum_i a_{ij} &gt; 0\)</span> for all <span class="math inline">\(j\)</span>).</li>
+<li>No two voxels have identical detection patterns.</li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="sec-roadmap" class="level2">
+<h2 class="anchored" data-anchor-id="sec-roadmap">Proof Roadmap</h2>
+<p>The proof consists of five steps, each building on the previous.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-charts-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-(a) First
-</figcaption>
-</figure>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>The five things we need to show
 </div>
 </div>
-<div class="cell-output cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-charts" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div id="fig-charts-2" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-subfloat-fig figure">
-<div aria-describedby="fig-charts-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="hello_files/figure-html/fig-charts-output-2.png" data-ref-parent="fig-charts" width="418" height="411" class="figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-charts-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-(b) Second
-</figcaption>
-</figure>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><p><strong>Bounded above:</strong> The log-likelihood <span class="math inline">\(\mathcal{L}(\mathbf{x})\)</span> has a finite maximum over <span class="math inline">\(\mathbf{x} \geq \mathbf{0}\)</span>.</p></li>
+<li><p><strong>Non-negativity preserved:</strong> If <span class="math inline">\(\mathbf{x}^k \geq \mathbf{0}\)</span>, then <span class="math inline">\(\mathbf{x}^{k+1} \geq \mathbf{0}\)</span>.</p></li>
+<li><p><strong>Monotonic increase:</strong> Each MLEM update satisfies <span class="math inline">\(\mathcal{L}(\mathbf{x}^{k+1}) \geq \mathcal{L}(\mathbf{x}^k)\)</span>.</p></li>
+<li><p><strong>Bounded iterates:</strong> The sequence <span class="math inline">\(\{\mathbf{x}^k\}\)</span> stays within a bounded region (i.e.&nbsp;the images do not grow without bound).</p></li>
+<li><p><strong>Convergence to the ML solution:</strong> The sequence <span class="math inline">\(\mathbf{x}^k\)</span> converges to the unique maximiser <span class="math inline">\(\hat{\mathbf{x}}\)</span> of <span class="math inline">\(\mathcal{L}\)</span>.</p></li>
+</ol>
 </div>
 </div>
+<p>Steps 1–3 together imply that <span class="math inline">\(\mathcal{L}(\mathbf{x}^k)\)</span> is a monotonically increasing sequence with an upper bound, so it converges to some value <span class="math inline">\(\mathcal{L}^*\)</span>. Steps 4 and 5 then show that the <em>iterates themselves</em> converge, and that their limit is the correct answer.</p>
+<hr>
+</section>
+<section id="sec-bounded" class="level2">
+<h2 class="anchored" data-anchor-id="sec-bounded">Step 1: The Log-Likelihood is Bounded Above</h2>
+<p>The Poisson log-likelihood can be rewritten as:</p>
+<p><span class="math display">\[\mathcal{L}(\mathbf{x}) = \sum_i \Bigl[y_i \log \bar{y}_i - \bar{y}_i\Bigr]
+= \sum_i \bigl(y_i \log y_i - y_i\bigr) - \underbrace{\sum_i \Bigl[y_i \log\tfrac{y_i}{\bar{y}_i} + \bar{y}_i - y_i\Bigr]}_{\geq\; 0}.\]</span></p>
+<p>To see this, write <span class="math inline">\(y_i \log \bar{y}_i = y_i \log y_i - y_i\log(y_i/\bar{y}_i)\)</span> and rearrange. The underlined term is a sum of <strong>generalised Kullback–Leibler divergences</strong> <span class="math inline">\(d(y_i, \bar{y}_i) = y_i \log(y_i/\bar{y}_i) + \bar{y}_i - y_i\)</span>, each of which is non-negative.</p>
+<p><span class="math display">\[\mathcal{L}(\mathbf{x}) \leq \sum_i \bigl(y_i \log y_i - y_i\bigr) =: \mathcal{L}_{\max} &lt; \infty.\]</span></p>
+<p>The upper bound <span class="math inline">\(\mathcal{L}_{\max}\)</span> is finite and is achieved only when <span class="math inline">\(\bar{y}_i = y_i\)</span> for all <span class="math inline">\(i\)</span> — i.e.&nbsp;when the predicted counts exactly match the measurements. <span class="math inline">\(\square\)</span></p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Convention: <span class="math inline">\(0 \log 0 = 0\)</span>
 </div>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-charts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Charts
-</figcaption>
-</figure>
+<div class="callout-body-container callout-body">
+<p>If <span class="math inline">\(y_i = 0\)</span>, the term <span class="math inline">\(y_i \log y_i\)</span> in <span class="math inline">\(\mathcal{L}_{\max}\)</span> is formally <span class="math inline">\(0 \cdot (-\infty)\)</span>. We adopt the standard convention</p>
+<p><span class="math display">\[0 \log 0 := 0,\]</span></p>
+<p>justified by the fact that <span class="math inline">\(\lim_{y \to 0^+} y \log y = 0\)</span> (the function is continuous from the right at zero).</p>
 </div>
-<p>Some formulas here.</p>
-<p><span id="eq-int"><span class="math display">\[
-\int f(x) dx = I_\alpha
-\tag{1}\]</span></span></p>
-<p>As shown in equation <a href="#eq-int" class="quarto-xref">Equation&nbsp;1</a>, the integral of <span class="math inline">\(f(x)\)</span> is equal to <span class="math inline">\(I_\alpha\)</span>.</p>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<p>We know from <em>the first fundamental theorem of calculus</em> that for <span class="math inline">\(x\)</span> in <span class="math inline">\([a, b]\)</span>:</p>
-<p><span class="math display">\[\frac{d}{dx}\left( \int_{a}^{x} f(u)\,du\right)=f(x).\]</span></p>
-</div></div><p>A table here</p>
-<div id="tbl-letters" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-letters-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;1: My Caption
-</figcaption>
-<div aria-describedby="tbl-letters-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+</div>
+<hr>
+</section>
+<section id="sec-nonneg" class="level2">
+<h2 class="anchored" data-anchor-id="sec-nonneg">Step 2: MLEM Preserves Non-Negativity</h2>
+<p>Inspect the update formula: if <span class="math inline">\(x_j^k \geq 0\)</span> and all <span class="math inline">\(a_{ij} \geq 0\)</span> and <span class="math inline">\(y_i \geq 0\)</span>, then every factor in the product is non-negative, so <span class="math inline">\(x_j^{k+1} \geq 0\)</span>. Since we start with <span class="math inline">\(\mathbf{x}^0 \geq \mathbf{0}\)</span>, all iterates satisfy <span class="math inline">\(\mathbf{x}^k \geq \mathbf{0}\)</span> by induction. <span class="math inline">\(\square\)</span></p>
+<hr>
+</section>
+<section id="sec-monotone" class="level2">
+<h2 class="anchored" data-anchor-id="sec-monotone">Step 3: Each MLEM Update Increases the Log-Likelihood</h2>
+<p>This is the most important step, and it uses the <strong>EM (Expectation–Maximisation) framework</strong>.</p>
+<section id="the-complete-data-idea" class="level3">
+<h3 class="anchored" data-anchor-id="the-complete-data-idea">The complete-data idea</h3>
+<p>Maximising <span class="math inline">\(\mathcal{L}(\mathbf{x})\)</span> directly is hard because the log contains a <em>sum</em> over all voxels, <span class="math inline">\(\log \bar{y}_i = \log(\sum_j A_{ij} x_j + b_i)\)</span>, which couples all unknowns together.</p>
+<p>The EM trick is to imagine that we could observe <em>more</em> data than we actually do. In PET/SPECT, every detected event originated from <em>some</em> voxel <span class="math inline">\(j\)</span>, but the detector only tells us the bin <span class="math inline">\(i\)</span> — not the voxel. If we also knew the voxel of origin, the problem would factor into independent sub-problems, one per voxel.</p>
+<p>Define the <strong>complete data</strong> <span class="math inline">\(n_{ij}\)</span> as the (hypothetical, unobserved) number of events detected in bin <span class="math inline">\(i\)</span> that originated from voxel <span class="math inline">\(j\)</span>, plus <span class="math inline">\(n_{i0}\)</span> for background events in bin <span class="math inline">\(i\)</span>. These satisfy:</p>
+<p><span class="math display">\[n_{ij} \sim \operatorname{Poisson}(a_{ij}\, x_j), \quad j \geq 1, \qquad
+n_{i0} \sim \operatorname{Poisson}(b_i), \qquad \text{all independent,}\]</span></p>
+<p>and they sum to the observed data: <span class="math inline">\(y_i = \sum_{j=0}^{J} n_{ij}\)</span>.</p>
+<p>The <strong>complete-data log-likelihood</strong> is much simpler than <span class="math inline">\(\mathcal{L}\)</span>:</p>
+<p><span class="math display">\[\log p(\mathbf{n} \mid \mathbf{x}) = \sum_{j=1}^{J} \left[\log x_j \underbrace{\sum_i n_{ij}}_{\text{counts from voxel }j} - x_j \underbrace{\sum_i a_{ij}}_{s_j}\right] + \text{const},\]</span></p>
+<p>which is a <strong>sum over voxels</strong> — each <span class="math inline">\(x_j\)</span> appears independently.</p>
+</section>
+<section id="the-q-function" class="level3">
+<h3 class="anchored" data-anchor-id="the-q-function">The <span class="math inline">\(Q\)</span> function</h3>
+<p>Since <span class="math inline">\(\mathbf{n}\)</span> is not observed, we cannot use <span class="math inline">\(\log p(\mathbf{n}\mid\mathbf{x})\)</span> directly. Instead, EM uses its <strong>conditional expectation</strong> given the observed data <span class="math inline">\(\mathbf{y}\)</span> and the current estimate <span class="math inline">\(\mathbf{x}^k\)</span>:</p>
+<p><span class="math display">\[Q(\mathbf{x} \mid \mathbf{x}^k) = E\!\left[\log p(\mathbf{n}\mid\mathbf{x}) \;\Big|\; \mathbf{y},\, \mathbf{x}^k\right].\]</span></p>
+<p><strong>Reading the notation:</strong> <span class="math inline">\(E[\,\cdot\mid \mathbf{y}, \mathbf{x}^k]\)</span> means “the average value of <span class="math inline">\((\cdot)\)</span>, computed over all possible complete-data configurations <span class="math inline">\(\mathbf{n}\)</span> that are consistent with the observed counts <span class="math inline">\(\mathbf{y}\)</span>, weighted by how probable each configuration is under the current image estimate <span class="math inline">\(\mathbf{x}^k\)</span>.” In short: we average out the unknown <span class="math inline">\(\mathbf{n}\)</span> using our best current guess <span class="math inline">\(\mathbf{x}^k\)</span>.</p>
+<p>To evaluate <span class="math inline">\(Q\)</span> we need the conditional expectation of <span class="math inline">\(n_{ij}\)</span>. One can show (using the Poisson splitting property) that:</p>
+<p><span class="math display">\[E[n_{ij} \mid y_i, \mathbf{x}^k] = \frac{a_{ij}\, x_j^k}{\bar{y}_i(\mathbf{x}^k)}\, y_i =: \hat{n}_{ij}^k.\]</span></p>
+<p>Intuitively: the <span class="math inline">\(y_i\)</span> observed events in bin <span class="math inline">\(i\)</span> are distributed among voxels proportionally to each voxel’s contribution to the expected counts <span class="math inline">\(\bar{y}_i(\mathbf{x}^k)\)</span>. Substituting:</p>
+<p><span class="math display">\[Q(\mathbf{x} \mid \mathbf{x}^k) = \sum_{j=1}^{J} \left[\hat{n}_j^k \log x_j - s_j x_j\right] + \text{const},
+\qquad \hat{n}_j^k = \sum_i \hat{n}_{ij}^k.\]</span></p>
+<p>This is again separable in the <span class="math inline">\(x_j\)</span>, so the maximisation over <span class="math inline">\(\mathbf{x}\)</span> can be done voxel by voxel.</p>
+</section>
+<section id="the-fundamental-identity" class="level3">
+<h3 class="anchored" data-anchor-id="the-fundamental-identity">The fundamental identity</h3>
+<p>Using Bayes’ theorem, we can write the joint distribution of <span class="math inline">\(\mathbf{n}\)</span> in two ways:</p>
+<p><span class="math display">\[p(\mathbf{n} \mid \mathbf{x}) = p(\mathbf{y} \mid \mathbf{x}) \cdot p(\mathbf{n} \mid \mathbf{y}, \mathbf{x}).\]</span></p>
+<p>Taking logarithms:</p>
+<p><span class="math display">\[\log p(\mathbf{n}\mid\mathbf{x}) = \underbrace{\log p(\mathbf{y}\mid\mathbf{x})}_{\mathcal{L}(\mathbf{x})} + \log p(\mathbf{n}\mid\mathbf{y},\mathbf{x}).\]</span></p>
+<p>Now take the conditional expectation <span class="math inline">\(E[\,\cdot\mid\mathbf{y},\mathbf{x}^k]\)</span> of both sides. Since <span class="math inline">\(\mathcal{L}(\mathbf{x}) = \log p(\mathbf{y}\mid\mathbf{x})\)</span> does not involve <span class="math inline">\(\mathbf{n}\)</span>, its expectation is just itself. Defining <span class="math inline">\(H(\mathbf{x}\mid\mathbf{x}^k) = E[\log p(\mathbf{n}\mid\mathbf{y},\mathbf{x})\mid\mathbf{y},\mathbf{x}^k]\)</span>:</p>
+<p><span class="math display">\[Q(\mathbf{x}\mid\mathbf{x}^k) = \mathcal{L}(\mathbf{x}) + H(\mathbf{x}\mid\mathbf{x}^k).\]</span></p>
+<p>Rearranging gives the <strong>fundamental identity</strong>:</p>
+<p><span class="math display">\[\boxed{\mathcal{L}(\mathbf{x}) = Q(\mathbf{x}\mid\mathbf{x}^k) - H(\mathbf{x}\mid\mathbf{x}^k).}\]</span></p>
+</section>
+<section id="the-em-guarantee" class="level3">
+<h3 class="anchored" data-anchor-id="the-em-guarantee">The EM guarantee</h3>
+<p>Each EM iteration sets <span class="math inline">\(\mathbf{x}^{k+1} = \arg\max_{\mathbf{x} \geq 0}\, Q(\mathbf{x}\mid\mathbf{x}^k)\)</span> (shown below to give exactly the MLEM formula). We want to show <span class="math inline">\(\mathcal{L}(\mathbf{x}^{k+1}) \geq \mathcal{L}(\mathbf{x}^k)\)</span>.</p>
+<p>Using the fundamental identity at both <span class="math inline">\(\mathbf{x}^{k+1}\)</span> and <span class="math inline">\(\mathbf{x}^k\)</span>:</p>
+<p><span class="math display">\[\mathcal{L}(\mathbf{x}^{k+1}) - \mathcal{L}(\mathbf{x}^k)
+= \underbrace{\bigl[Q(\mathbf{x}^{k+1}\mid\mathbf{x}^k) - Q(\mathbf{x}^k\mid\mathbf{x}^k)\bigr]}_{\text{Term A}} + \underbrace{\bigl[H(\mathbf{x}^k\mid\mathbf{x}^k) - H(\mathbf{x}^{k+1}\mid\mathbf{x}^k)\bigr]}_{\text{Term B}}.\]</span></p>
+<p><strong>Term A <span class="math inline">\(\geq 0\)</span>:</strong> By definition, <span class="math inline">\(\mathbf{x}^{k+1}\)</span> maximises <span class="math inline">\(Q(\cdot\mid\mathbf{x}^k)\)</span>, so <span class="math inline">\(Q(\mathbf{x}^{k+1}\mid\mathbf{x}^k) \geq Q(\mathbf{x}^k\mid\mathbf{x}^k)\)</span>.</p>
+<p><strong>Term B <span class="math inline">\(\geq 0\)</span>:</strong> Expanding the difference:</p>
+<p><span class="math display">\[H(\mathbf{x}^k\mid\mathbf{x}^k) - H(\mathbf{x}\mid\mathbf{x}^k)
+= E\!\left[\log \frac{p(\mathbf{n}\mid\mathbf{y},\mathbf{x}^k)}{p(\mathbf{n}\mid\mathbf{y},\mathbf{x})}\;\Bigg|\;\mathbf{y},\mathbf{x}^k\right]
+= \underbrace{D_{\mathrm{KL}}\!\bigl(p(\mathbf{n}\mid\mathbf{y},\mathbf{x}^k)\;\|\;p(\mathbf{n}\mid\mathbf{y},\mathbf{x})\bigr)}_{\geq\; 0}.\]</span></p>
+<p>The <strong>Kullback–Leibler (KL) divergence</strong> <span class="math inline">\(D_{\mathrm{KL}}(p\|q) = \sum_{\mathbf{n}} p(\mathbf{n}) \log \frac{p(\mathbf{n})}{q(\mathbf{n})}\)</span> is always <span class="math inline">\(\geq 0\)</span>, with equality only when <span class="math inline">\(p = q\)</span>.</p>
+<p>Therefore <span class="math inline">\(\mathcal{L}(\mathbf{x}^{k+1}) - \mathcal{L}(\mathbf{x}^k) \geq 0\)</span>, i.e. <strong>the log-likelihood never decreases</strong>. <span class="math inline">\(\square\)</span></p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Why the KL divergence is non-negative
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For any two probability distributions <span class="math inline">\(p\)</span> and <span class="math inline">\(q\)</span>, the KL divergence satisfies:</p>
+<p><span class="math display">\[D_{\mathrm{KL}}(p\|q) = \sum_{\mathbf{n}} p(\mathbf{n})\log\frac{p(\mathbf{n})}{q(\mathbf{n})} \geq 0.\]</span></p>
+<p>This follows from Jensen’s inequality applied to the concave function <span class="math inline">\(\log\)</span>:</p>
+<p><span class="math display">\[D_{\mathrm{KL}}(p\|q) = -\sum_{\mathbf{n}} p(\mathbf{n})\log\frac{q(\mathbf{n})}{p(\mathbf{n})} \geq -\log\!\left(\sum_{\mathbf{n}} p(\mathbf{n})\cdot\frac{q(\mathbf{n})}{p(\mathbf{n})}\right) = -\log 1 = 0.\]</span></p>
+</div>
+</div>
+</section>
+<section id="the-m-step-gives-the-mlem-update" class="level3">
+<h3 class="anchored" data-anchor-id="the-m-step-gives-the-mlem-update">The M-step gives the MLEM update</h3>
+<p>Maximise <span class="math inline">\(Q(\mathbf{x}\mid\mathbf{x}^k) = \sum_j [\hat{n}_j^k \log x_j - s_j x_j] + \text{const}\)</span> over <span class="math inline">\(x_j \geq 0\)</span>. Setting the derivative to zero:</p>
+<p><span class="math display">\[\frac{\partial Q}{\partial x_j} = \frac{\hat{n}_j^k}{x_j} - s_j = 0
+\quad\Longrightarrow\quad
+x_j^{k+1} = \frac{\hat{n}_j^k}{s_j}
+= \frac{\displaystyle\sum_i \hat{n}_{ij}^k}{\displaystyle\sum_i a_{ij}}
+= \frac{x_j^k}{\displaystyle\sum_i a_{ij}} \sum_i a_{ij}\,\frac{y_i}{\bar{y}_i(\mathbf{x}^k)}.\]</span></p>
+<p>This is exactly the MLEM formula, confirming that MLEM is an EM algorithm. <span class="math inline">\(\square\)</span></p>
+<hr>
+</section>
+</section>
+<section id="sec-bounded-iterates" class="level2">
+<h2 class="anchored" data-anchor-id="sec-bounded-iterates">Step 4: The Iterates Are Bounded</h2>
+<p>Steps 1–3 tell us that <span class="math inline">\(\mathcal{L}(\mathbf{x}^k)\)</span> is a monotonically increasing sequence with <span class="math inline">\(\mathcal{L}(\mathbf{x}^k) \leq \mathcal{L}_{\max}\)</span>. In particular, all iterates lie in the <strong>sub-level set</strong>:</p>
+<p><span class="math display">\[\mathcal{S} = \{\mathbf{x} \geq \mathbf{0} : \mathcal{L}(\mathbf{x}) \geq \mathcal{L}(\mathbf{x}^0)\}.\]</span></p>
+<p>We now show that <span class="math inline">\(\mathcal{S}\)</span> is bounded (and therefore compact).</p>
+<p><strong>Why <span class="math inline">\(\mathcal{L}(\mathbf{x}) \to -\infty\)</span> as <span class="math inline">\(\|\mathbf{x}\| \to \infty\)</span>:</strong> The log-likelihood contains the term <span class="math inline">\(-\sum_i \bar{y}_i(\mathbf{x}) = -\mathbf{1}^T A\mathbf{x} - \mathbf{1}^T\mathbf{b}\)</span>. When <span class="math inline">\(\mathbf{x} \geq \mathbf{0}\)</span> and <span class="math inline">\(\|\mathbf{x}\| \to \infty\)</span>, at least one component <span class="math inline">\(x_j \to \infty\)</span>. Because <span class="math inline">\(A\)</span> has full column rank, the column <span class="math inline">\(A_{\cdot j}\)</span> is not zero, so <span class="math inline">\(\sum_i A_{ij} x_j \to \infty\)</span>. Therefore <span class="math inline">\(\sum_i \bar{y}_i(\mathbf{x}) \to \infty\)</span>, which drives <span class="math inline">\(\mathcal{L}(\mathbf{x}) \to -\infty\)</span>.</p>
+<p>Since <span class="math inline">\(\mathcal{L}(\mathbf{x}) \to -\infty\)</span> for large <span class="math inline">\(\|\mathbf{x}\|\)</span> and <span class="math inline">\(\mathcal{S}\)</span> requires <span class="math inline">\(\mathcal{L}(\mathbf{x}) \geq \mathcal{L}(\mathbf{x}^0) &gt; -\infty\)</span>, the set <span class="math inline">\(\mathcal{S}\)</span> must be bounded.</p>
+<p><strong>Conclusion:</strong> All iterates <span class="math inline">\(\mathbf{x}^k\)</span> lie in the bounded set <span class="math inline">\(\mathcal{S}\)</span>. In particular, no voxel value can grow without bound. <span class="math inline">\(\square\)</span></p>
+<hr>
+</section>
+<section id="sec-convergence" class="level2">
+<h2 class="anchored" data-anchor-id="sec-convergence">Step 5: Convergence to the ML Solution</h2>
+<p>We now combine all previous steps to show that <span class="math inline">\(\mathbf{x}^k\)</span> converges to the unique ML solution.</p>
+<section id="the-log-likelihood-values-converge" class="level3">
+<h3 class="anchored" data-anchor-id="the-log-likelihood-values-converge">The log-likelihood values converge</h3>
+<p>From Steps 1 and 3: <span class="math inline">\(\{\mathcal{L}(\mathbf{x}^k)\}\)</span> is monotonically increasing and bounded above. By the <strong>monotone convergence theorem</strong> (a real-analysis result for sequences of real numbers), it converges:</p>
+<p><span class="math display">\[\mathcal{L}(\mathbf{x}^k) \;\longrightarrow\; \mathcal{L}^* \;\leq\; \mathcal{L}_{\max}.\]</span></p>
+</section>
+<section id="a-convergent-subsequence-exists" class="level3">
+<h3 class="anchored" data-anchor-id="a-convergent-subsequence-exists">A convergent subsequence exists</h3>
+<p>From Step 4, all iterates lie in the bounded set <span class="math inline">\(\mathcal{S} \subset \mathbb{R}^J\)</span>. By the <strong>Bolzano–Weierstrass theorem</strong> (every bounded sequence in <span class="math inline">\(\mathbb{R}^J\)</span> has a convergent subsequence), there exists a subsequence <span class="math inline">\(\mathbf{x}^{k_1}, \mathbf{x}^{k_2}, \ldots\)</span> converging to some limit point <span class="math inline">\(\mathbf{x}^*\)</span>:</p>
+<p><span class="math display">\[\mathbf{x}^{k_m} \;\longrightarrow\; \mathbf{x}^* \quad \text{as } m \to \infty.\]</span></p>
+<p>Since <span class="math inline">\(\mathcal{L}\)</span> is continuous and <span class="math inline">\(\mathcal{L}(\mathbf{x}^k) \to \mathcal{L}^*\)</span>:</p>
+<p><span class="math display">\[\mathcal{L}(\mathbf{x}^*) = \lim_{m\to\infty} \mathcal{L}(\mathbf{x}^{k_m}) = \mathcal{L}^*.\]</span></p>
+</section>
+<section id="the-limit-is-the-global-ml-solution" class="level3">
+<h3 class="anchored" data-anchor-id="the-limit-is-the-global-ml-solution">The limit is the global ML solution</h3>
+<p><strong>Claim:</strong> <span class="math inline">\(\mathbf{x}^*\)</span> is a fixed point of MLEM — that is, the MLEM update applied to <span class="math inline">\(\mathbf{x}^*\)</span> returns <span class="math inline">\(\mathbf{x}^*\)</span> unchanged.</p>
+<p><strong>Proof by contradiction:</strong> Suppose <span class="math inline">\(\mathbf{x}^*\)</span> is <em>not</em> a fixed point. Then <span class="math inline">\(\mathbf{x}^{k+1} = F(\mathbf{x}^k) \neq \mathbf{x}^k\)</span> at <span class="math inline">\(\mathbf{x}^k = \mathbf{x}^*\)</span>, and by the strict EM inequality (Term A is strictly positive when <span class="math inline">\(\mathbf{x}^{k+1} \neq \mathbf{x}^k\)</span>, because <span class="math inline">\(Q\)</span> is strictly concave under full rank):</p>
+<p><span class="math display">\[\mathcal{L}(F(\mathbf{x}^*)) &gt; \mathcal{L}(\mathbf{x}^*) = \mathcal{L}^*.\]</span></p>
+<p>But the MLEM map <span class="math inline">\(F\)</span> is continuous (all operations in the update are continuous away from zero), so:</p>
+<p><span class="math display">\[\mathcal{L}(\mathbf{x}^{k_m + 1}) = \mathcal{L}(F(\mathbf{x}^{k_m})) \;\longrightarrow\; \mathcal{L}(F(\mathbf{x}^*)) &gt; \mathcal{L}^*.\]</span></p>
+<p>This contradicts <span class="math inline">\(\mathcal{L}(\mathbf{x}^k) \to \mathcal{L}^*\)</span> (since <span class="math inline">\(\mathbf{x}^{k_m+1}\)</span> is a subsequence of <span class="math inline">\(\{\mathbf{x}^k\}\)</span>). Therefore <span class="math inline">\(\mathbf{x}^*\)</span> must be a fixed point. <span class="math inline">\(\square\)</span></p>
+<p><strong>What does a fixed point imply?</strong> At a fixed point <span class="math inline">\(F(\mathbf{x}^*) = \mathbf{x}^*\)</span>, the MLEM formula reads:</p>
+<p><span class="math display">\[x_j^* = x_j^* \cdot \frac{\displaystyle\sum_i a_{ij}\, \frac{y_i}{\bar{y}_i(\mathbf{x}^*)}}{\displaystyle\sum_i a_{ij}}.\]</span></p>
+<p>For each voxel <span class="math inline">\(j\)</span>, either <span class="math inline">\(x_j^* &gt; 0\)</span> or <span class="math inline">\(x_j^* = 0\)</span>:</p>
+<ul>
+<li>If <span class="math inline">\(x_j^* &gt; 0\)</span>: dividing both sides by <span class="math inline">\(x_j^*\)</span> gives <span class="math inline">\(\displaystyle\frac{\partial \mathcal{L}}{\partial x_j}\bigg|_{\mathbf{x}^*} = \sum_i a_{ij}\frac{y_i}{\bar{y}_i(\mathbf{x}^*)} - \sum_i a_{ij} = 0\)</span>.</li>
+<li>If <span class="math inline">\(x_j^* = 0\)</span>: <span class="math inline">\(x_j^*\)</span> is at the non-negativity boundary.</li>
+</ul>
+<p>These are precisely the <strong>Karush–Kuhn–Tucker (KKT) optimality conditions</strong> for the constrained problem <span class="math inline">\(\max_{\mathbf{x} \geq 0} \mathcal{L}(\mathbf{x})\)</span>: at the optimum, the gradient must be zero for any active (positive) variable, and non-positive for any variable sitting at its lower bound.</p>
+<p>Because <span class="math inline">\(\mathcal{L}\)</span> is <strong>concave</strong> in <span class="math inline">\(\mathbf{x}\)</span> (its Hessian <span class="math inline">\(\nabla^2 \mathcal{L} = -A^\top \operatorname{diag}(y_i / \bar{y}_i^2) A\)</span> is negative semi-definite), the KKT conditions are not just necessary but also <strong>sufficient</strong> for global optimality. Therefore <span class="math inline">\(\mathbf{x}^*\)</span> is a global maximum of <span class="math inline">\(\mathcal{L}\)</span> over <span class="math inline">\(\mathbf{x} \geq \mathbf{0}\)</span>, and <span class="math inline">\(\mathcal{L}^* = \mathcal{L}_{\max}\)</span>.</p>
+</section>
+<section id="the-full-sequence-converges-not-just-the-subsequence" class="level3">
+<h3 class="anchored" data-anchor-id="the-full-sequence-converges-not-just-the-subsequence">The full sequence converges (not just the subsequence)</h3>
+<p>Under the full-rank assumption, <span class="math inline">\(\mathcal{L}\)</span> is <strong>strictly concave</strong>: its Hessian <span class="math inline">\(\nabla^2\mathcal{L} = -A^\top D A\)</span> (with <span class="math inline">\(D = \operatorname{diag}(y_i/\bar{y}_i^2) &gt; 0\)</span>) is negative <em>definite</em> because <span class="math inline">\(A\)</span> has full column rank. A strictly concave function over a convex set has <strong>at most one</strong> global maximum. Since we have shown that <span class="math inline">\(\mathbf{x}^*\)</span> is a global maximum, it is the <em>unique</em> global maximum <span class="math inline">\(\hat{\mathbf{x}}\)</span>.</p>
+<p>Now consider any convergent subsequence of <span class="math inline">\(\{\mathbf{x}^k\}\)</span>. By the same argument as above, its limit must also be a fixed point and therefore a global maximum. By uniqueness, every convergent subsequence must converge to the same point <span class="math inline">\(\hat{\mathbf{x}}\)</span>. Since the sequence is bounded (Step 4), this implies the <strong>full sequence</strong> converges:</p>
+<p><span class="math display">\[\mathbf{x}^k \;\longrightarrow\; \hat{\mathbf{x}} \quad \text{as } k \to \infty. \quad \square\]</span></p>
+<hr>
+</section>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Convergence theorem
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <span class="math inline">\(y_i \sim \operatorname{Poisson}((A\mathbf{x}+\mathbf{b})_i)\)</span> with <span class="math inline">\(A\)</span> having full column rank and <span class="math inline">\(b_i \geq 0\)</span>. Starting from any <span class="math inline">\(\mathbf{x}^0 &gt; \mathbf{0}\)</span>, the MLEM iterates <span class="math inline">\(\mathbf{x}^k\)</span> converge to the unique global maximiser <span class="math inline">\(\hat{\mathbf{x}}\)</span> of the Poisson log-likelihood over <span class="math inline">\(\mathbf{x} \geq \mathbf{0}\)</span>.</p>
+</div>
+</div>
+<p>The proof proceeded in five steps:</p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 48%">
+<col style="width: 32%">
+</colgroup>
 <thead>
 <tr class="header">
-<th>Col1</th>
-<th>Col2</th>
-<th>Col3</th>
+<th>Step</th>
+<th>What we showed</th>
+<th>Key tool</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>A</td>
-<td>B</td>
-<td>C</td>
+<td>1</td>
+<td><span class="math inline">\(\mathcal{L}(\mathbf{x})\)</span> is bounded above</td>
+<td><span class="math inline">\(\log u \leq u - 1\)</span></td>
 </tr>
 <tr class="even">
-<td>E</td>
-<td>F</td>
-<td>G</td>
+<td>2</td>
+<td><span class="math inline">\(\mathbf{x}^k \geq \mathbf{0}\)</span> for all <span class="math inline">\(k\)</span></td>
+<td>MLEM formula</td>
 </tr>
 <tr class="odd">
-<td>A</td>
-<td>G</td>
-<td>G</td>
+<td>3</td>
+<td><span class="math inline">\(\mathcal{L}(\mathbf{x}^{k+1}) \geq \mathcal{L}(\mathbf{x}^k)\)</span></td>
+<td>EM framework (Q function + KL <span class="math inline">\(\geq 0\)</span>)</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td><span class="math inline">\(\{\mathbf{x}^k\}\)</span> stays bounded</td>
+<td>Full rank <span class="math inline">\(\Rightarrow\)</span> compact level sets</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td><span class="math inline">\(\mathbf{x}^k \to \hat{\mathbf{x}}\)</span> (global ML solution)</td>
+<td>Bolzano–Weierstrass + strict concavity</td>
 </tr>
 </tbody>
 </table>
-</div>
-</figure>
-</div>
-<p>See <a href="#tbl-letters" class="quarto-xref">Table&nbsp;1</a>.</p>
-<p>Some interactive python cells here.</p>
-<div>
-<div id="pyodide-1" class="exercise-cell">
+<p>The most important step is Step 3: the EM framework shows that MLEM always makes progress, and the KL divergence is the reason why. Steps 4 and 5 guarantee that this progress is not wasted — the algorithm does not wander off to infinity and the improvements accumulate to reach the true answer.</p>
 
-</div>
-<script type="pyodide-1-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiaW1wb3J0IG51bXB5IGFzIG5wXG5cbmRlZiBzcXVhcmUoeCk6XG4gICAgcmV0dXJuIHgqKjJcblxueCA9IG5wLmFyYW5nZSg1KVxucHJpbnQoZlwieCA9IHt4fVwiKVxucHJpbnQoZlwic3F1YXJlKHgpID0ge3NxdWFyZSh4KX1cIikifQ==
-</script>
-</div>
-<div>
-<div id="pyodide-2" class="exercise-cell">
-
-</div>
-<script type="pyodide-2-contents">
-eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiaW1wb3J0IG1hdHBsb3RsaWIucHlwbG90IGFzIHBsdFxuXG55ID0geCArIDJcbnByaW50KGZcInkgPSB7eX1cIilcbnByaW50KGZcInNxdWFyZSh5KSA9IHtzcXVhcmUoeSl9XCIpXG5cbmZpZzMsIGF4MyA9IHBsdC5zdWJwbG90cygxLCAxLCBmaWdzaXplPSg1LCAzKSwgbGF5b3V0PSdjb25zdHJhaW5lZCcpXG5heDMucGxvdCh5LCBzcXVhcmUoeSksICcuLScpXG5heDMuc2V0X3hsYWJlbCgneScpXG5heDMuc2V0X3lsYWJlbCgnZih5KSA9IHkqeScpXG5heDMuZ3JpZChscyA9ICc6JylcbnBsdC5zaG93KCkifQ==
-</script>
-</div>
-
-
-<script type="pyodide-data">
-eyJvcHRpb25zIjp7ImVudiI6eyJQTE9UTFlfUkVOREVSRVIiOiJwbG90bHlfbWltZXR5cGUifSwiaW5kZXhVUkwiOiJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvcHlvZGlkZS92MC4yOC4xL2Z1bGwvIn0sInBhY2thZ2VzIjp7InBrZ3MiOlsicHlvZGlkZV9odHRwIiwibWljcm9waXAiLCJpcHl0aG9uIiwibWF0cGxvdGxpYiIsIm51bXB5Iiwic2NpcHkiLCJwYW5kYXMiXX19
-</script>
-<script type="ojs-module-contents">
-eyJjb250ZW50cyI6W3siY2VsbE5hbWUiOiJweW9kaWRlLTIiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl8yID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS0yLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHB5b2RpZGUtMi1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IoXG4gICAgcHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSxcbiAgICBibG9jay5jb2RlLFxuICAgIG9wdGlvbnNcbiAgKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl9weW9kaWRlX3ZhbHVlXzIgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzIsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLTEiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl8xID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS0xLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHB5b2RpZGUtMS1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IoXG4gICAgcHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSxcbiAgICBibG9jay5jb2RlLFxuICAgIG9wdGlvbnNcbiAgKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl9weW9kaWRlX3ZhbHVlXzEgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzEsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLXByZWx1ZGUiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJweW9kaWRlT2pzID0ge1xuICBjb25zdCB7XG4gICAgUHlvZGlkZUV2YWx1YXRvcixcbiAgICBQeW9kaWRlRW52aXJvbm1lbnRNYW5hZ2VyLFxuICAgIHNldHVwUHl0aG9uLFxuICAgIHN0YXJ0UHlvZGlkZVdvcmtlcixcbiAgICBiNjREZWNvZGUsXG4gICAgY29sbGFwc2VQYXRoLFxuICB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzdGF0dXNDb250YWluZXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcImV4ZXJjaXNlLWxvYWRpbmctc3RhdHVzXCIpO1xuICBjb25zdCBpbmRpY2F0b3JDb250YWluZXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcImV4ZXJjaXNlLWxvYWRpbmctaW5kaWNhdG9yXCIpO1xuICBpbmRpY2F0b3JDb250YWluZXIuY2xhc3NMaXN0LnJlbW92ZShcImQtbm9uZVwiKTtcblxuICBsZXQgc3RhdHVzVGV4dCA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoXCJkaXZcIilcbiAgc3RhdHVzVGV4dC5jbGFzc0xpc3QgPSBcImV4ZXJjaXNlLWxvYWRpbmctZGV0YWlsc1wiO1xuICBzdGF0dXNUZXh0ID0gc3RhdHVzQ29udGFpbmVyLmFwcGVuZENoaWxkKHN0YXR1c1RleHQpO1xuICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYEluaXRpYWxpc2VgO1xuXG4gIC8vIEhvaXN0IGluZGljYXRvciBvdXQgZnJvbSBmaW5hbCBzbGlkZSB3aGVuIHJ1bm5pbmcgdW5kZXIgcmV2ZWFsXG4gIGNvbnN0IHJldmVhbFN0YXR1cyA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoXCIucmV2ZWFsIC5leGVyY2lzZS1sb2FkaW5nLWluZGljYXRvclwiKTtcbiAgaWYgKHJldmVhbFN0YXR1cykge1xuICAgIHJldmVhbFN0YXR1cy5yZW1vdmUoKTtcbiAgICBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKFwiLnJldmVhbCA+IC5zbGlkZXNcIikuYXBwZW5kQ2hpbGQocmV2ZWFsU3RhdHVzKTtcbiAgfVxuXG4gIC8vIE1ha2UgYW55IHJldmVhbCBzbGlkZXMgd2l0aCBsaXZlIGNlbGxzIHNjcm9sbGFibGVcbiAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbChcIi5yZXZlYWwgLmV4ZXJjaXNlLWNlbGxcIikuZm9yRWFjaCgoZWwpID0+IHtcbiAgICBlbC5jbG9zZXN0KCdzZWN0aW9uLnNsaWRlJykuY2xhc3NMaXN0LmFkZChcInNjcm9sbGFibGVcIik7XG4gIH0pXG5cbiAgLy8gUHlvZGlkZSBzdXBwbGVtZW50YWwgZGF0YSBhbmQgb3B0aW9uc1xuICBjb25zdCBkYXRhQ29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJweW9kaWRlLWRhdGFcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBkYXRhID0gSlNPTi5wYXJzZShiNjREZWNvZGUoZGF0YUNvbnRlbnQpKTtcblxuICAvLyBHcmFiIGxpc3Qgb2YgcmVzb3VyY2VzIHRvIGJlIGRvd25sb2FkZWRcbiAgY29uc3QgZmlsZXNDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInZmcy1maWxlXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgZmlsZXMgPSBKU09OLnBhcnNlKGI2NERlY29kZShmaWxlc0NvbnRlbnQpKTtcblxuICBsZXQgcHlvZGlkZVByb21pc2UgPSAoYXN5bmMgKCkgPT4ge1xuICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgUHlvZGlkZWA7XG4gICAgY29uc3QgcHlvZGlkZSA9IGF3YWl0IHN0YXJ0UHlvZGlkZVdvcmtlcihkYXRhLm9wdGlvbnMpO1xuXG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBEb3dubG9hZGluZyBwYWNrYWdlOiBtaWNyb3BpcGA7XG4gICAgYXdhaXQgcHlvZGlkZS5sb2FkUGFja2FnZShcIm1pY3JvcGlwXCIpO1xuICAgIGNvbnN0IG1pY3JvcGlwID0gYXdhaXQgcHlvZGlkZS5weWltcG9ydChcIm1pY3JvcGlwXCIpO1xuICAgIGF3YWl0IGRhdGEucGFja2FnZXMucGtncy5tYXAoKHBrZykgPT4gKCkgPT4ge1xuICAgICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBEb3dubG9hZGluZyBwYWNrYWdlOiAke3BrZ31gO1xuICAgICAgcmV0dXJuIG1pY3JvcGlwLmluc3RhbGwocGtnKTtcbiAgICB9KS5yZWR1Y2UoKGN1ciwgbmV4dCkgPT4gY3VyLnRoZW4obmV4dCksIFByb21pc2UucmVzb2x2ZSgpKTtcbiAgICBhd2FpdCBtaWNyb3BpcC5kZXN0cm95KCk7XG5cbiAgICAvLyBEb3dubG9hZCBhbmQgaW5zdGFsbCByZXNvdXJjZXNcbiAgICBhd2FpdCBmaWxlcy5tYXAoKGZpbGUpID0+IGFzeW5jICgpID0+IHtcbiAgICAgIGNvbnN0IG5hbWUgPSBmaWxlLnN1YnN0cmluZyhmaWxlLmxhc3RJbmRleE9mKCcvJykgKyAxKTtcbiAgICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcmVzb3VyY2U6ICR7bmFtZX1gO1xuICAgICAgY29uc3QgcmVzcG9uc2UgPSBhd2FpdCBmZXRjaChmaWxlKTtcbiAgICAgIGlmICghcmVzcG9uc2Uub2spIHtcbiAgICAgICAgdGhyb3cgbmV3IEVycm9yKGBDYW4ndCBkb3dubG9hZCBcXGAke2ZpbGV9XFxgLiBFcnJvciAke3Jlc3BvbnNlLnN0YXR1c306IFwiJHtyZXNwb25zZS5zdGF0dXNUZXh0fVwiLmApO1xuICAgICAgfVxuICAgICAgY29uc3QgZGF0YSA9IGF3YWl0IHJlc3BvbnNlLmFycmF5QnVmZmVyKCk7XG5cbiAgICAgIC8vIFN0b3JlIFVSTHMgaW4gdGhlIGN3ZCB3aXRob3V0IGFueSBzdWJkaXJlY3Rvcnkgc3RydWN0dXJlXG4gICAgICBpZiAoZmlsZS5pbmNsdWRlcyhcIjovL1wiKSkge1xuICAgICAgICBmaWxlID0gbmFtZTtcbiAgICAgIH1cblxuICAgICAgLy8gQ29sbGFwc2UgaGlnaGVyIGRpcmVjdG9yeSBzdHJ1Y3R1cmVcbiAgICAgIGZpbGUgPSBjb2xsYXBzZVBhdGgoZmlsZSk7XG5cbiAgICAgIC8vIENyZWF0ZSBkaXJlY3RvcnkgdHJlZSwgaWdub3JpbmcgXCJkaXJlY3RvcnkgZXhpc3RzXCIgVkZTIGVycm9yc1xuICAgICAgY29uc3QgcGFydHMgPSBmaWxlLnNwbGl0KCcvJykuc2xpY2UoMCwgLTEpO1xuICAgICAgbGV0IHBhdGggPSAnJztcbiAgICAgIHdoaWxlIChwYXJ0cy5sZW5ndGggPiAwKSB7XG4gICAgICAgIHBhdGggKz0gcGFydHMuc2hpZnQoKSArICcvJztcbiAgICAgICAgdHJ5IHtcbiAgICAgICAgICBhd2FpdCBweW9kaWRlLkZTLm1rZGlyKHBhdGgpO1xuICAgICAgICB9IGNhdGNoIChlKSB7XG4gICAgICAgICAgaWYgKGUubmFtZSAhPT0gXCJFcnJub0Vycm9yXCIpIHRocm93IGU7XG4gICAgICAgICAgaWYgKGUuZXJybm8gIT09IDIwKSB7XG4gICAgICAgICAgICBjb25zdCBlcnJvclRleHRQdHIgPSBhd2FpdCBweW9kaWRlLl9tb2R1bGUuX3N0cmVycm9yKGUuZXJybm8pO1xuICAgICAgICAgICAgY29uc3QgZXJyb3JUZXh0ID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLlVURjhUb1N0cmluZyhlcnJvclRleHRQdHIpO1xuICAgICAgICAgICAgdGhyb3cgbmV3IEVycm9yKGBGaWxlc3lzdGVtIEVycm9yICR7ZS5lcnJub30gXCIke2Vycm9yVGV4dH1cIi5gKTtcbiAgICAgICAgICB9XG4gICAgICAgIH1cbiAgICAgIH1cblxuICAgICAgLy8gV3JpdGUgdGhpcyBmaWxlIHRvIHRoZSBWRlNcbiAgICAgIHRyeSB7XG4gICAgICAgIHJldHVybiBhd2FpdCBweW9kaWRlLkZTLndyaXRlRmlsZShmaWxlLCBuZXcgVWludDhBcnJheShkYXRhKSk7XG4gICAgICB9IGNhdGNoIChlKSB7XG4gICAgICAgIGlmIChlLm5hbWUgIT09IFwiRXJybm9FcnJvclwiKSB0aHJvdyBlO1xuICAgICAgICBjb25zdCBlcnJvclRleHRQdHIgPSBhd2FpdCBweW9kaWRlLl9tb2R1bGUuX3N0cmVycm9yKGUuZXJybm8pO1xuICAgICAgICBjb25zdCBlcnJvclRleHQgPSBhd2FpdCBweW9kaWRlLl9tb2R1bGUuVVRGOFRvU3RyaW5nKGVycm9yVGV4dFB0cik7XG4gICAgICAgIHRocm93IG5ldyBFcnJvcihgRmlsZXN5c3RlbSBFcnJvciAke2UuZXJybm99IFwiJHtlcnJvclRleHR9XCIuYCk7XG4gICAgICB9XG4gICAgfSkucmVkdWNlKChjdXIsIG5leHQpID0+IGN1ci50aGVuKG5leHQpLCBQcm9taXNlLnJlc29sdmUoKSk7XG5cbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYFB5b2RpZGUgZW52aXJvbm1lbnQgc2V0dXBgO1xuICAgIGF3YWl0IHNldHVwUHl0aG9uKHB5b2RpZGUpO1xuXG4gICAgc3RhdHVzVGV4dC5yZW1vdmUoKTtcbiAgICBpZiAoc3RhdHVzQ29udGFpbmVyLmNoaWxkcmVuLmxlbmd0aCA9PSAwKSB7XG4gICAgICBzdGF0dXNDb250YWluZXIucGFyZW50Tm9kZS5yZW1vdmUoKTtcbiAgICB9XG4gICAgcmV0dXJuIHB5b2RpZGU7XG4gIH0pKCkuY2F0Y2goKGVycikgPT4ge1xuICAgIHN0YXR1c1RleHQuc3R5bGUuY29sb3IgPSBcInZhcigtLWV4ZXJjaXNlLWVkaXRvci1obC1lciwgI0FEMDAwMClcIjtcbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gZXJyLm1lc3NhZ2U7XG4gICAgLy9pbmRpY2F0b3JDb250YWluZXIucXVlcnlTZWxlY3RvcihcIi5zcGlubmVyLWdyb3dcIikuY2xhc3NMaXN0LmFkZChcImQtbm9uZVwiKTtcbiAgICB0aHJvdyBlcnI7XG4gIH0pO1xuXG4gIC8vIEtlZXAgdHJhY2sgb2YgaW5pdGlhbCBPSlMgYmxvY2sgcmVuZGVyXG4gIGNvbnN0IHJlbmRlcmVkT2pzID0ge307XG5cbiAgY29uc3QgcHJvY2VzcyA9IGFzeW5jIChjb250ZXh0LCBpbnB1dHMpID0+IHtcbiAgICBjb25zdCBweW9kaWRlID0gYXdhaXQgcHlvZGlkZVByb21pc2U7XG4gICAgY29uc3QgZXZhbHVhdG9yID0gbmV3IFB5b2RpZGVFdmFsdWF0b3IocHlvZGlkZSwgY29udGV4dCk7XG4gICAgYXdhaXQgZXZhbHVhdG9yLnByb2Nlc3MoaW5wdXRzKTtcbiAgICByZXR1cm4gZXZhbHVhdG9yLmNvbnRhaW5lcjtcbiAgfVxuXG4gIHJldHVybiB7XG4gICAgcHlvZGlkZVByb21pc2UsXG4gICAgcmVuZGVyZWRPanMsXG4gICAgcHJvY2VzcyxcbiAgfTtcbn1cbiJ9XX0=
-</script>
-<div id="exercise-loading-indicator" class="exercise-loading-indicator d-none d-flex align-items-center gap-2">
-<div id="exercise-loading-status" class="d-flex gap-2">
-
-</div>
-<div class="spinner-grow spinner-grow-sm">
-
-</div>
-</div>
-<script type="vfs-file">
-W10=
-</script>
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
-<div id="ref-ehrhardt2025fast" class="csl-entry" role="listitem">
-Ehrhardt, Matthias J., Zeljko Kereta, and Georg Schramm. 2025. <span>“Fast PET Reconstruction with Variance Reduction and Prior-Aware Preconditioning.”</span> <em>Frontiers in Nuclear Medicine</em> Volume 5 - 2025. <a href="https://doi.org/10.3389/fnume.2025.1641215">https://doi.org/10.3389/fnume.2025.1641215</a>.
-</div>
-</div></section></div></main> <!-- /main -->
-<script type="ojs-module-contents">
-eyJjb250ZW50cyI6W119
-</script>
-<script type="module">
-if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
-window._ojs.paths.runtimeToDoc = "../..";
-window._ojs.paths.runtimeToRoot = "../..";
-window._ojs.paths.docToRoot = "";
-window._ojs.selfContained = false;
-window._ojs.runtime.interpretFromScriptTags();
-</script>
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
