@@ -151,7 +151,8 @@ window.Quarto = {
   <li><a href="#the-log-likelihood" id="toc-the-log-likelihood" class="nav-link" data-scroll-target="#the-log-likelihood"><span class="header-section-number">2.2</span> The log-likelihood</a></li>
   <li><a href="#the-mlem-update" id="toc-the-mlem-update" class="nav-link" data-scroll-target="#the-mlem-update"><span class="header-section-number">2.3</span> The MLEM update</a></li>
   <li><a href="#the-full-rank-assumption" id="toc-the-full-rank-assumption" class="nav-link" data-scroll-target="#the-full-rank-assumption"><span class="header-section-number">2.4</span> The full-rank assumption</a></li>
-  <li><a href="#two-types-of-constrained-maximum" id="toc-two-types-of-constrained-maximum" class="nav-link" data-scroll-target="#two-types-of-constrained-maximum"><span class="header-section-number">2.5</span> Two types of constrained maximum</a></li>
+  <li><a href="#two-types-of-constrained-optima" id="toc-two-types-of-constrained-optima" class="nav-link" data-scroll-target="#two-types-of-constrained-optima"><span class="header-section-number">2.5</span> Two types of constrained optima</a></li>
+  <li><a href="#interactive-visualisation-of-the-two-cases" id="toc-interactive-visualisation-of-the-two-cases" class="nav-link" data-scroll-target="#interactive-visualisation-of-the-two-cases"><span class="header-section-number">2.6</span> Interactive visualisation of the two cases</a></li>
   </ul></li>
   <li><a href="#sec-roadmap" id="toc-sec-roadmap" class="nav-link" data-scroll-target="#sec-roadmap"><span class="header-section-number">3</span> Proof Roadmap</a></li>
   <li><a href="#sec-bounded" id="toc-sec-bounded" class="nav-link" data-scroll-target="#sec-bounded"><span class="header-section-number">4</span> Step 1: The Log-Likelihood is Bounded Above</a></li>
@@ -252,8 +253,8 @@ window.Quarto = {
 <li>No two voxels have identical detection patterns.</li>
 </ol>
 </section>
-<section id="two-types-of-constrained-maximum" class="level3" data-number="2.5">
-<h3 data-number="2.5" class="anchored" data-anchor-id="two-types-of-constrained-maximum"><span class="header-section-number">2.5</span> Two types of constrained maximum</h3>
+<section id="two-types-of-constrained-optima" class="level3" data-number="2.5">
+<h3 data-number="2.5" class="anchored" data-anchor-id="two-types-of-constrained-optima"><span class="header-section-number">2.5</span> Two types of constrained optima</h3>
 <p>A crucial distinction runs throughout the proof. The constrained maximum <span class="math inline">\(\hat{\mathbf{x}}\)</span> can be of two types, distinguished by whether the unconstrained maximum of <span class="math inline">\(\mathcal{L}\)</span> is feasible.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -293,6 +294,12 @@ window.Quarto = {
 </div>
 <p>Under the full-rank assumption <span class="math inline">\(\mathcal{L}\)</span> is strictly concave (shown in Step 5), so in both cases <span class="math inline">\(\hat{\mathbf{x}}\)</span> is <strong>unique</strong>.</p>
 <hr>
+</section>
+<section id="interactive-visualisation-of-the-two-cases" class="level3" data-number="2.6">
+<h3 data-number="2.6" class="anchored" data-anchor-id="interactive-visualisation-of-the-two-cases"><span class="header-section-number">2.6</span> Interactive visualisation of the two cases</h3>
+<p>Below is an interactive plot of the log-likelihood landscape for a simple 2-voxel problem, showing the two cases. In this example the forward model is</p>
+<p><span class="math display">\[\bar{y}_1 = x_1 + b_1, \qquad \bar{y}_2 = x_1 + x_2 + b_2,\]</span></p>
+<p>with <span class="math inline">\(b_1 = 0.5\)</span> and <span class="math inline">\(b_2 = 0.5\)</span>. The plots show the log-likelihood <span class="math inline">\(\mathcal{L}(x_1, x_2)\)</span> as a function of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> and three different measurements: (a) <span class="math inline">\(y_1, y_2\)</span>, (b) <span class="math inline">\(y_1, y_2\)</span>, (c) <span class="math inline">\(y_1, y_2\)</span>. The blue triangle and red start show the contrained and unconstrained optima, respectively. Moreover, 20 MLEM iterations starting at <span class="math inline">\(x_1 = x_2 = 2.5\)</span> are shown. The middle plot corresponds to case (i) where the constrained optimum is in the interior of the non-negative orthant, while the left and right plots correspond to case (ii) where the constrained optimum is on the boundary. In the latter two, the gradient of the log-likelihood at the constrained optimum is also shown.</p>
 <div>
 <div id="pyodide-1" class="exercise-cell">
 

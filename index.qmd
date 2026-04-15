@@ -99,7 +99,7 @@ Practically this means:
 1. Every voxel contributes to at least one detector bin ($s_j > 0$ for all $j$).
 2. No two voxels have identical detection patterns.
 
-### Two types of constrained maximum
+### Two types of constrained optima
 
 A crucial distinction runs throughout the proof. The constrained maximum
 $\hat{\mathbf{x}}$ can be of two types, distinguished by whether the
@@ -138,6 +138,20 @@ Under the full-rank assumption $\mathcal{L}$ is strictly concave (shown in
 Step 5), so in both cases $\hat{\mathbf{x}}$ is **unique**.
 
 ---
+
+### Interactive visualisation of the two cases
+
+Below is an interactive plot of the log-likelihood landscape for a simple 2-voxel problem, showing the two cases. 
+In this example the forward model is
+
+$$\bar{y}_1 = x_1 + b_1, \qquad \bar{y}_2 = x_1 + x_2 + b_2,$$ 
+
+with $b_1 = 0.5$ and $b_2 = 0.5$. The plots show the log-likelihood $\mathcal{L}(x_1, x_2)$ as a function of $x_1$ and $x_2$ and
+three different measurements: (a) $y_1, y_2$, (b) $y_1, y_2$, (c) $y_1, y_2$.
+The blue triangle and red start show the contrained and unconstrained optima, respectively. 
+Moreover, 20 MLEM iterations starting at $x_1 = x_2 = 2.5$ are shown. 
+The middle plot corresponds to case (i) where the constrained optimum is in the interior of the non-negative orthant, while the left and right plots correspond to case (ii) where the constrained optimum is on the boundary.
+In the latter two, the gradient of the log-likelihood at the constrained optimum is also shown.
 
 ```{pyodide}
 {{< include logL_plot.py >}}
