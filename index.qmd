@@ -2,7 +2,7 @@
 title: "MLEM-FB Convergence"
 subtitle: "A self-contained proof for $y \\sim \\operatorname{Poisson}(A\\mathbf{x} + \\mathbf{b})$ and $A$ having full column rank"
 format:
-  html:
+  live-html:
     toc: true
     toc-depth: 3
     number-sections: true
@@ -11,6 +11,10 @@ format:
     toc: true
     number-sections: true
     geometry: margin=2.5cm
+pyodide:
+  packages:
+    - matplotlib
+    - numpy
 ---
 
 ## Introduction
@@ -132,6 +136,14 @@ zero would *decrease* $\mathcal{L}$, so zeroing that voxel is optimal.
 
 Under the full-rank assumption $\mathcal{L}$ is strictly concave (shown in
 Step 5), so in both cases $\hat{\mathbf{x}}$ is **unique**.
+
+---
+
+```{pyodide}
+{{< include logL_plot.py >}}
+#| autorun: true
+#| max-lines: 10
+```
 
 ---
 

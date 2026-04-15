@@ -121,4 +121,4 @@ plot_logL(ax[0], y1=0, y2=2, b1=0.5, b2=0.5, X1=X1, X2=X2, show_grad=True)
 plot_logL(ax[1], y1=1, y2=2, b1=0.5, b2=0.5, X1=X1, X2=X2)
 plot_logL(ax[2], y1=3, y2=2, b1=0.5, b2=0.5, X1=X1, X2=X2, show_grad=True)
 
-fig.show()
+plt.show()
