@@ -110,9 +110,6 @@ $\mathcal{L}$ vanishes at $\hat{\mathbf{x}}$:
 $$\frac{\partial \mathcal{L}}{\partial x_j}\bigg|_{\hat{\mathbf{x}}}
 = \sum_i a_{ij}\,\frac{y_i}{\bar{y}_i(\hat{\mathbf{x}})} - s_j = 0
 \quad \text{for all } j.$$
-
-This means the average correction ratio $\sum_i a_{ij} y_i/\bar{y}_i /
-\sum_i a_{ij}$ equals exactly 1 for every voxel.
 :::
 
 ::: {.callout-note icon=false}
