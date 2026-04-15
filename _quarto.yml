@@ -3,10 +3,10 @@ project:
   output-dir: docs
 
 website:
-  title: "MLEM proofs"
+  title: "MLEM convergence proofs"
   navbar:
     left:
-      - text: "MLEM proof"
+      - text: "MLEM-FB full rank"
         href: index.qmd
 
 format:
