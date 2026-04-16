@@ -214,13 +214,24 @@ We adopt $0 \log 0 := 0$, justified by $\lim_{y\to 0^+} y\log y = 0$.
 
 ## Step 2: MLEM Preserves Non-Negativity {#sec-nonneg}
 
-Inspect the update: if $x_j^k \geq 0$, then $x_j^{k+1} = x_j^k \cdot
-(\text{non-negative factor}) \geq 0$. By induction, $\mathbf{x}^k \geq
-\mathbf{0}$ for all $k$.
+Write the update as $x_j^{k+1} = x_j^k \cdot f_j^k$, where the **update
+factor** for voxel $j$ is
 
-If $\mathbf{x}^0 > \mathbf{0}$, then $x_j^{k+1} = x_j^k \cdot
-(\text{strictly positive factor}) > 0$. **Every iterate is strictly positive.**
-$\square$
+$$f_j^k = \frac{1}{s_j}\sum_{i=1}^{I} a_{ij}\,\frac{y_i}{\bar{y}_i(\mathbf{x}^k)}.$$
+
+Because $a_{ij}\geq 0$, $y_i \geq 0$, and $\bar{y}_i(\mathbf{x}^k) > 0$, we
+have $f_j^k \geq 0$. Therefore $x_j^k \geq 0 \Rightarrow x_j^{k+1} \geq 0$,
+and by induction $\mathbf{x}^k \geq \mathbf{0}$ for all $k \geq 0$. $\square$
+
+::: {.callout-warning}
+**Strict positivity is not preserved in general.**
+$f_j^k = 0$ whenever every detector bin $i$ that "sees" voxel $j$
+(i.e.\ $a_{ij}>0$) measured zero counts ($y_i = 0$). In that case
+$x_j^{k+1} = 0$ regardless of $x_j^k > 0$, and once a voxel reaches zero it
+stays at zero for all subsequent iterations. Starting from $\mathbf{x}^0 >
+\mathbf{0}$ therefore does **not** guarantee that iterates remain strictly
+positive.
+:::
 
 ---
 
@@ -449,13 +460,18 @@ in both cases.
 ::: {.callout-note icon=false}
 ## Case (i): Interior solution ($\hat{\mathbf{x}} > \mathbf{0}$)
 
-From Step 2, all iterates satisfy $\mathbf{x}^k > \mathbf{0}$, so
-$\mathbf{x}^* \geq \mathbf{0}$. Since $\hat{\mathbf{x}} > \mathbf{0}$, a boundary
-accumulation point is in principle possible but let us consider both
-sub-cases.
+**All iterates stay strictly positive under $\mathbf{x}^0 > \mathbf{0}$.**
+Because $\hat{x}_j > 0$ for every voxel $j$, there must exist at least one
+detector bin $i$ with $a_{ij} > 0$ and $y_i > 0$ — otherwise
+$\partial\mathcal{L}/\partial x_j = \sum_i a_{ij}(y_i/\bar{y}_i - 1) \leq
+-s_j < 0$ everywhere, which would force $\hat{x}_j = 0$, a contradiction.
+Combined with the background ($\bar{y}_i(\mathbf{x}^k) \geq b_i > 0$), the
+update factor $f_j^k > 0$ for all $j$ and $k$. Starting from $\mathbf{x}^0 >
+\mathbf{0}$, all iterates therefore satisfy $\mathbf{x}^k > \mathbf{0}$ by
+induction, and so does any accumulation point $\mathbf{x}^* > \mathbf{0}$.
 
-**If $\mathbf{x}^* > \mathbf{0}$ (interior):** A fixed point of $F$ in the
-interior requires $\partial\mathcal{L}/\partial x_j = 0$ for all $j$.
+**The contradiction.** A fixed point of $F$ in the interior requires
+$\partial\mathcal{L}/\partial x_j = 0$ for all $j$ (the MLEM ratio equals 1).
 By strict concavity the only such point is $\hat{\mathbf{x}}$. Since
 $\mathbf{x}^* \neq \hat{\mathbf{x}}$, we have $F(\mathbf{x}^*) \neq \mathbf{x}^*$,
 so Term A $> 0$ and:
@@ -463,39 +479,38 @@ so Term A $> 0$ and:
 $$\mathcal{L}(F(\mathbf{x}^*)) > \mathcal{L}(\mathbf{x}^*) = \mathcal{L}^*.$$
 
 Since $F$ and $\mathcal{L}$ are continuous:
-$\mathcal{L}(\mathbf{x}^{k_m+1}) = \mathcal{L}(F(\mathbf{x}^{k_m})) \to \mathcal{L}(F(\mathbf{x}^*)) > \mathcal{L}^*$.
+$\mathcal{L}(\mathbf{x}^{k_m+1}) = \mathcal{L}(F(\mathbf{x}^{k_m})) \to
+\mathcal{L}(F(\mathbf{x}^*)) > \mathcal{L}^*$.
 But $\mathbf{x}^{k_m+1}$ is a subsequence of $\{\mathbf{x}^k\}$, whose
 $\mathcal{L}$-values converge to $\mathcal{L}^*$. **Contradiction.**
 
-**If $\mathbf{x}^*$ has some zero components:** Since $\hat{\mathbf{x}} > \mathbf{0}$
-and $\mathbf{x}^* \neq \hat{\mathbf{x}}$, there is some voxel $j$ where
-$x_j^* \neq \hat{x}_j$. For the active voxels of $\mathbf{x}^*$, the same
-fixed-point argument applies; for the zero voxels of $\mathbf{x}^*$, the
-gradient $\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*} > 0$ (since
-$\hat{x}_j > 0$ and $\mathcal{L}$ increases toward $\hat{\mathbf{x}}$), so
-$F(\mathbf{x}^*)_j = 0$ yet $F(\mathbf{x}^k)_j > 0$ for $\mathbf{x}^k$ nearby,
-meaning $F(\mathbf{x}^*) \neq \mathbf{x}^*$. The same contradiction follows.
-
-In all sub-cases, $\mathcal{L}^* < \mathcal{L}(\hat{\mathbf{x}})$ leads to a
-contradiction. Therefore $\mathcal{L}^* = \mathcal{L}(\hat{\mathbf{x}})$.
+Therefore $\mathcal{L}^* = \mathcal{L}(\hat{\mathbf{x}})$.
 :::
 
 ::: {.callout-note icon=false}
 ## Case (ii): Boundary solution (some $\hat{x}_j = 0$)
 
 **Step A — any interior accumulation point leads to a contradiction.**
-From Step 2, all iterates $\mathbf{x}^k > \mathbf{0}$.
-Suppose $\mathbf{x}^* > \mathbf{0}$ (interior). As shown in Step 3, no interior
-point is a fixed point of $F$ in Case (ii) (the unconstrained maximum of
-$\mathcal{L}$ is infeasible). Therefore $F(\mathbf{x}^*) \neq \mathbf{x}^*$
-and Term A $> 0$, giving $\mathcal{L}(F(\mathbf{x}^*)) > \mathcal{L}^*$.
+Suppose $\mathbf{x}^* > \mathbf{0}$ (interior accumulation point). Since zero
+is absorbing (Step 2), any component that converges to a positive limit was
+never driven to zero along the subsequence; hence $\mathbf{x}^{k_m} >
+\mathbf{0}$ for all $m$.
+As shown in Step 3, no interior point is a fixed point of $F$ in Case (ii)
+(the unconstrained maximum of $\mathcal{L}$ is infeasible). Therefore
+$F(\mathbf{x}^*) \neq \mathbf{x}^*$ and Term A $> 0$, giving
+$\mathcal{L}(F(\mathbf{x}^*)) > \mathcal{L}^*$.
 By continuity, $\mathcal{L}(\mathbf{x}^{k_m+1}) \to \mathcal{L}(F(\mathbf{x}^*)) > \mathcal{L}^*$,
 contradicting $\mathcal{L}(\mathbf{x}^k) \to \mathcal{L}^*$.
 So $\mathbf{x}^*$ must be **on the boundary** (some $x_j^* = 0$).
 
 **Step B — the boundary accumulation point satisfies the KKT conditions.**
-Consider a voxel $j$ with $x_j^* = 0$. Because $\mathbf{x}^{k_m} > \mathbf{0}$
-and $x_j^{k_m} \to 0$, the MLEM update gives:
+Consider a voxel $j$ with $x_j^* = 0$. There are two sub-cases depending on
+whether $x_j^{k_m}$ converges to zero from above or was driven to exactly zero
+at some finite step. In the latter case, $f_j^k = 0$ required all bins
+covering voxel $j$ to have $y_i = 0$, which gives
+$\partial\mathcal{L}/\partial x_j = -s_j < 0 \leq 0$, so the KKT condition
+holds immediately. In the former case, $\mathbf{x}^{k_m} > \mathbf{0}$ and
+$x_j^{k_m} \to 0$, and the MLEM update gives:
 
 $$x_j^{k_m+1} = x_j^{k_m} \cdot \frac{1}{s_j}\sum_i a_{ij}\frac{y_i}{\bar{y}_i(\mathbf{x}^{k_m})}.$$
 
