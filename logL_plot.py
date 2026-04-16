@@ -1,5 +1,7 @@
+# SCROLL TO THE END TO CHANGE THE PLOT PARAMETERS (Y1,Y1,B1,B2) FOR THE FOUR SUBPLOTS AND RERUN
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FormatStrFormatter
 
 
 def logL(x1, x2, y1, y2, b1, b2):
@@ -32,7 +34,7 @@ def mlem_update(x1, x2, y1, y2, b1, b2):
     return x1_new, x2_new
 
 
-def plot_logL(axx, y1, y2, b1, b2, X1, X2, show_grad=False):
+def plot_logL(axx, y1, y2, b1, b2, X1, X2, show_grad=False, Lmin=None, Lmax=None):
     Z = logL(X1, X2, y1=y1, y2=y2, b1=b1, b2=b2)
     feasible = (X1 + b1 >= 0) & (X1 + X2 + b2 >= 0)
     constrain = (X1 >= 0) & (X2 >= 0)
@@ -47,8 +49,10 @@ def plot_logL(axx, y1, y2, b1, b2, X1, X2, show_grad=False):
     xhat_1 = X1[idx]
     xhat_2 = X2[idx]
 
-    Lmin = Z_plot[constrain].min()
-    Lmax = Z_plot[feasible].max()
+    if Lmin is None:
+        Lmin = Z_plot[constrain].min()
+    if Lmax is None:
+        Lmax = Z_plot[feasible].max()
 
     levels = np.linspace(Lmin, Lmax, 32)
     cs = axx.contourf(X1, X2, Z_plot, levels=levels, cmap="magma", alpha=0.85)
@@ -81,9 +85,10 @@ def plot_logL(axx, y1, y2, b1, b2, X1, X2, show_grad=False):
         ms=7,
         zorder=5,
     )
-    plt.colorbar(
+    cb = plt.colorbar(
         cs, ax=axx, label=r"$\log L$", fraction=0.04, location="right", pad=0.04
     )
+    cb.ax.yaxis.set_major_formatter(FormatStrFormatter("%.1f"))
 
     axx.set_xlabel(r"$x_1$")
     axx.set_ylabel(r"$x_2$")
@@ -111,14 +116,40 @@ def plot_logL(axx, y1, y2, b1, b2, X1, X2, show_grad=False):
 ################################################################################
 
 
-x1 = np.linspace(-1.2, 3.0, 1001)
-x2 = np.linspace(-1.2, 3.0, 1001)
+x1 = np.linspace(-1.2, 3.5, 1001)
+x2 = np.linspace(-1.2, 3.5, 1001)
 X1, X2 = np.meshgrid(x1, x2)
 
-fig, ax = plt.subplots(1, 3, figsize=(14.25, 4), layout="constrained")
+fig, ax = plt.subplots(2, 2, figsize=(7.5, 6), layout="constrained")
 
-plot_logL(ax[0], y1=0, y2=2, b1=0.5, b2=0.5, X1=X1, X2=X2, show_grad=True)
-plot_logL(ax[1], y1=1, y2=2, b1=0.5, b2=0.5, X1=X1, X2=X2)
-plot_logL(ax[2], y1=3, y2=2, b1=0.5, b2=0.5, X1=X1, X2=X2, show_grad=True)
+lmin = -10
+lmax = 0
+
+plot_logL(ax[0, 0], y1=1, y2=2, b1=0.5, b2=0.5, X1=X1, X2=X2, Lmin=lmin, Lmax=lmax)
+plot_logL(ax[0, 1], y1=1, y2=2, b1=0.0, b2=0.0, X1=X1, X2=X2, Lmin=lmin, Lmax=lmax)
+plot_logL(
+    ax[1, 0],
+    y1=0,
+    y2=2,
+    b1=0.5,
+    b2=0.5,
+    X1=X1,
+    X2=X2,
+    show_grad=True,
+    Lmin=lmin,
+    Lmax=lmax,
+)
+plot_logL(
+    ax[1, 1],
+    y1=3,
+    y2=2,
+    b1=0.0,
+    b2=0.0,
+    X1=X1,
+    X2=X2,
+    show_grad=True,
+    Lmin=lmin,
+    Lmax=lmax,
+)
 
 plt.show()

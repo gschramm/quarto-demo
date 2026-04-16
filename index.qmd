@@ -150,9 +150,7 @@ with $b_1 = 0.5$ and $b_2 = 0.5$. The plots show the log-likelihood $\mathcal{L}
 three different measurements: (a) $y_1, y_2$, (b) $y_1, y_2$, (c) $y_1, y_2$.
 The blue triangle and red start show the contrained and unconstrained optima, respectively. 
 Moreover, 20 MLEM iterations starting at $x_1 = x_2 = 2.5$ are shown. 
-The middle plot corresponds to case (i) where the constrained optimum is in the interior of the non-negative orthant, while the left and right plots correspond to case (ii) where the constrained optimum is on the boundary.
-In the latter two, the gradient of the log-likelihood at the constrained optimum is also shown.
-
+The top row shows to examples (with and without fixed background) where the constrained optimum is in the interior, while the bottom row shows examples where the constrained optimum is on the boundary.
 ```{pyodide}
 {{< include logL_plot.py >}}
 #| autorun: true
