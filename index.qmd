@@ -368,12 +368,16 @@ for all $j$, i.e. $\mathbf{x}^k$ is the unconstrained maximum of $\mathcal{L}$.
   The log-likelihood increases *strictly* at every iteration until
   $\hat{\mathbf{x}}$ is reached.
 
-- **Case (ii) — boundary solution:** the unconstrained maximum of
-  $\mathcal{L}$ has infeasible (negative) components and lies outside
-  $\mathbf{x} \geq \mathbf{0}$. Therefore no feasible $\mathbf{x}^k > \mathbf{0}$
-  satisfies $\nabla\mathcal{L}(\mathbf{x}^k) = \mathbf{0}$, and Term A $> 0$
-  for **every** iterate. The log-likelihood increases *strictly* at every single
-  step — the algorithm never stops making progress in finite time.
+- **Case (ii) — boundary solution:** $\hat{\mathbf{x}}$ lies on the boundary
+  of $\mathbf{x} \geq \mathbf{0}$ (some $\hat{x}_j = 0$). Term A = 0 iff
+  $\mathbf{x}^{k+1} = \mathbf{x}^k$, i.e.\ $\mathbf{x}^k$ is a MLEM fixed
+  point. Fixed points satisfy the KKT conditions for maximising $\mathcal{L}$
+  over $\mathbf{x} \geq \mathbf{0}$, and — by strict concavity — the unique
+  such point is $\hat{\mathbf{x}}$ itself. So Term A = 0 iff
+  $\mathbf{x}^k = \hat{\mathbf{x}}$, exactly as in Case (i). Note: it would be
+  wrong to argue that no feasible point has $\nabla\mathcal{L} = \mathbf{0}$
+  implies Term A $> 0$ always — $\hat{\mathbf{x}}$ is a fixed point of MLEM
+  even though it is not an interior critical point of $\mathcal{L}$.
 :::
 
 ---
@@ -458,82 +462,66 @@ $$\mathcal{L}(\mathbf{x}^*) = \lim_{m\to\infty}\mathcal{L}(\mathbf{x}^{k_m}) = \
 (Two facts combine: a subsequence of a convergent sequence shares its limit;
 $\mathcal{L}$ is continuous so the limit commutes with the function.)
 
-### The limit point is the constrained maximum: $\mathcal{L}^* = \mathcal{L}(\hat{\mathbf{x}})$
+### Every accumulation point equals $\hat{\mathbf{x}}$
 
-Suppose for contradiction that $\mathcal{L}^* < \mathcal{L}(\hat{\mathbf{x}})$,
-so $\mathbf{x}^* \neq \hat{\mathbf{x}}$. We show this leads to a contradiction
-in both cases.
+Because $\mathcal{L}(\mathbf{x}^k)$ is non-decreasing and bounded above (Steps
+1 & 3), it converges and its increments vanish:
 
-::: {.callout-note icon=false}
-## Case (i): Interior solution ($\hat{\mathbf{x}} > \mathbf{0}$)
+$$\mathcal{L}(\mathbf{x}^{k+1}) - \mathcal{L}(\mathbf{x}^k) \;\longrightarrow\; 0.$$
 
-**All iterates stay strictly positive.**
-$\hat{\mathbf{x}}>\mathbf{0}$ implies $\mathcal{Z}=\emptyset$: any voxel with
-$\sum_i a_{ij}y_i = 0$ would satisfy $\partial\mathcal{L}/\partial x_j =
--s_j < 0$ everywhere, forcing $\hat{x}_j = 0$, a contradiction.
-Hence all voxels belong to $\mathcal{A}$ and, by Step 2, $x_j^k > 0$ for all
-$j$ and $k$. Any accumulation point therefore satisfies $\mathbf{x}^*\geq\mathbf{0}$
-with all components approached strictly from above.
+For the subsequence $\mathbf{x}^{k_m}\to\mathbf{x}^*$, continuity of $F$ and
+$\mathcal{L}$ then gives
 
-**The contradiction.** A fixed point of $F$ in the interior requires
-$\partial\mathcal{L}/\partial x_j = 0$ for all $j$ (the MLEM ratio equals 1).
-By strict concavity the only such point is $\hat{\mathbf{x}}$. Since
-$\mathbf{x}^* \neq \hat{\mathbf{x}}$, we have $F(\mathbf{x}^*) \neq \mathbf{x}^*$,
-so Term A $> 0$ and:
+$$\mathcal{L}(F(\mathbf{x}^*)) - \mathcal{L}(\mathbf{x}^*) =
+\lim_{m\to\infty}\bigl[\mathcal{L}(\mathbf{x}^{k_m+1})
+- \mathcal{L}(\mathbf{x}^{k_m})\bigr] = 0. \tag{$*$}$$
 
-$$\mathcal{L}(F(\mathbf{x}^*)) > \mathcal{L}(\mathbf{x}^*) = \mathcal{L}^*.$$
+We verify the **KKT conditions** at $\mathbf{x}^*$ voxel by voxel.
+Note first that the MLEM update can be written as a diagonally preconditioned
+gradient ascent step:
 
-Since $F$ and $\mathcal{L}$ are continuous:
-$\mathcal{L}(\mathbf{x}^{k_m+1}) = \mathcal{L}(F(\mathbf{x}^{k_m})) \to
-\mathcal{L}(F(\mathbf{x}^*)) > \mathcal{L}^*$.
-But $\mathbf{x}^{k_m+1}$ is a subsequence of $\{\mathbf{x}^k\}$, whose
-$\mathcal{L}$-values converge to $\mathcal{L}^*$. **Contradiction.**
+$$x_j^{k+1} = x_j^k + \frac{x_j^k}{s_j}\,
+\frac{\partial\mathcal{L}}{\partial x_j}(\mathbf{x}^k). \tag{$**$}$$
 
-Therefore $\mathcal{L}^* = \mathcal{L}(\hat{\mathbf{x}})$.
-:::
+For $j\in\mathcal{A}$, $x_j^k>0$ (Step 2), so the per-voxel step in $(**)$
+is zero if and only if $\partial\mathcal{L}/\partial x_j = 0$.
 
-::: {.callout-note icon=false}
-## Case (ii): Boundary solution (some $\hat{x}_j = 0$)
+- **$j\in\mathcal{Z}$:** $x_j^*=0$ and $\partial\mathcal{L}/\partial x_j =
+  -s_j<0$ everywhere on the feasible set. KKT satisfied. $\checkmark$
 
-By Step 2, voxels in $\mathcal{Z}$ satisfy $x_j^k = 0$ for all $k\geq 1$, so
-every accumulation point has $x_j^* = 0$ for $j\in\mathcal{Z}$. Voxels in
-$\mathcal{A}$ satisfy $x_j^k > 0$ for all $k$, so $x_j^{k_m} > 0$ along any
-subsequence. We verify the **KKT conditions** at $\mathbf{x}^*$ voxel by voxel:
-
-- **$j\in\mathcal{Z}$:** $x_j^* = 0$ and
-  $\partial\mathcal{L}/\partial x_j = -s_j < 0$ everywhere. KKT satisfied. $\checkmark$
-
-- **$j\in\mathcal{A}$, $x_j^* > 0$:** the same fixed-point argument as
-  Case (i) gives $\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*} = 0$.
+- **$j\in\mathcal{A},\; x_j^*>0$:** From $(*)$,
+  $\mathcal{L}(F(\mathbf{x}^*))=\mathcal{L}(\mathbf{x}^*)$. By Step 3, MLEM
+  strictly increases $\mathcal{L}$ unless at a fixed point, so
+  $F(\mathbf{x}^*)=\mathbf{x}^*$. Since $x_j^*>0$, $(**)$ gives
+  $\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}=0$.
   KKT satisfied. $\checkmark$
 
-- **$j\in\mathcal{A}$, $x_j^* = 0$:** since $x_j^{k_m} > 0$ and
-  $x_j^{k_m}\to 0$, the MLEM update gives
+- **$j\in\mathcal{A},\; x_j^*=0$:** Since $x_j^{k_m}>0$ for all $m$ (Step 2)
+  and $x_j^{k_m}\to 0$, the MLEM update gives
 
   $$x_j^{k_m+1} = x_j^{k_m}\cdot\frac{1}{s_j}\sum_i
   a_{ij}\frac{y_i}{\bar{y}_i(\mathbf{x}^{k_m})}.$$
 
   If $\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}>0$, the ratio
-  exceeds $1$ near $\mathbf{x}^*$, so $x_j^{k_m+1}>x_j^{k_m}$ —
-  incompatible with $x_j^{k_m}\to 0$. Therefore
+  exceeds $1$ near $\mathbf{x}^*$, so $x_j^{k_m+1}>x_j^{k_m}$ for large
+  $m$ — incompatible with $x_j^{k_m}\to 0$. Therefore
   $\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}\leq 0$.
   KKT satisfied. $\checkmark$
 
-Together, $\mathbf{x}^*$ satisfies the KKT conditions for
-$\max_{\mathbf{x}\geq\mathbf{0}}\mathcal{L}(\mathbf{x})$. Since
-$\mathcal{L}$ is strictly concave, KKT conditions are necessary and sufficient
-for the unique global maximum, so $\mathbf{x}^*=\hat{\mathbf{x}}$ —
-contradicting $\mathcal{L}^*=\mathcal{L}(\mathbf{x}^*)<\mathcal{L}(\hat{\mathbf{x}})$.
-
-Therefore $\mathcal{L}^* = \mathcal{L}(\hat{\mathbf{x}})$.
+::: {.callout-note}
+Bullets 1 and 3 together show that **an accumulation point can only have a
+zero component where $\hat{\mathbf{x}}$ is also zero**: if $x_j^*=0$, the KKT
+condition $\partial\mathcal{L}/\partial x_j\leq 0$ holds at $\mathbf{x}^*$,
+which — together with the full KKT structure — forces $\mathbf{x}^*=\hat{\mathbf{x}}$
+and hence $\hat{x}_j=0$. In particular, $\mathbf{x}^*=\mathbf{0}$ is only
+consistent with the KKT conditions if $\hat{\mathbf{x}}=\mathbf{0}$, i.e.\ all
+voxels are in $\mathcal{Z}$ and no counts are observed anywhere.
 :::
 
-### $\mathbf{x}^*$ equals $\hat{\mathbf{x}}$
-
-Having shown $\mathcal{L}^* = \mathcal{L}(\hat{\mathbf{x}})$, any accumulation
-point $\mathbf{x}^*$ satisfies $\mathcal{L}(\mathbf{x}^*) = \mathcal{L}(\hat{\mathbf{x}})$.
-Since $\hat{\mathbf{x}}$ is the **unique** constrained maximum (strict concavity),
-$\mathbf{x}^* = \hat{\mathbf{x}}$.
+Since $\mathcal{L}$ is strictly concave, the KKT conditions are necessary and
+sufficient for the unique constrained maximum, so $\mathbf{x}^*=\hat{\mathbf{x}}$,
+and therefore $\mathcal{L}^*=\mathcal{L}(\mathbf{x}^*)=\mathcal{L}(\hat{\mathbf{x}})$.
+$\square$
 
 ### The full sequence converges
 

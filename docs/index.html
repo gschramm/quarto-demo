@@ -172,9 +172,8 @@ window.Quarto = {
   <li><a href="#hatmathbfx-is-a-fixed-point-of-mlem-in-both-cases" id="toc-hatmathbfx-is-a-fixed-point-of-mlem-in-both-cases" class="nav-link" data-scroll-target="#hatmathbfx-is-a-fixed-point-of-mlem-in-both-cases"><span class="header-section-number">8.2</span> <span class="math inline">\(\hat{\mathbf{x}}\)</span> is a fixed point of MLEM in both cases</a></li>
   <li><a href="#the-log-likelihood-values-converge" id="toc-the-log-likelihood-values-converge" class="nav-link" data-scroll-target="#the-log-likelihood-values-converge"><span class="header-section-number">8.3</span> The log-likelihood values converge</a></li>
   <li><a href="#a-convergent-subsequence-exists" id="toc-a-convergent-subsequence-exists" class="nav-link" data-scroll-target="#a-convergent-subsequence-exists"><span class="header-section-number">8.4</span> A convergent subsequence exists</a></li>
-  <li><a href="#the-limit-point-is-the-constrained-maximum-mathcall-mathcallhatmathbfx" id="toc-the-limit-point-is-the-constrained-maximum-mathcall-mathcallhatmathbfx" class="nav-link" data-scroll-target="#the-limit-point-is-the-constrained-maximum-mathcall-mathcallhatmathbfx"><span class="header-section-number">8.5</span> The limit point is the constrained maximum: <span class="math inline">\(\mathcal{L}^* = \mathcal{L}(\hat{\mathbf{x}})\)</span></a></li>
-  <li><a href="#mathbfx-equals-hatmathbfx" id="toc-mathbfx-equals-hatmathbfx" class="nav-link" data-scroll-target="#mathbfx-equals-hatmathbfx"><span class="header-section-number">8.6</span> <span class="math inline">\(\mathbf{x}^*\)</span> equals <span class="math inline">\(\hat{\mathbf{x}}\)</span></a></li>
-  <li><a href="#the-full-sequence-converges" id="toc-the-full-sequence-converges" class="nav-link" data-scroll-target="#the-full-sequence-converges"><span class="header-section-number">8.7</span> The full sequence converges</a></li>
+  <li><a href="#every-accumulation-point-equals-hatmathbfx" id="toc-every-accumulation-point-equals-hatmathbfx" class="nav-link" data-scroll-target="#every-accumulation-point-equals-hatmathbfx"><span class="header-section-number">8.5</span> Every accumulation point equals <span class="math inline">\(\hat{\mathbf{x}}\)</span></a></li>
+  <li><a href="#the-full-sequence-converges" id="toc-the-full-sequence-converges" class="nav-link" data-scroll-target="#the-full-sequence-converges"><span class="header-section-number">8.6</span> The full sequence converges</a></li>
   </ul></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">9</span> Summary</a></li>
   <li><a href="#appendix" id="toc-appendix" class="nav-link" data-scroll-target="#appendix"><span class="header-section-number">10</span> Appendix</a>
@@ -464,7 +463,7 @@ x_j^{k+1} = \frac{\hat{n}_j^k}{s_j}
 <p><strong>Term A = 0</strong> iff <span class="math inline">\(\mathbf{x}^{k+1} = \mathbf{x}^k\)</span>, i.e.&nbsp;<span class="math inline">\(\mathbf{x}^k\)</span> already maximises <span class="math inline">\(Q(\cdot\mid\mathbf{x}^k)\)</span>. Since the unconstrained maximiser of <span class="math inline">\(Q\)</span> is <span class="math inline">\(x_j = \hat{n}_j^k/s_j &gt; 0\)</span> (always interior and unique), this requires <span class="math inline">\(\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^k} = 0\)</span> for all <span class="math inline">\(j\)</span>, i.e.&nbsp;<span class="math inline">\(\mathbf{x}^k\)</span> is the unconstrained maximum of <span class="math inline">\(\mathcal{L}\)</span>.</p>
 <ul>
 <li><p><strong>Case (i) — interior solution:</strong> the unconstrained and constrained maxima coincide at <span class="math inline">\(\hat{\mathbf{x}}\)</span>. Term A = 0 iff <span class="math inline">\(\mathbf{x}^k = \hat{\mathbf{x}}\)</span>. The log-likelihood increases <em>strictly</em> at every iteration until <span class="math inline">\(\hat{\mathbf{x}}\)</span> is reached.</p></li>
-<li><p><strong>Case (ii) — boundary solution:</strong> the unconstrained maximum of <span class="math inline">\(\mathcal{L}\)</span> has infeasible (negative) components and lies outside <span class="math inline">\(\mathbf{x} \geq \mathbf{0}\)</span>. Therefore no feasible <span class="math inline">\(\mathbf{x}^k &gt; \mathbf{0}\)</span> satisfies <span class="math inline">\(\nabla\mathcal{L}(\mathbf{x}^k) = \mathbf{0}\)</span>, and Term A <span class="math inline">\(&gt; 0\)</span> for <strong>every</strong> iterate. The log-likelihood increases <em>strictly</em> at every single step — the algorithm never stops making progress in finite time.</p></li>
+<li><p><strong>Case (ii) — boundary solution:</strong> <span class="math inline">\(\hat{\mathbf{x}}\)</span> lies on the boundary of <span class="math inline">\(\mathbf{x} \geq \mathbf{0}\)</span> (some <span class="math inline">\(\hat{x}_j = 0\)</span>). Term A = 0 iff <span class="math inline">\(\mathbf{x}^{k+1} = \mathbf{x}^k\)</span>, i.e.&nbsp;<span class="math inline">\(\mathbf{x}^k\)</span> is a MLEM fixed point. Fixed points satisfy the KKT conditions for maximising <span class="math inline">\(\mathcal{L}\)</span> over <span class="math inline">\(\mathbf{x} \geq \mathbf{0}\)</span>, and — by strict concavity — the unique such point is <span class="math inline">\(\hat{\mathbf{x}}\)</span> itself. So Term A = 0 iff <span class="math inline">\(\mathbf{x}^k = \hat{\mathbf{x}}\)</span>, exactly as in Case (i). Note: it would be wrong to argue that no feasible point has <span class="math inline">\(\nabla\mathcal{L} = \mathbf{0}\)</span> implies Term A <span class="math inline">\(&gt; 0\)</span> always — <span class="math inline">\(\hat{\mathbf{x}}\)</span> is a fixed point of MLEM even though it is not an interior critical point of <span class="math inline">\(\mathcal{L}\)</span>.</p></li>
 </ul>
 </div>
 </div>
@@ -512,58 +511,44 @@ D(\mathbf{x}) = \operatorname{diag}\!\left(\frac{y_i}{\bar{y}_i(\mathbf{x})^2}\r
 <p><span class="math display">\[\mathcal{L}(\mathbf{x}^*) = \lim_{m\to\infty}\mathcal{L}(\mathbf{x}^{k_m}) = \mathcal{L}^*.\]</span></p>
 <p>(Two facts combine: a subsequence of a convergent sequence shares its limit; <span class="math inline">\(\mathcal{L}\)</span> is continuous so the limit commutes with the function.)</p>
 </section>
-<section id="the-limit-point-is-the-constrained-maximum-mathcall-mathcallhatmathbfx" class="level3" data-number="8.5">
-<h3 data-number="8.5" class="anchored" data-anchor-id="the-limit-point-is-the-constrained-maximum-mathcall-mathcallhatmathbfx"><span class="header-section-number">8.5</span> The limit point is the constrained maximum: <span class="math inline">\(\mathcal{L}^* = \mathcal{L}(\hat{\mathbf{x}})\)</span></h3>
-<p>Suppose for contradiction that <span class="math inline">\(\mathcal{L}^* &lt; \mathcal{L}(\hat{\mathbf{x}})\)</span>, so <span class="math inline">\(\mathbf{x}^* \neq \hat{\mathbf{x}}\)</span>. We show this leads to a contradiction in both cases.</p>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Case (i): Interior solution (<span class="math inline">\(\hat{\mathbf{x}} &gt; \mathbf{0}\)</span>)
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>All iterates stay strictly positive.</strong> <span class="math inline">\(\hat{\mathbf{x}}&gt;\mathbf{0}\)</span> implies <span class="math inline">\(\mathcal{Z}=\emptyset\)</span>: any voxel with <span class="math inline">\(\sum_i a_{ij}y_i = 0\)</span> would satisfy <span class="math inline">\(\partial\mathcal{L}/\partial x_j =
--s_j &lt; 0\)</span> everywhere, forcing <span class="math inline">\(\hat{x}_j = 0\)</span>, a contradiction. Hence all voxels belong to <span class="math inline">\(\mathcal{A}\)</span> and, by Step 2, <span class="math inline">\(x_j^k &gt; 0\)</span> for all <span class="math inline">\(j\)</span> and <span class="math inline">\(k\)</span>. Any accumulation point therefore satisfies <span class="math inline">\(\mathbf{x}^*\geq\mathbf{0}\)</span> with all components approached strictly from above.</p>
-<p><strong>The contradiction.</strong> A fixed point of <span class="math inline">\(F\)</span> in the interior requires <span class="math inline">\(\partial\mathcal{L}/\partial x_j = 0\)</span> for all <span class="math inline">\(j\)</span> (the MLEM ratio equals 1). By strict concavity the only such point is <span class="math inline">\(\hat{\mathbf{x}}\)</span>. Since <span class="math inline">\(\mathbf{x}^* \neq \hat{\mathbf{x}}\)</span>, we have <span class="math inline">\(F(\mathbf{x}^*) \neq \mathbf{x}^*\)</span>, so Term A <span class="math inline">\(&gt; 0\)</span> and:</p>
-<p><span class="math display">\[\mathcal{L}(F(\mathbf{x}^*)) &gt; \mathcal{L}(\mathbf{x}^*) = \mathcal{L}^*.\]</span></p>
-<p>Since <span class="math inline">\(F\)</span> and <span class="math inline">\(\mathcal{L}\)</span> are continuous: <span class="math inline">\(\mathcal{L}(\mathbf{x}^{k_m+1}) = \mathcal{L}(F(\mathbf{x}^{k_m})) \to
-\mathcal{L}(F(\mathbf{x}^*)) &gt; \mathcal{L}^*\)</span>. But <span class="math inline">\(\mathbf{x}^{k_m+1}\)</span> is a subsequence of <span class="math inline">\(\{\mathbf{x}^k\}\)</span>, whose <span class="math inline">\(\mathcal{L}\)</span>-values converge to <span class="math inline">\(\mathcal{L}^*\)</span>. <strong>Contradiction.</strong></p>
-<p>Therefore <span class="math inline">\(\mathcal{L}^* = \mathcal{L}(\hat{\mathbf{x}})\)</span>.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Case (ii): Boundary solution (some <span class="math inline">\(\hat{x}_j = 0\)</span>)
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>By Step 2, voxels in <span class="math inline">\(\mathcal{Z}\)</span> satisfy <span class="math inline">\(x_j^k = 0\)</span> for all <span class="math inline">\(k\geq 1\)</span>, so every accumulation point has <span class="math inline">\(x_j^* = 0\)</span> for <span class="math inline">\(j\in\mathcal{Z}\)</span>. Voxels in <span class="math inline">\(\mathcal{A}\)</span> satisfy <span class="math inline">\(x_j^k &gt; 0\)</span> for all <span class="math inline">\(k\)</span>, so <span class="math inline">\(x_j^{k_m} &gt; 0\)</span> along any subsequence. We verify the <strong>KKT conditions</strong> at <span class="math inline">\(\mathbf{x}^*\)</span> voxel by voxel:</p>
+<section id="every-accumulation-point-equals-hatmathbfx" class="level3" data-number="8.5">
+<h3 data-number="8.5" class="anchored" data-anchor-id="every-accumulation-point-equals-hatmathbfx"><span class="header-section-number">8.5</span> Every accumulation point equals <span class="math inline">\(\hat{\mathbf{x}}\)</span></h3>
+<p>Because <span class="math inline">\(\mathcal{L}(\mathbf{x}^k)\)</span> is non-decreasing and bounded above (Steps 1 &amp; 3), it converges and its increments vanish:</p>
+<p><span class="math display">\[\mathcal{L}(\mathbf{x}^{k+1}) - \mathcal{L}(\mathbf{x}^k) \;\longrightarrow\; 0.\]</span></p>
+<p>For the subsequence <span class="math inline">\(\mathbf{x}^{k_m}\to\mathbf{x}^*\)</span>, continuity of <span class="math inline">\(F\)</span> and <span class="math inline">\(\mathcal{L}\)</span> then gives</p>
+<p><span class="math display">\[\mathcal{L}(F(\mathbf{x}^*)) - \mathcal{L}(\mathbf{x}^*) =
+\lim_{m\to\infty}\bigl[\mathcal{L}(\mathbf{x}^{k_m+1})
+- \mathcal{L}(\mathbf{x}^{k_m})\bigr] = 0. \tag{$*$}\]</span></p>
+<p>We verify the <strong>KKT conditions</strong> at <span class="math inline">\(\mathbf{x}^*\)</span> voxel by voxel. Note first that the MLEM update can be written as a diagonally preconditioned gradient ascent step:</p>
+<p><span class="math display">\[x_j^{k+1} = x_j^k + \frac{x_j^k}{s_j}\,
+\frac{\partial\mathcal{L}}{\partial x_j}(\mathbf{x}^k). \tag{$**$}\]</span></p>
+<p>For <span class="math inline">\(j\in\mathcal{A}\)</span>, <span class="math inline">\(x_j^k&gt;0\)</span> (Step 2), so the per-voxel step in <span class="math inline">\((**)\)</span> is zero if and only if <span class="math inline">\(\partial\mathcal{L}/\partial x_j = 0\)</span>.</p>
 <ul>
-<li><p><strong><span class="math inline">\(j\in\mathcal{Z}\)</span>:</strong> <span class="math inline">\(x_j^* = 0\)</span> and <span class="math inline">\(\partial\mathcal{L}/\partial x_j = -s_j &lt; 0\)</span> everywhere. KKT satisfied. <span class="math inline">\(\checkmark\)</span></p></li>
-<li><p><strong><span class="math inline">\(j\in\mathcal{A}\)</span>, <span class="math inline">\(x_j^* &gt; 0\)</span>:</strong> the same fixed-point argument as Case (i) gives <span class="math inline">\(\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*} = 0\)</span>. KKT satisfied. <span class="math inline">\(\checkmark\)</span></p></li>
-<li><p><strong><span class="math inline">\(j\in\mathcal{A}\)</span>, <span class="math inline">\(x_j^* = 0\)</span>:</strong> since <span class="math inline">\(x_j^{k_m} &gt; 0\)</span> and <span class="math inline">\(x_j^{k_m}\to 0\)</span>, the MLEM update gives</p>
+<li><p><strong><span class="math inline">\(j\in\mathcal{Z}\)</span>:</strong> <span class="math inline">\(x_j^*=0\)</span> and <span class="math inline">\(\partial\mathcal{L}/\partial x_j =
+-s_j&lt;0\)</span> everywhere on the feasible set. KKT satisfied. <span class="math inline">\(\checkmark\)</span></p></li>
+<li><p><strong><span class="math inline">\(j\in\mathcal{A},\; x_j^*&gt;0\)</span>:</strong> From <span class="math inline">\((*)\)</span>, <span class="math inline">\(\mathcal{L}(F(\mathbf{x}^*))=\mathcal{L}(\mathbf{x}^*)\)</span>. By Step 3, MLEM strictly increases <span class="math inline">\(\mathcal{L}\)</span> unless at a fixed point, so <span class="math inline">\(F(\mathbf{x}^*)=\mathbf{x}^*\)</span>. Since <span class="math inline">\(x_j^*&gt;0\)</span>, <span class="math inline">\((**)\)</span> gives <span class="math inline">\(\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}=0\)</span>. KKT satisfied. <span class="math inline">\(\checkmark\)</span></p></li>
+<li><p><strong><span class="math inline">\(j\in\mathcal{A},\; x_j^*=0\)</span>:</strong> Since <span class="math inline">\(x_j^{k_m}&gt;0\)</span> for all <span class="math inline">\(m\)</span> (Step 2) and <span class="math inline">\(x_j^{k_m}\to 0\)</span>, the MLEM update gives</p>
 <p><span class="math display">\[x_j^{k_m+1} = x_j^{k_m}\cdot\frac{1}{s_j}\sum_i
 a_{ij}\frac{y_i}{\bar{y}_i(\mathbf{x}^{k_m})}.\]</span></p>
-<p>If <span class="math inline">\(\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}&gt;0\)</span>, the ratio exceeds <span class="math inline">\(1\)</span> near <span class="math inline">\(\mathbf{x}^*\)</span>, so <span class="math inline">\(x_j^{k_m+1}&gt;x_j^{k_m}\)</span> — incompatible with <span class="math inline">\(x_j^{k_m}\to 0\)</span>. Therefore <span class="math inline">\(\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}\leq 0\)</span>. KKT satisfied. <span class="math inline">\(\checkmark\)</span></p></li>
+<p>If <span class="math inline">\(\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}&gt;0\)</span>, the ratio exceeds <span class="math inline">\(1\)</span> near <span class="math inline">\(\mathbf{x}^*\)</span>, so <span class="math inline">\(x_j^{k_m+1}&gt;x_j^{k_m}\)</span> for large <span class="math inline">\(m\)</span> — incompatible with <span class="math inline">\(x_j^{k_m}\to 0\)</span>. Therefore <span class="math inline">\(\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}\leq 0\)</span>. KKT satisfied. <span class="math inline">\(\checkmark\)</span></p></li>
 </ul>
-<p>Together, <span class="math inline">\(\mathbf{x}^*\)</span> satisfies the KKT conditions for <span class="math inline">\(\max_{\mathbf{x}\geq\mathbf{0}}\mathcal{L}(\mathbf{x})\)</span>. Since <span class="math inline">\(\mathcal{L}\)</span> is strictly concave, KKT conditions are necessary and sufficient for the unique global maximum, so <span class="math inline">\(\mathbf{x}^*=\hat{\mathbf{x}}\)</span> — contradicting <span class="math inline">\(\mathcal{L}^*=\mathcal{L}(\mathbf{x}^*)&lt;\mathcal{L}(\hat{\mathbf{x}})\)</span>.</p>
-<p>Therefore <span class="math inline">\(\mathcal{L}^* = \mathcal{L}(\hat{\mathbf{x}})\)</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
 </div>
 </div>
+<div class="callout-body-container callout-body">
+<p>Bullets 1 and 3 together show that <strong>an accumulation point can only have a zero component where <span class="math inline">\(\hat{\mathbf{x}}\)</span> is also zero</strong>: if <span class="math inline">\(x_j^*=0\)</span>, the KKT condition <span class="math inline">\(\partial\mathcal{L}/\partial x_j\leq 0\)</span> holds at <span class="math inline">\(\mathbf{x}^*\)</span>, which — together with the full KKT structure — forces <span class="math inline">\(\mathbf{x}^*=\hat{\mathbf{x}}\)</span> and hence <span class="math inline">\(\hat{x}_j=0\)</span>. In particular, <span class="math inline">\(\mathbf{x}^*=\mathbf{0}\)</span> is only consistent with the KKT conditions if <span class="math inline">\(\hat{\mathbf{x}}=\mathbf{0}\)</span>, i.e.&nbsp;all voxels are in <span class="math inline">\(\mathcal{Z}\)</span> and no counts are observed anywhere.</p>
+</div>
+</div>
+<p>Since <span class="math inline">\(\mathcal{L}\)</span> is strictly concave, the KKT conditions are necessary and sufficient for the unique constrained maximum, so <span class="math inline">\(\mathbf{x}^*=\hat{\mathbf{x}}\)</span>, and therefore <span class="math inline">\(\mathcal{L}^*=\mathcal{L}(\mathbf{x}^*)=\mathcal{L}(\hat{\mathbf{x}})\)</span>. <span class="math inline">\(\square\)</span></p>
 </section>
-<section id="mathbfx-equals-hatmathbfx" class="level3" data-number="8.6">
-<h3 data-number="8.6" class="anchored" data-anchor-id="mathbfx-equals-hatmathbfx"><span class="header-section-number">8.6</span> <span class="math inline">\(\mathbf{x}^*\)</span> equals <span class="math inline">\(\hat{\mathbf{x}}\)</span></h3>
-<p>Having shown <span class="math inline">\(\mathcal{L}^* = \mathcal{L}(\hat{\mathbf{x}})\)</span>, any accumulation point <span class="math inline">\(\mathbf{x}^*\)</span> satisfies <span class="math inline">\(\mathcal{L}(\mathbf{x}^*) = \mathcal{L}(\hat{\mathbf{x}})\)</span>. Since <span class="math inline">\(\hat{\mathbf{x}}\)</span> is the <strong>unique</strong> constrained maximum (strict concavity), <span class="math inline">\(\mathbf{x}^* = \hat{\mathbf{x}}\)</span>.</p>
-</section>
-<section id="the-full-sequence-converges" class="level3" data-number="8.7">
-<h3 data-number="8.7" class="anchored" data-anchor-id="the-full-sequence-converges"><span class="header-section-number">8.7</span> The full sequence converges</h3>
+<section id="the-full-sequence-converges" class="level3" data-number="8.6">
+<h3 data-number="8.6" class="anchored" data-anchor-id="the-full-sequence-converges"><span class="header-section-number">8.6</span> The full sequence converges</h3>
 <p>Every convergent subsequence of <span class="math inline">\(\{\mathbf{x}^k\}\)</span> shares the same limit <span class="math inline">\(\hat{\mathbf{x}}\)</span> by the argument above: any accumulation point achieves <span class="math inline">\(\mathcal{L}^* = \mathcal{L}(\hat{\mathbf{x}})\)</span>, and strict concavity forces it to equal <span class="math inline">\(\hat{\mathbf{x}}\)</span>. Since the sequence is bounded (Step 4), this single accumulation point forces the full sequence to converge:</p>
 <p><span class="math display">\[\mathbf{x}^k \;\longrightarrow\; \hat{\mathbf{x}} \quad \text{as } k \to \infty.
 \qquad \square\]</span></p>
