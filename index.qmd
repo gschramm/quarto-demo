@@ -351,33 +351,46 @@ x_j^{k+1} = \frac{\hat{n}_j^k}{s_j}
 
 which is exactly the MLEM formula. $\square$
 
+::: {.callout-note}
+## MLEM as preconditioned gradient ascent
+
+Rewrite $\hat{n}_j^k = x_j^k \sum_i a_{ij}\,y_i/\bar{y}_i(\mathbf{x}^k)$ and note that
+the gradient of the log-likelihood is
+
+$$\frac{\partial\mathcal{L}}{\partial x_j}(\mathbf{x}^k)
+= \sum_i a_{ij}\!\left(\frac{y_i}{\bar{y}_i(\mathbf{x}^k)}-1\right)
+= \frac{\hat{n}_j^k}{x_j^k} - s_j \qquad (x_j^k>0).$$
+
+Substituting into the MLEM formula gives
+
+$$\boxed{x_j^{k+1} = x_j^k + \frac{x_j^k}{s_j}\,
+\frac{\partial\mathcal{L}}{\partial x_j}(\mathbf{x}^k).} \tag{$**$}$$
+
+This is a **gradient ascent step** with a **diagonal preconditioner**
+$P_j^k = x_j^k/s_j$. Two immediate consequences used throughout:
+
+- **A-voxels ($j\in\mathcal{A}$):** $x_j^k>0$, so $x_j^{k+1}=x_j^k$
+  **if and only if** $\partial\mathcal{L}/\partial x_j(\mathbf{x}^k)=0$.
+- **Z-voxels ($j\in\mathcal{Z}$):** $x_j^k=0$ for all $k\geq 1$;
+  the preconditioner vanishes and the voxel is permanently pinned at zero.
+:::
+
 ::: {.callout-tip icon=false}
-## When does $\mathcal{L}$ increase *strictly*? The role of Case (i) vs Case (ii)
+## When does $\mathcal{L}$ increase *strictly*?
 
-The EM guarantee gives $\geq$, but for convergence we need to know when
-the increase is strict.
+The EM guarantee gives $\geq$; for convergence we need to know when equality holds.
 
-**Term A = 0** iff $\mathbf{x}^{k+1} = \mathbf{x}^k$, i.e. $\mathbf{x}^k$
-already maximises $Q(\cdot\mid\mathbf{x}^k)$. Since the unconstrained
-maximiser of $Q$ is $x_j = \hat{n}_j^k/s_j > 0$ (always interior and unique),
-this requires $\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^k} = 0$
-for all $j$, i.e. $\mathbf{x}^k$ is the unconstrained maximum of $\mathcal{L}$.
+**Term A $= 0$** iff $\mathbf{x}^{k+1}=\mathbf{x}^k$, i.e., every per-voxel
+step in $(**)$ is zero.  For $j\in\mathcal{Z}$ the step is always zero (pinned).
+For $j\in\mathcal{A}$, $x_j^k>0$, so the step is zero **iff**
+$\partial\mathcal{L}/\partial x_j(\mathbf{x}^k)=0$.
 
-- **Case (i) — interior solution:** the unconstrained and constrained maxima
-  coincide at $\hat{\mathbf{x}}$. Term A = 0 iff $\mathbf{x}^k = \hat{\mathbf{x}}$.
-  The log-likelihood increases *strictly* at every iteration until
-  $\hat{\mathbf{x}}$ is reached.
-
-- **Case (ii) — boundary solution:** $\hat{\mathbf{x}}$ lies on the boundary
-  of $\mathbf{x} \geq \mathbf{0}$ (some $\hat{x}_j = 0$). Term A = 0 iff
-  $\mathbf{x}^{k+1} = \mathbf{x}^k$, i.e.\ $\mathbf{x}^k$ is a MLEM fixed
-  point. Fixed points satisfy the KKT conditions for maximising $\mathcal{L}$
-  over $\mathbf{x} \geq \mathbf{0}$, and — by strict concavity — the unique
-  such point is $\hat{\mathbf{x}}$ itself. So Term A = 0 iff
-  $\mathbf{x}^k = \hat{\mathbf{x}}$, exactly as in Case (i). Note: it would be
-  wrong to argue that no feasible point has $\nabla\mathcal{L} = \mathbf{0}$
-  implies Term A $> 0$ always — $\hat{\mathbf{x}}$ is a fixed point of MLEM
-  even though it is not an interior critical point of $\mathcal{L}$.
+By KKT + strict concavity of $\mathcal{L}$, the unique point satisfying
+$\partial\mathcal{L}/\partial x_j = 0$ for all $j\in\mathcal{A}$ (together
+with $x_j=0$ for all $j\in\mathcal{Z}$) is $\hat{\mathbf{x}}$.
+Therefore **$\mathcal{L}(\mathbf{x}^{k+1})>\mathcal{L}(\mathbf{x}^k)$ whenever
+$\mathbf{x}^k\neq\hat{\mathbf{x}}$**, whether $\hat{\mathbf{x}}$ is interior or
+on the boundary.
 :::
 
 ---
@@ -421,21 +434,17 @@ for any diagonal $D > 0$, so $\nabla^2\mathcal{L}$ is **negative definite**:
 $\mathcal{L}$ is **strictly concave**. A strictly concave function over a
 convex set has **at most one** maximum, so $\hat{\mathbf{x}}$ is unique.
 
-### $\hat{\mathbf{x}}$ is a fixed point of MLEM in both cases
+### $\hat{\mathbf{x}}$ is a fixed point of MLEM
 
 We show $F(\hat{\mathbf{x}}) = \hat{\mathbf{x}}$, where $F$ denotes one MLEM step.
 
-**Active voxels ($\hat{x}_j > 0$, both cases):** The KKT condition gives
-$\partial\mathcal{L}/\partial x_j\big|_{\hat{\mathbf{x}}} = 0$, which means
-$\sum_i a_{ij} y_i/\bar{y}_i(\hat{\mathbf{x}}) = s_j$. The MLEM correction
-ratio equals 1, so $F(\hat{\mathbf{x}})_j = \hat{x}_j \cdot 1 = \hat{x}_j$. $\checkmark$
+**Active voxels ($\hat{x}_j > 0$):** The KKT condition gives
+$\partial\mathcal{L}/\partial x_j\big|_{\hat{\mathbf{x}}} = 0$, so
+the gradient ascent step $(**)$ is zero: $F(\hat{\mathbf{x}})_j = \hat{x}_j$. $\checkmark$
 
-**Inactive voxels ($\hat{x}_j = 0$, Case (ii) only):** The multiplicative
-formula gives $F(\hat{\mathbf{x}})_j = 0 \times (\ldots) = 0 = \hat{x}_j$,
-*regardless of the gradient*. MLEM cannot create activity from nothing. $\checkmark$
-
-The gradient does not need to be zero at an inactive voxel — the algorithm
-keeps it at zero through the multiplicative structure alone.
+**Inactive voxels ($\hat{x}_j = 0$):** The multiplicative structure gives
+$F(\hat{\mathbf{x}})_j = 0 \times (\ldots) = 0 = \hat{x}_j$, regardless
+of the gradient — MLEM cannot create activity from nothing. $\checkmark$
 
 ### The log-likelihood values converge
 
@@ -476,15 +485,8 @@ $$\mathcal{L}(F(\mathbf{x}^*)) - \mathcal{L}(\mathbf{x}^*) =
 \lim_{m\to\infty}\bigl[\mathcal{L}(\mathbf{x}^{k_m+1})
 - \mathcal{L}(\mathbf{x}^{k_m})\bigr] = 0. \tag{$*$}$$
 
-We verify the **KKT conditions** at $\mathbf{x}^*$ voxel by voxel.
-Note first that the MLEM update can be written as a diagonally preconditioned
-gradient ascent step:
-
-$$x_j^{k+1} = x_j^k + \frac{x_j^k}{s_j}\,
-\frac{\partial\mathcal{L}}{\partial x_j}(\mathbf{x}^k). \tag{$**$}$$
-
-For $j\in\mathcal{A}$, $x_j^k>0$ (Step 2), so the per-voxel step in $(**)$
-is zero if and only if $\partial\mathcal{L}/\partial x_j = 0$.
+We verify the **KKT conditions** at $\mathbf{x}^*$ voxel by voxel,
+using the gradient ascent form $(**)$.
 
 - **$j\in\mathcal{Z}$:** $x_j^*=0$ and $\partial\mathcal{L}/\partial x_j =
   -s_j<0$ everywhere on the feasible set. KKT satisfied. $\checkmark$
@@ -492,8 +494,8 @@ is zero if and only if $\partial\mathcal{L}/\partial x_j = 0$.
 - **$j\in\mathcal{A},\; x_j^*>0$:** From $(*)$,
   $\mathcal{L}(F(\mathbf{x}^*))=\mathcal{L}(\mathbf{x}^*)$. By Step 3, MLEM
   strictly increases $\mathcal{L}$ unless at a fixed point, so
-  $F(\mathbf{x}^*)=\mathbf{x}^*$. Since $x_j^*>0$, $(**)$ gives
-  $\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}=0$.
+  $F(\mathbf{x}^*)=\mathbf{x}^*$. Since $x_j^*>0$, the gradient ascent step
+  $(**)$ is zero: $\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}=0$.
   KKT satisfied. $\checkmark$
 
 - **$j\in\mathcal{A},\; x_j^*=0$:** Since $x_j^{k_m}>0$ for all $m$ (Step 2)

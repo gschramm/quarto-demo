@@ -169,7 +169,7 @@ window.Quarto = {
   <li><a href="#sec-convergence" id="toc-sec-convergence" class="nav-link" data-scroll-target="#sec-convergence"><span class="header-section-number">8</span> Step 5: Convergence to the Constrained ML Solution</a>
   <ul class="collapse">
   <li><a href="#strict-concavity-and-uniqueness-of-hatmathbfx" id="toc-strict-concavity-and-uniqueness-of-hatmathbfx" class="nav-link" data-scroll-target="#strict-concavity-and-uniqueness-of-hatmathbfx"><span class="header-section-number">8.1</span> Strict concavity and uniqueness of <span class="math inline">\(\hat{\mathbf{x}}\)</span></a></li>
-  <li><a href="#hatmathbfx-is-a-fixed-point-of-mlem-in-both-cases" id="toc-hatmathbfx-is-a-fixed-point-of-mlem-in-both-cases" class="nav-link" data-scroll-target="#hatmathbfx-is-a-fixed-point-of-mlem-in-both-cases"><span class="header-section-number">8.2</span> <span class="math inline">\(\hat{\mathbf{x}}\)</span> is a fixed point of MLEM in both cases</a></li>
+  <li><a href="#hatmathbfx-is-a-fixed-point-of-mlem" id="toc-hatmathbfx-is-a-fixed-point-of-mlem" class="nav-link" data-scroll-target="#hatmathbfx-is-a-fixed-point-of-mlem"><span class="header-section-number">8.2</span> <span class="math inline">\(\hat{\mathbf{x}}\)</span> is a fixed point of MLEM</a></li>
   <li><a href="#the-log-likelihood-values-converge" id="toc-the-log-likelihood-values-converge" class="nav-link" data-scroll-target="#the-log-likelihood-values-converge"><span class="header-section-number">8.3</span> The log-likelihood values converge</a></li>
   <li><a href="#a-convergent-subsequence-exists" id="toc-a-convergent-subsequence-exists" class="nav-link" data-scroll-target="#a-convergent-subsequence-exists"><span class="header-section-number">8.4</span> A convergent subsequence exists</a></li>
   <li><a href="#every-accumulation-point-equals-hatmathbfx" id="toc-every-accumulation-point-equals-hatmathbfx" class="nav-link" data-scroll-target="#every-accumulation-point-equals-hatmathbfx"><span class="header-section-number">8.5</span> Every accumulation point equals <span class="math inline">\(\hat{\mathbf{x}}\)</span></a></li>
@@ -449,22 +449,43 @@ p(\mathbf{n}\mid\mathbf{y},\mathbf{x}^{k+1})\bigr) \geq 0\)</span> (KL divergenc
 x_j^{k+1} = \frac{\hat{n}_j^k}{s_j}
 = \frac{x_j^k}{s_j} \sum_i a_{ij}\,\frac{y_i}{\bar{y}_i(\mathbf{x}^k)},\]</span></p>
 <p>which is exactly the MLEM formula. <span class="math inline">\(\square\)</span></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>MLEM as preconditioned gradient ascent
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Rewrite <span class="math inline">\(\hat{n}_j^k = x_j^k \sum_i a_{ij}\,y_i/\bar{y}_i(\mathbf{x}^k)\)</span> and note that the gradient of the log-likelihood is</p>
+<p><span class="math display">\[\frac{\partial\mathcal{L}}{\partial x_j}(\mathbf{x}^k)
+= \sum_i a_{ij}\!\left(\frac{y_i}{\bar{y}_i(\mathbf{x}^k)}-1\right)
+= \frac{\hat{n}_j^k}{x_j^k} - s_j \qquad (x_j^k&gt;0).\]</span></p>
+<p>Substituting into the MLEM formula gives</p>
+<p><span class="math display">\[\boxed{x_j^{k+1} = x_j^k + \frac{x_j^k}{s_j}\,
+\frac{\partial\mathcal{L}}{\partial x_j}(\mathbf{x}^k).} \tag{$**$}\]</span></p>
+<p>This is a <strong>gradient ascent step</strong> with a <strong>diagonal preconditioner</strong> <span class="math inline">\(P_j^k = x_j^k/s_j\)</span>. Two immediate consequences used throughout:</p>
+<ul>
+<li><strong>A-voxels (<span class="math inline">\(j\in\mathcal{A}\)</span>):</strong> <span class="math inline">\(x_j^k&gt;0\)</span>, so <span class="math inline">\(x_j^{k+1}=x_j^k\)</span> <strong>if and only if</strong> <span class="math inline">\(\partial\mathcal{L}/\partial x_j(\mathbf{x}^k)=0\)</span>.</li>
+<li><strong>Z-voxels (<span class="math inline">\(j\in\mathcal{Z}\)</span>):</strong> <span class="math inline">\(x_j^k=0\)</span> for all <span class="math inline">\(k\geq 1\)</span>; the preconditioner vanishes and the voxel is permanently pinned at zero.</li>
+</ul>
+</div>
+</div>
 <div class="callout callout-style-default callout-tip no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>When does <span class="math inline">\(\mathcal{L}\)</span> increase <em>strictly</em>? The role of Case (i) vs Case (ii)
+<span class="screen-reader-only">Tip</span>When does <span class="math inline">\(\mathcal{L}\)</span> increase <em>strictly</em>?
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The EM guarantee gives <span class="math inline">\(\geq\)</span>, but for convergence we need to know when the increase is strict.</p>
-<p><strong>Term A = 0</strong> iff <span class="math inline">\(\mathbf{x}^{k+1} = \mathbf{x}^k\)</span>, i.e.&nbsp;<span class="math inline">\(\mathbf{x}^k\)</span> already maximises <span class="math inline">\(Q(\cdot\mid\mathbf{x}^k)\)</span>. Since the unconstrained maximiser of <span class="math inline">\(Q\)</span> is <span class="math inline">\(x_j = \hat{n}_j^k/s_j &gt; 0\)</span> (always interior and unique), this requires <span class="math inline">\(\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^k} = 0\)</span> for all <span class="math inline">\(j\)</span>, i.e.&nbsp;<span class="math inline">\(\mathbf{x}^k\)</span> is the unconstrained maximum of <span class="math inline">\(\mathcal{L}\)</span>.</p>
-<ul>
-<li><p><strong>Case (i) — interior solution:</strong> the unconstrained and constrained maxima coincide at <span class="math inline">\(\hat{\mathbf{x}}\)</span>. Term A = 0 iff <span class="math inline">\(\mathbf{x}^k = \hat{\mathbf{x}}\)</span>. The log-likelihood increases <em>strictly</em> at every iteration until <span class="math inline">\(\hat{\mathbf{x}}\)</span> is reached.</p></li>
-<li><p><strong>Case (ii) — boundary solution:</strong> <span class="math inline">\(\hat{\mathbf{x}}\)</span> lies on the boundary of <span class="math inline">\(\mathbf{x} \geq \mathbf{0}\)</span> (some <span class="math inline">\(\hat{x}_j = 0\)</span>). Term A = 0 iff <span class="math inline">\(\mathbf{x}^{k+1} = \mathbf{x}^k\)</span>, i.e.&nbsp;<span class="math inline">\(\mathbf{x}^k\)</span> is a MLEM fixed point. Fixed points satisfy the KKT conditions for maximising <span class="math inline">\(\mathcal{L}\)</span> over <span class="math inline">\(\mathbf{x} \geq \mathbf{0}\)</span>, and — by strict concavity — the unique such point is <span class="math inline">\(\hat{\mathbf{x}}\)</span> itself. So Term A = 0 iff <span class="math inline">\(\mathbf{x}^k = \hat{\mathbf{x}}\)</span>, exactly as in Case (i). Note: it would be wrong to argue that no feasible point has <span class="math inline">\(\nabla\mathcal{L} = \mathbf{0}\)</span> implies Term A <span class="math inline">\(&gt; 0\)</span> always — <span class="math inline">\(\hat{\mathbf{x}}\)</span> is a fixed point of MLEM even though it is not an interior critical point of <span class="math inline">\(\mathcal{L}\)</span>.</p></li>
-</ul>
+<p>The EM guarantee gives <span class="math inline">\(\geq\)</span>; for convergence we need to know when equality holds.</p>
+<p><strong>Term A <span class="math inline">\(= 0\)</span></strong> iff <span class="math inline">\(\mathbf{x}^{k+1}=\mathbf{x}^k\)</span>, i.e., every per-voxel step in <span class="math inline">\((**)\)</span> is zero. For <span class="math inline">\(j\in\mathcal{Z}\)</span> the step is always zero (pinned). For <span class="math inline">\(j\in\mathcal{A}\)</span>, <span class="math inline">\(x_j^k&gt;0\)</span>, so the step is zero <strong>iff</strong> <span class="math inline">\(\partial\mathcal{L}/\partial x_j(\mathbf{x}^k)=0\)</span>.</p>
+<p>By KKT + strict concavity of <span class="math inline">\(\mathcal{L}\)</span>, the unique point satisfying <span class="math inline">\(\partial\mathcal{L}/\partial x_j = 0\)</span> for all <span class="math inline">\(j\in\mathcal{A}\)</span> (together with <span class="math inline">\(x_j=0\)</span> for all <span class="math inline">\(j\in\mathcal{Z}\)</span>) is <span class="math inline">\(\hat{\mathbf{x}}\)</span>. Therefore <strong><span class="math inline">\(\mathcal{L}(\mathbf{x}^{k+1})&gt;\mathcal{L}(\mathbf{x}^k)\)</span> whenever <span class="math inline">\(\mathbf{x}^k\neq\hat{\mathbf{x}}\)</span></strong>, whether <span class="math inline">\(\hat{\mathbf{x}}\)</span> is interior or on the boundary.</p>
 </div>
 </div>
 <hr>
@@ -490,12 +511,11 @@ x_j^{k+1} = \frac{\hat{n}_j^k}{s_j}
 D(\mathbf{x}) = \operatorname{diag}\!\left(\frac{y_i}{\bar{y}_i(\mathbf{x})^2}\right) &gt; 0.\]</span></p>
 <p>Because <span class="math inline">\(A\)</span> has full column rank, <span class="math inline">\(A^\top D A\)</span> is <strong>positive definite</strong> for any diagonal <span class="math inline">\(D &gt; 0\)</span>, so <span class="math inline">\(\nabla^2\mathcal{L}\)</span> is <strong>negative definite</strong>: <span class="math inline">\(\mathcal{L}\)</span> is <strong>strictly concave</strong>. A strictly concave function over a convex set has <strong>at most one</strong> maximum, so <span class="math inline">\(\hat{\mathbf{x}}\)</span> is unique.</p>
 </section>
-<section id="hatmathbfx-is-a-fixed-point-of-mlem-in-both-cases" class="level3" data-number="8.2">
-<h3 data-number="8.2" class="anchored" data-anchor-id="hatmathbfx-is-a-fixed-point-of-mlem-in-both-cases"><span class="header-section-number">8.2</span> <span class="math inline">\(\hat{\mathbf{x}}\)</span> is a fixed point of MLEM in both cases</h3>
+<section id="hatmathbfx-is-a-fixed-point-of-mlem" class="level3" data-number="8.2">
+<h3 data-number="8.2" class="anchored" data-anchor-id="hatmathbfx-is-a-fixed-point-of-mlem"><span class="header-section-number">8.2</span> <span class="math inline">\(\hat{\mathbf{x}}\)</span> is a fixed point of MLEM</h3>
 <p>We show <span class="math inline">\(F(\hat{\mathbf{x}}) = \hat{\mathbf{x}}\)</span>, where <span class="math inline">\(F\)</span> denotes one MLEM step.</p>
-<p><strong>Active voxels (<span class="math inline">\(\hat{x}_j &gt; 0\)</span>, both cases):</strong> The KKT condition gives <span class="math inline">\(\partial\mathcal{L}/\partial x_j\big|_{\hat{\mathbf{x}}} = 0\)</span>, which means <span class="math inline">\(\sum_i a_{ij} y_i/\bar{y}_i(\hat{\mathbf{x}}) = s_j\)</span>. The MLEM correction ratio equals 1, so <span class="math inline">\(F(\hat{\mathbf{x}})_j = \hat{x}_j \cdot 1 = \hat{x}_j\)</span>. <span class="math inline">\(\checkmark\)</span></p>
-<p><strong>Inactive voxels (<span class="math inline">\(\hat{x}_j = 0\)</span>, Case (ii) only):</strong> The multiplicative formula gives <span class="math inline">\(F(\hat{\mathbf{x}})_j = 0 \times (\ldots) = 0 = \hat{x}_j\)</span>, <em>regardless of the gradient</em>. MLEM cannot create activity from nothing. <span class="math inline">\(\checkmark\)</span></p>
-<p>The gradient does not need to be zero at an inactive voxel — the algorithm keeps it at zero through the multiplicative structure alone.</p>
+<p><strong>Active voxels (<span class="math inline">\(\hat{x}_j &gt; 0\)</span>):</strong> The KKT condition gives <span class="math inline">\(\partial\mathcal{L}/\partial x_j\big|_{\hat{\mathbf{x}}} = 0\)</span>, so the gradient ascent step <span class="math inline">\((**)\)</span> is zero: <span class="math inline">\(F(\hat{\mathbf{x}})_j = \hat{x}_j\)</span>. <span class="math inline">\(\checkmark\)</span></p>
+<p><strong>Inactive voxels (<span class="math inline">\(\hat{x}_j = 0\)</span>):</strong> The multiplicative structure gives <span class="math inline">\(F(\hat{\mathbf{x}})_j = 0 \times (\ldots) = 0 = \hat{x}_j\)</span>, regardless of the gradient — MLEM cannot create activity from nothing. <span class="math inline">\(\checkmark\)</span></p>
 </section>
 <section id="the-log-likelihood-values-converge" class="level3" data-number="8.3">
 <h3 data-number="8.3" class="anchored" data-anchor-id="the-log-likelihood-values-converge"><span class="header-section-number">8.3</span> The log-likelihood values converge</h3>
@@ -519,14 +539,11 @@ D(\mathbf{x}) = \operatorname{diag}\!\left(\frac{y_i}{\bar{y}_i(\mathbf{x})^2}\r
 <p><span class="math display">\[\mathcal{L}(F(\mathbf{x}^*)) - \mathcal{L}(\mathbf{x}^*) =
 \lim_{m\to\infty}\bigl[\mathcal{L}(\mathbf{x}^{k_m+1})
 - \mathcal{L}(\mathbf{x}^{k_m})\bigr] = 0. \tag{$*$}\]</span></p>
-<p>We verify the <strong>KKT conditions</strong> at <span class="math inline">\(\mathbf{x}^*\)</span> voxel by voxel. Note first that the MLEM update can be written as a diagonally preconditioned gradient ascent step:</p>
-<p><span class="math display">\[x_j^{k+1} = x_j^k + \frac{x_j^k}{s_j}\,
-\frac{\partial\mathcal{L}}{\partial x_j}(\mathbf{x}^k). \tag{$**$}\]</span></p>
-<p>For <span class="math inline">\(j\in\mathcal{A}\)</span>, <span class="math inline">\(x_j^k&gt;0\)</span> (Step 2), so the per-voxel step in <span class="math inline">\((**)\)</span> is zero if and only if <span class="math inline">\(\partial\mathcal{L}/\partial x_j = 0\)</span>.</p>
+<p>We verify the <strong>KKT conditions</strong> at <span class="math inline">\(\mathbf{x}^*\)</span> voxel by voxel, using the gradient ascent form <span class="math inline">\((**)\)</span>.</p>
 <ul>
 <li><p><strong><span class="math inline">\(j\in\mathcal{Z}\)</span>:</strong> <span class="math inline">\(x_j^*=0\)</span> and <span class="math inline">\(\partial\mathcal{L}/\partial x_j =
 -s_j&lt;0\)</span> everywhere on the feasible set. KKT satisfied. <span class="math inline">\(\checkmark\)</span></p></li>
-<li><p><strong><span class="math inline">\(j\in\mathcal{A},\; x_j^*&gt;0\)</span>:</strong> From <span class="math inline">\((*)\)</span>, <span class="math inline">\(\mathcal{L}(F(\mathbf{x}^*))=\mathcal{L}(\mathbf{x}^*)\)</span>. By Step 3, MLEM strictly increases <span class="math inline">\(\mathcal{L}\)</span> unless at a fixed point, so <span class="math inline">\(F(\mathbf{x}^*)=\mathbf{x}^*\)</span>. Since <span class="math inline">\(x_j^*&gt;0\)</span>, <span class="math inline">\((**)\)</span> gives <span class="math inline">\(\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}=0\)</span>. KKT satisfied. <span class="math inline">\(\checkmark\)</span></p></li>
+<li><p><strong><span class="math inline">\(j\in\mathcal{A},\; x_j^*&gt;0\)</span>:</strong> From <span class="math inline">\((*)\)</span>, <span class="math inline">\(\mathcal{L}(F(\mathbf{x}^*))=\mathcal{L}(\mathbf{x}^*)\)</span>. By Step 3, MLEM strictly increases <span class="math inline">\(\mathcal{L}\)</span> unless at a fixed point, so <span class="math inline">\(F(\mathbf{x}^*)=\mathbf{x}^*\)</span>. Since <span class="math inline">\(x_j^*&gt;0\)</span>, the gradient ascent step <span class="math inline">\((**)\)</span> is zero: <span class="math inline">\(\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}=0\)</span>. KKT satisfied. <span class="math inline">\(\checkmark\)</span></p></li>
 <li><p><strong><span class="math inline">\(j\in\mathcal{A},\; x_j^*=0\)</span>:</strong> Since <span class="math inline">\(x_j^{k_m}&gt;0\)</span> for all <span class="math inline">\(m\)</span> (Step 2) and <span class="math inline">\(x_j^{k_m}\to 0\)</span>, the MLEM update gives</p>
 <p><span class="math display">\[x_j^{k_m+1} = x_j^{k_m}\cdot\frac{1}{s_j}\sum_i
 a_{ij}\frac{y_i}{\bar{y}_i(\mathbf{x}^{k_m})}.\]</span></p>
