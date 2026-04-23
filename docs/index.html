@@ -23,7 +23,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -223,7 +242,7 @@ window.Quarto = {
 <p>where:</p>
 <ul>
 <li><span class="math inline">\(A \in \mathbb{R}^{I \times J}_{\geq 0}\)</span> is the <strong>system matrix</strong> with entries <span class="math inline">\(a_{ij} \geq 0\)</span>. Entry <span class="math inline">\(a_{ij}\)</span> is the probability that an event emitted in voxel <span class="math inline">\(j\)</span> is detected in bin <span class="math inline">\(i\)</span>.</li>
-<li><span class="math inline">\(\mathbf{b} \in \mathbb{R}^I_{&gt; 0}\)</span> is the <strong>background</strong> (scatter and random coincidences), assumed known, fixed, and strictly positive.</li>
+<li><span class="math inline">\(\mathbf{b} \in \mathbb{R}^I_{&gt; 0}\)</span> denotes the expectation of additive contaminations (scattered events in SPECT, and scatered and random coicidences in PET). We assume that the expectation <span class="math inline">\(\mathbf{b}\)</span> is known (e.g.&nbsp;pre-estimated), and strictly positive.</li>
 </ul>
 <p>We model each detector bin as an independent Poisson random variable:</p>
 <p><span class="math display">\[y_i \sim \operatorname{Poisson}\!\bigl(\bar{y}_i(\mathbf{x})\bigr),
@@ -234,6 +253,19 @@ window.Quarto = {
 <p>The probability of observing count <span class="math inline">\(y_i\)</span> when the expected count is <span class="math inline">\(\bar{y}_i\)</span> is <span class="math inline">\(P(y_i) = e^{-\bar{y}_i}\,\bar{y}_i^{y_i}/y_i!\)</span>. Taking the logarithm and summing over all bins (and dropping terms that do not depend on <span class="math inline">\(\mathbf{x}\)</span>) gives the <strong>Poisson log-likelihood</strong>:</p>
 <p><span class="math display">\[\mathcal{L}(\mathbf{x}) = \sum_{i=1}^{I} \Bigl[y_i \log \bar{y}_i(\mathbf{x}) - \bar{y}_i(\mathbf{x})\Bigr].\]</span></p>
 <p>Our goal is to find the image <span class="math inline">\(\hat{\mathbf{x}}\)</span> that maximises <span class="math inline">\(\mathcal{L}(\mathbf{x})\)</span> subject to <span class="math inline">\(\mathbf{x} \geq \mathbf{0}\)</span> (non-negativity).</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span><span class="math inline">\(\mathcal{L}\)</span> is continuous and differentiable
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Since we assume <span class="math inline">\(\mathbf{b} &gt; \mathbf{0}\)</span>, <span class="math inline">\(\mathcal{L}\)</span> is continuous and differentiable for all <span class="math inline">\(\mathbf{x} \geq \mathbf{0}\)</span>.</p>
+</div>
+</div>
 </section>
 <section id="the-mlem-update" class="level3" data-number="2.3">
 <h3 data-number="2.3" class="anchored" data-anchor-id="the-mlem-update"><span class="header-section-number">2.3</span> The MLEM update</h3>
@@ -246,11 +278,7 @@ window.Quarto = {
 </section>
 <section id="the-full-rank-assumption" class="level3" data-number="2.4">
 <h3 data-number="2.4" class="anchored" data-anchor-id="the-full-rank-assumption"><span class="header-section-number">2.4</span> The full-rank assumption</h3>
-<p>We assume throughout that <span class="math inline">\(A\)</span> has <strong>full column rank</strong>, meaning no non-zero vector <span class="math inline">\(\mathbf{v} \neq \mathbf{0}\)</span> satisfies <span class="math inline">\(A\mathbf{v} = \mathbf{0}\)</span>. Practically this means:</p>
-<ol type="1">
-<li>Every voxel contributes to at least one detector bin (<span class="math inline">\(s_j &gt; 0\)</span> for all <span class="math inline">\(j\)</span>).</li>
-<li>No two voxels have identical detection patterns.</li>
-</ol>
+<p>We assume throughout that <span class="math inline">\(A\)</span> has <strong>full column rank</strong>, meaning no non-zero vector <span class="math inline">\(\mathbf{v} \neq \mathbf{0}\)</span> satisfies <span class="math inline">\(A\mathbf{v} = \mathbf{0}\)</span> (the nullspace of <span class="math inline">\(A\)</span> is trivial). Assuming full column rank simplifies the convergence proof. For the more general (and much more complex) case where <span class="math inline">\(A\)</span> does not have full column rank, see <span class="citation" data-cites="salvo2019">(<a href="#ref-salvo2019" role="doc-biblioref">Salvo and Defrise 2019</a>)</span>.</p>
 </section>
 <section id="two-types-of-constrained-optima" class="level3" data-number="2.5">
 <h3 data-number="2.5" class="anchored" data-anchor-id="two-types-of-constrained-optima"><span class="header-section-number">2.5</span> Two types of constrained optima</h3>
@@ -387,7 +415,7 @@ eyJhdHRyIjp7ImF1dG9ydW4iOnRydWUsImVkaXQiOnRydWUsImV2YWwiOnRydWUsIm1heC1saW5lcyI6
 <p>with <span class="math inline">\(y_i = \sum_{j=0}^{J} n_{ij}\)</span>. The <strong>complete-data log-likelihood</strong> decouples over voxels:</p>
 <p><span class="math display">\[\log p(\mathbf{n} \mid \mathbf{x})
 = \sum_{j=1}^{J} \left[\log x_j \underbrace{\sum_i n_{ij}}_{\text{events from }j}
-- x_j \underbrace{\sum_i a_{ij}}_{s_j}\right] + \text{const.}\]</span></p>
+- x_j \underbrace{\sum_i a_{ij}}_{s_j}\right] +  \underbrace{\left[ \sum_i n_{i0} \log b_i - b_i \right]}_{\text{const. indep. of x}}\]</span></p>
 </section>
 <section id="the-q-function" class="level3" data-number="6.2">
 <h3 data-number="6.2" class="anchored" data-anchor-id="the-q-function"><span class="header-section-number">6.2</span> The <span class="math inline">\(Q\)</span> function</h3>
@@ -704,10 +732,15 @@ eyJjb250ZW50cyI6W3siY2VsbE5hbWUiOiJweW9kaWRlLTEiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2RO
 <script type="vfs-file">
 W10=
 </script>
+
 </section>
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-salvo2019" class="csl-entry" role="listitem">
+Salvo, Koen, and Michel Defrise. 2019. <span>“A <span>Convergence</span> <span>Proof</span> of <span>MLEM</span> and <span>MLEM</span>-3 <span>With</span> <span>Fixed</span> <span>Background</span>.”</span> <em>IEEE Transactions on Medical Imaging</em> 38 (3): 721–29. <a href="https://doi.org/10.1109/TMI.2018.2870968">https://doi.org/10.1109/TMI.2018.2870968</a>.
+</div>
+</div></section></div></main> <!-- /main -->
 <script type="ojs-module-contents">
 eyJjb250ZW50cyI6W119
 </script>

@@ -15,6 +15,7 @@ pyodide:
   packages:
     - matplotlib
     - numpy
+bibliography: references.bib
 ---
 
 ## Introduction
@@ -50,8 +51,9 @@ where:
 - $A \in \mathbb{R}^{I \times J}_{\geq 0}$ is the **system matrix** with entries
   $a_{ij} \geq 0$. Entry $a_{ij}$ is the probability that an event emitted
   in voxel $j$ is detected in bin $i$.
-- $\mathbf{b} \in \mathbb{R}^I_{> 0}$ is the **background** (scatter and
-  random coincidences), assumed known, fixed, and strictly positive.
+- $\mathbf{b} \in \mathbb{R}^I_{> 0}$ denotes the expectation of additive contaminations (scattered events in SPECT,
+and scatered and random coicidences in PET). 
+We assume that the expectation $\mathbf{b}$ is known (e.g. pre-estimated), and strictly positive.
 
 We model each detector bin as an independent Poisson random variable:
 
@@ -69,6 +71,12 @@ $$\mathcal{L}(\mathbf{x}) = \sum_{i=1}^{I} \Bigl[y_i \log \bar{y}_i(\mathbf{x}) 
 
 Our goal is to find the image $\hat{\mathbf{x}}$ that maximises $\mathcal{L}(\mathbf{x})$
 subject to $\mathbf{x} \geq \mathbf{0}$ (non-negativity).
+
+::: {.callout-note icon=false}
+## $\mathcal{L}$ is continuous and differentiable
+
+Since we assume $\mathbf{b} > \mathbf{0}$, $\mathcal{L}$ is continuous and differentiable for all $\mathbf{x} \geq \mathbf{0}$.
+:::
 
 ### The MLEM update
 
@@ -93,11 +101,12 @@ by the voxel sensitivity $s_j$.
 ### The full-rank assumption
 
 We assume throughout that $A$ has **full column rank**, meaning no non-zero
-vector $\mathbf{v} \neq \mathbf{0}$ satisfies $A\mathbf{v} = \mathbf{0}$.
-Practically this means:
+vector $\mathbf{v} \neq \mathbf{0}$ satisfies $A\mathbf{v} = \mathbf{0}$
+(the nullspace of $A$ is trivial).
+Assuming full column rank simplifies the convergence proof. 
+For the more general (and much more complex) case where $A$ does not have full column rank, 
+see [@salvo2019].
 
-1. Every voxel contributes to at least one detector bin ($s_j > 0$ for all $j$).
-2. No two voxels have identical detection patterns.
 
 ### Two types of constrained optima
 
@@ -264,7 +273,7 @@ decouples over voxels:
 
 $$\log p(\mathbf{n} \mid \mathbf{x})
 = \sum_{j=1}^{J} \left[\log x_j \underbrace{\sum_i n_{ij}}_{\text{events from }j}
-- x_j \underbrace{\sum_i a_{ij}}_{s_j}\right] + \text{const.}$$
+- x_j \underbrace{\sum_i a_{ij}}_{s_j}\right] +  \underbrace{\left[ \sum_i n_{i0} \log b_i - b_i \right]}_{\text{const. indep. of x}}$$
 
 ### The $Q$ function
 
