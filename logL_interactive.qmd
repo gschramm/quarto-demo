@@ -8,6 +8,7 @@ pyodide:
   packages:
     - matplotlib
     - numpy
+bibliography: references.bib
 ---
 
 ## Log-likelihood landscape for a 2-voxel problem
@@ -15,16 +16,35 @@ pyodide:
 This page shows the Poisson log-likelihood $\mathcal{L}(x_1, x_2)$ for the
 2-voxel forward model
 
-$$\bar{y}_1 = x_1 + b_1, \qquad \bar{y}_2 = x_1 + x_2 + b_2.$$
+$$\bar{y}_1 = x_1 + b_1, \qquad \bar{y}_2 = x_1 + x_2 + b_2,$$
+
+together with the iterates of two algorithms started from the same point.
+
+**MLEM** [@shepp1982; @lange1984], written as preconditioned gradient ascent:
+
+$$x_j^{k+1} = x_j^k + \frac{x_j^k}{s_j} \frac{\partial \mathcal{L}}{\partial x_j}(x^k),$$
+
+where $s_j = \sum_i a_{ij}$ is the sensitivity of voxel $j$.
+
+**MLEM-3** [@fessler1995; @salvo2019], which replaces the diagonal preconditioner
+$x_j / s_j$ by the shifted version $(x_j + \gamma_j) / s_j$:
+
+$$x_j^{n+1} = \left[ x_j^n + \frac{x_j^n + \gamma_j}{s_j}
+  \frac{\partial \mathcal{L}}{\partial x_j}(x^n) \right]_+,$$
+
+with $\gamma_j = \min_{i:\, a_{ij}>0} \bar{r}_i / a_{i\cdot}$, where
+$a_{i\cdot} = \sum_j a_{ij}$ is the row sum and $\bar{r}_i$ is a positive
+background for bin $i$.  For the 2-voxel model this gives
+$\gamma = \min(b_1, b_2/2)$.
+MLEM is recovered by setting $\gamma = 0$.
 
 Use the controls below to set the measured counts $(y_1, y_2)$, background
-levels $(b_1, b_2)$, axis range, and MLEM starting point.
+levels $(b_1, b_2)$, axis range, and starting point.
 The colorbar range is set automatically.
-The plot updates automatically.
 
 - **Blue triangle** — constrained maximum $\hat{\mathbf{x}}$ (non-negative orthant)
-- **Red star** — unconstrained maximum
-- **Black square** — MLEM starting point; **black dots** — 20 MLEM iterates
+- **Red star** — unconstrained maximum $x^\mathrm{ML}$
+- **Black / cyan squares** — common starting point; **dots** — 20 iterates of MLEM (black) and MLEM-3 (cyan)
 
 ---
 
