@@ -12,22 +12,103 @@ pyodide:
 
 ## Log-likelihood landscape for a 2-voxel problem
 
-This page shows the Poisson log-likelihood $\mathcal{L}(x_1, x_2)$ for a
-simple 2-voxel forward model
+This page shows the Poisson log-likelihood $\mathcal{L}(x_1, x_2)$ for the
+2-voxel forward model
 
 $$\bar{y}_1 = x_1 + b_1, \qquad \bar{y}_2 = x_1 + x_2 + b_2.$$
 
-Each panel uses different measurements $(y_1, y_2)$ and background values
-$(b_1, b_2)$. The **blue triangle** marks the constrained maximum
-$\hat{\mathbf{x}}$ (non-negative orthant), the **red star** marks the
-unconstrained maximum, and the **black dots** show 20 MLEM iterations
-starting from $x_1 = x_2 = 2.5$.
+Use the controls below to set the measured counts $(y_1, y_2)$ and background
+levels $(b_1, b_2)$. The plot updates automatically.
 
-The top row shows cases where the constrained optimum lies in the interior
-(all voxels active); the bottom row shows boundary cases where one voxel is
-driven to zero.
+- **Blue triangle** — constrained maximum $\hat{\mathbf{x}}$ (non-negative orthant)
+- **Red star** — unconstrained maximum
+- **Black dots** — 20 MLEM iterations starting from $x_1 = x_2 = 2.5$
+
+---
+
+```{ojs}
+//| echo: false
+viewof y1 = Inputs.range([0, 10], {step: 1, value: 1, label: "y₁ (counts, bin 1)"})
+viewof y2 = Inputs.range([0, 10], {step: 1, value: 2, label: "y₂ (counts, bin 2)"})
+viewof b1 = Inputs.range([0, 3], {step: 0.1, value: 0.5, label: "b₁ (background, bin 1)"})
+viewof b2 = Inputs.range([0, 3], {step: 0.1, value: 0.5, label: "b₂ (background, bin 2)"})
+```
 
 ```{pyodide}
-{{< include logL_plot.py >}}
+#| echo: false
 #| autorun: true
+#| input: [y1, y2, b1, b2]
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.ticker import FormatStrFormatter
+
+# OJS sliders pass floats; counts must be integers
+y1, y2 = int(y1), int(y2)
+
+def logL(x1, x2, y1, y2, b1, b2):
+    ybar1 = x1 + b1
+    ybar2 = x1 + x2 + b2
+    with np.errstate(divide="ignore", invalid="ignore"):
+        term1 = np.where(
+            y1 > 0,
+            y1 * np.log(np.where(ybar1 > 0, ybar1, np.nan)) - ybar1,
+            np.where(ybar1 > 0, -ybar1, -np.inf),
+        )
+        term2 = np.where(
+            y2 > 0,
+            y2 * np.log(np.where(ybar2 > 0, ybar2, np.nan)) - ybar2,
+            np.where(ybar2 > 0, -ybar2, -np.inf),
+        )
+    return term1 + term2
+
+def mlem_update(x1, x2, y1, y2, b1, b2):
+    ybar1 = x1 + b1
+    ybar2 = x1 + x2 + b2
+    r1 = np.where(ybar1 > 0, y1 / ybar1, 0)
+    r2 = np.where(ybar2 > 0, y2 / ybar2, 0)
+    return float((x1 / 2) * (r1 + r2)), float(x2 * r2)
+
+x = np.linspace(-0.5, 5.0, 800)
+X1, X2 = np.meshgrid(x, x)
+Z = logL(X1, X2, y1=y1, y2=y2, b1=b1, b2=b2)
+
+feasible = (X1 >= 0) & (X2 >= 0)
+Z_plot   = np.where(feasible, Z, np.nan)
+levels   = np.linspace(-12, 2, 40)
+
+# Constrained maximum (grid search over feasible region)
+flat_idx      = np.nanargmax(Z_plot)
+idx           = np.unravel_index(flat_idx, Z_plot.shape)
+xhat1, xhat2  = X1[idx], X2[idx]
+
+# Unconstrained maximum
+xml1 = y1 - b1
+xml2 = y2 - xml1 - b2
+
+# MLEM trajectory (20 steps from (2.5, 2.5))
+tx, ty = [2.5], [2.5]
+for _ in range(20):
+    nx, ny = mlem_update(tx[-1], ty[-1], y1, y2, b1, b2)
+    tx.append(nx); ty.append(ny)
+
+fig, ax = plt.subplots(figsize=(5.5, 4.5))
+cs = ax.contourf(X1, X2, Z_plot, levels=levels, cmap="magma", alpha=0.85)
+ax.hlines(0, 0, x.max(), color="black", lw=1.0)
+ax.vlines(0, 0, x.max(), color="black", lw=1.0)
+ax.plot(tx, ty, "k.-", ms=5, zorder=5, label="MLEM trajectory")
+ax.plot(xhat1, xhat2, "b^", ms=9, zorder=6, label=r"$\hat{\mathbf{x}}$ (constrained)")
+ax.plot(xml1,  xml2,  "r*", ms=11, zorder=6, label="unconstrained max")
+cb = plt.colorbar(cs, ax=ax, label=r"$\mathcal{L}(x_1,x_2)$",
+                  fraction=0.046, pad=0.04)
+cb.ax.yaxis.set_major_formatter(FormatStrFormatter("%.1f"))
+ax.set_xlabel(r"$x_1$"); ax.set_ylabel(r"$x_2$")
+ax.set_xlim(-0.1, 5.0); ax.set_ylim(-0.1, 5.0)
+ax.set_aspect("equal", adjustable="box")
+ax.set_title(
+    rf"$y_1={y1},\; y_2={y2},\; b_1={b1:.1f},\; b_2={b2:.1f}$",
+    fontsize="medium"
+)
+ax.legend(loc="upper right", fontsize=8)
+plt.tight_layout()
+plt.show()
 ```

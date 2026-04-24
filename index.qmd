@@ -163,8 +163,8 @@ Blue triangle: constrained maximum $\hat{\mathbf{x}}$. Red star: unconstrained
 maximum. Black dots: 20 MLEM iterates.](logL_examples.png){width=90%}
 
 An [interactive version](logL_interactive.qmd) of this figure — where you can
-rerun the Python code and change the parameters — is available as a separate
-page.
+adjust $y_1, y_2, b_1, b_2$ with sliders and see the plot update live — is
+available as a separate page.
 
 ---
 
