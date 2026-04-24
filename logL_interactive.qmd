@@ -82,13 +82,17 @@ x = np.linspace(xmin, xmax, 800)
 X1, X2 = np.meshgrid(x, x)
 Z = logL(X1, X2, y1=y1, y2=y2, b1=b1, b2=b2)
 
-feasible = (X1 >= 0) & (X2 >= 0)
-Z_plot   = np.where(feasible, Z, np.nan)
+# Show contours everywhere the log-likelihood is defined (both ȳ_i > 0),
+# not just in the feasible (non-negative) region — matching logL_examples.png
+defined  = (X1 + b1 > 0) & (X1 + X2 + b2 > 0)
+Z_plot   = np.where(defined, Z, np.nan)
 levels   = np.linspace(lmin, lmax, 40)
 
-# Constrained maximum (grid search over feasible region)
-flat_idx      = np.nanargmax(Z_plot)
-idx           = np.unravel_index(flat_idx, Z_plot.shape)
+# Constrained maximum: search only the feasible (x >= 0) region
+feasible      = (X1 >= 0) & (X2 >= 0)
+Z_feasible    = np.where(feasible, Z_plot, np.nan)
+flat_idx      = np.nanargmax(Z_feasible)
+idx           = np.unravel_index(flat_idx, Z_feasible.shape)
 xhat1, xhat2  = X1[idx], X2[idx]
 
 # Unconstrained maximum
@@ -104,8 +108,8 @@ for _ in range(20):
 fig, ax = plt.subplots(figsize=(5.5, 4.5))
 cs = ax.contourf(X1, X2, Z_plot, levels=levels, cmap="magma", alpha=0.85,
                  vmin=lmin, vmax=lmax)
-ax.hlines(0, xmin, xmax, color="black", lw=1.0)
-ax.vlines(0, xmin, xmax, color="black", lw=1.0)
+ax.axhline(0, color="black", lw=1.0)
+ax.axvline(0, color="black", lw=1.0)
 ax.plot(tx, ty, "k.-", ms=5, zorder=5, label="MLEM trajectory")
 ax.plot(tx[0], ty[0], "ks", ms=7, zorder=6, label="MLEM start")
 ax.plot(xhat1, xhat2, "b^", ms=9,  zorder=6, label=r"$\hat{\mathbf{x}}$ (constrained)")
