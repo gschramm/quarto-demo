@@ -691,18 +691,29 @@ constrained maximiser $\hat{\mathbf{x}}$.
 
 - **$j\in\mathcal{A},\; x_j^*=0$:** This is the trickiest case: $\mathbf{x}^*$
   has a voxel driven to zero even though the observed data suggest some signal
-  there. Since $x_j^{k_m}>0$ for all $m$ (Step 2) and $x_j^{k_m}\to 0$, the
-  MLEM update gives
+  there. Since $x_j^{k_m}>0$ for all $m$ (Step 2) and $x_j^{k_m}\to 0$,
+  rewrite the MLEM update using $(**)$ as a **multiplicative factor**:
 
-  $$x_j^{k_m+1} = x_j^{k_m}\cdot\frac{1}{s_j}\sum_i
-  a_{ij}\frac{y_i}{\bar{y}_i(\mathbf{x}^{k_m})}.$$
+  $$x_j^{k_m+1}
+  = x_j^{k_m}\!\left(1 + \frac{1}{s_j}
+    \frac{\partial\mathcal{L}}{\partial x_j}(\mathbf{x}^{k_m})\right).$$
 
-  If the gradient were positive at $\mathbf{x}^*$, i.e.\
-  $\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}>0$, then close to
-  $\mathbf{x}^*$ the update factor would exceed 1, meaning
-  $x_j^{k_m+1}>x_j^{k_m}$ for large $m$ — the voxel would be *growing*, not
-  shrinking toward 0. This contradicts $x_j^{k_m}\to 0$. Therefore the
-  gradient must be $\leq 0$:
+  Note: using the additive form of $(**)$ directly would be misleading here —
+  the step $\tfrac{x_j^{k_m}}{s_j}\nabla_j\mathcal{L}\to 0$ as $x_j^{k_m}\to 0$,
+  even when the gradient is positive, so one cannot conclude from the step size
+  alone that the sequence grows.  What matters is the **ratio**
+  $x_j^{k_m+1}/x_j^{k_m}$, which equals the factor in parentheses above and
+  does not vanish as $x_j^{k_m}\to 0$.
+
+  If $\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}>0$, then by
+  continuity there exists $\delta>0$ such that
+  $\partial\mathcal{L}/\partial x_j(\mathbf{x}^{k_m})\geq\delta$ for all
+  sufficiently large $m$, giving
+
+  $$x_j^{k_m+1} \;\geq\; \left(1+\frac{\delta}{s_j}\right)x_j^{k_m}.$$
+
+  The sequence grows geometrically at rate $1+\delta/s_j>1$, contradicting
+  $x_j^{k_m}\to 0$. Therefore the gradient must be $\leq 0$:
   $\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}\leq 0$.
   KKT satisfied. $\checkmark$
 
