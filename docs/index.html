@@ -228,7 +228,7 @@ window.Quarto = {
 
 <section id="introduction" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">1</span> Introduction</h2>
-<p>The MLEM (Maximum Likelihood Expectation Maximisation) algorithm is the standard reconstruction method in emission tomography (PET, SPECT). It produces non-negative images and steadily improves the fit to the measured data at every iteration. But does it always find the non-negative image with highest Poisson log-likelihood? And if so, why?</p>
+<p>The MLEM (Maximum Likelihood Expectation Maximisation) algorithm is the standard reconstruction method in emission tomography (PET, SPECT) <span class="citation" data-cites="shepp1982 lange1984">(<a href="#ref-shepp1982" role="doc-biblioref">Shepp and Vardi 1982</a>; <a href="#ref-lange1984" role="doc-biblioref">Lange and Carson 1984</a>)</span>. It produces non-negative images and steadily improves the fit to the measured data at every iteration. But does it always find the non-negative image with highest Poisson log-likelihood? And if so, why?</p>
 <p>This document gives a complete, self-contained proof that MLEM converges to the unique non-negative image that maximises the Poisson log-likelihood. We assume only basic calculus and probability; every mathematical step is explained.</p>
 <hr>
 </section>
@@ -279,7 +279,7 @@ window.Quarto = {
 </section>
 <section id="the-full-rank-assumption" class="level3" data-number="2.4">
 <h3 data-number="2.4" class="anchored" data-anchor-id="the-full-rank-assumption"><span class="header-section-number">2.4</span> The full-rank assumption</h3>
-<p>We assume throughout that <span class="math inline">\(A\)</span> has <strong>full column rank</strong>, meaning no non-zero vector <span class="math inline">\(\mathbf{v} \neq \mathbf{0}\)</span> satisfies <span class="math inline">\(A\mathbf{v} = \mathbf{0}\)</span> (the nullspace of <span class="math inline">\(A\)</span> is trivial). Assuming full column rank simplifies the convergence proof. For the more general (and much more complex) case where <span class="math inline">\(A\)</span> does not have full column rank, see <span class="citation" data-cites="salvo2019">(<a href="#ref-salvo2019" role="doc-biblioref">Salvo and Defrise 2019</a>)</span>.</p>
+<p>We assume throughout that <span class="math inline">\(A\)</span> has <strong>full column rank</strong>, meaning no non-zero vector <span class="math inline">\(\mathbf{v} \neq \mathbf{0}\)</span> satisfies <span class="math inline">\(A\mathbf{v} = \mathbf{0}\)</span> (the nullspace of <span class="math inline">\(A\)</span> is trivial). Assuming full column rank simplifies the convergence proof. <span class="citation" data-cites="salvo2019">Salvo and Defrise (<a href="#ref-salvo2019" role="doc-biblioref">2019</a>)</span> prove convergence for the more general (and much more complex) rank-deficient case, and also cover <strong>MLEM-3</strong> proposed by <span class="citation" data-cites="fessler1995">Fessler and Hero (<a href="#ref-fessler1995" role="doc-biblioref">1995</a>)</span> (see also the <a href="https://web.eecs.umich.edu/~fessler/book/c-eml.pdf">online book chapter</a>).</p>
 </section>
 <section id="two-types-of-constrained-optima" class="level3" data-number="2.5">
 <h3 data-number="2.5" class="anchored" data-anchor-id="two-types-of-constrained-optima"><span class="header-section-number">2.5</span> Two types of constrained optima</h3>
@@ -404,7 +404,7 @@ window.Quarto = {
 </section>
 <section id="sec-monotone" class="level2" data-number="6">
 <h2 data-number="6" class="anchored" data-anchor-id="sec-monotone"><span class="header-section-number">6</span> Step 3: Each MLEM Update does not decrease the Log-Likelihood</h2>
-<p>This is the most important step. It uses the <strong>EM (Expectation–Maximisation) framework</strong>, a general-purpose strategy for maximum likelihood estimation whenever the observed data can be thought of as an <em>incomplete</em> version of some richer, easier-to-handle <strong>complete data</strong>.</p>
+<p>This is the most important step. It uses the <strong>EM (Expectation–Maximisation) framework</strong> <span class="citation" data-cites="dempster1977">(<a href="#ref-dempster1977" role="doc-biblioref">Dempster et al. 1977</a>)</span>, a general-purpose strategy for maximum likelihood estimation whenever the observed data can be thought of as an <em>incomplete</em> version of some richer, easier-to-handle <strong>complete data</strong>.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -773,8 +773,20 @@ n_{i0} \sim \operatorname{Poisson}(b_i),\]</span></p>
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-dempster1977" class="csl-entry" role="listitem">
+Dempster, A. P., N. M. Laird, and D. B. Rubin. 1977. <span>“Maximum Likelihood from Incomplete Data via the EM Algorithm.”</span> <em>Journal of the Royal Statistical Society: Series B (Methodological)</em> 39 (1): 1–22. https://doi.org/<a href="https://doi.org/10.1111/j.2517-6161.1977.tb01600.x">https://doi.org/10.1111/j.2517-6161.1977.tb01600.x</a>.
+</div>
+<div id="ref-fessler1995" class="csl-entry" role="listitem">
+Fessler, J. A., and A. O. Hero. 1995. <span>“Penalized Maximum-Likelihood Image Reconstruction Using Space-Alternating Generalized EM Algorithms.”</span> <em>IEEE Transactions on Image Processing</em> 4 (10): 1417–29. <a href="https://doi.org/10.1109/83.465106">https://doi.org/10.1109/83.465106</a>.
+</div>
+<div id="ref-lange1984" class="csl-entry" role="listitem">
+Lange, K., and R. Carson. 1984. <span>“EM Reconstruction Algorithms for Emission and Transmission Tomography.”</span> <em>Journal of Computer Assisted Tomography</em> 8 (2).
+</div>
 <div id="ref-salvo2019" class="csl-entry" role="listitem">
 Salvo, Koen, and Michel Defrise. 2019. <span>“A <span>Convergence</span> <span>Proof</span> of <span>MLEM</span> and <span>MLEM</span>-3 <span>With</span> <span>Fixed</span> <span>Background</span>.”</span> <em>IEEE Transactions on Medical Imaging</em> 38 (3): 721–29. <a href="https://doi.org/10.1109/TMI.2018.2870968">https://doi.org/10.1109/TMI.2018.2870968</a>.
+</div>
+<div id="ref-shepp1982" class="csl-entry" role="listitem">
+Shepp, L. A., and Y. Vardi. 1982. <span>“Maximum Likelihood Reconstruction for Emission Tomography.”</span> <em>IEEE Transactions on Medical Imaging</em> 1 (2): 113–22. <a href="https://doi.org/10.1109/TMI.1982.4307558">https://doi.org/10.1109/TMI.1982.4307558</a>.
 </div>
 </div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

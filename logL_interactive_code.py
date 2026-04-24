@@ -41,6 +41,25 @@ def mlem_update(x1, x2, y1, y2, b1, b2):
     r2 = np.where(ybar2 > 0, y2 / ybar2, 0)
     return float((x1 / 2) * (r1 + r2)), float(x2 * r2)
 
+def mlem3_update(x1, x2, y1, y2, b1, b2, gamma):
+    # E-ML-EM-3 (Fessler eq. 18.4.4 / 18.4.5)
+    # x_j^{n+1} = [(x_j^n + gamma_j) / s_j * e_j(x^n) - gamma_j]_+
+    # e_j(x) = sum_i a_ij * y_i / ybar_i(x)   (back-projected ratio)
+    # Sensitivities: s_1 = a_11 + a_21 = 1 + 1 = 2,  s_2 = a_22 = 1
+    ybar1 = x1 + b1
+    ybar2 = x1 + x2 + b2
+    r1 = y1 / ybar1 if ybar1 > 0 else 0.0
+    r2 = y2 / ybar2 if ybar2 > 0 else 0.0
+    e1 = r1 + r2   # voxel 1 contributes to both bins
+    e2 = r2        # voxel 2 contributes to bin 2 only
+    x1_new = max(0.0, (x1 + gamma) / 2.0 * e1 - gamma)
+    x2_new = max(0.0, (x2 + gamma) / 1.0 * e2 - gamma)
+    return x1_new, x2_new
+
+# gamma_j = min_{i} r̄_i / a_{i.}  where a_{i.} is the row sum of A
+# bin 1: a_{1.} = 1,  bin 2: a_{2.} = 2  →  gamma = min(b1/1, b2/2)
+gamma = min(b1 / 1.0, b2 / 2.0)
+
 x = np.linspace(xmin, xmax, 800)
 X1, X2 = np.meshgrid(x, x)
 Z = logL(X1, X2, y1=y1, y2=y2, b1=b1, b2=b2)
@@ -67,15 +86,22 @@ for _ in range(20):
     nx, ny = mlem_update(tx[-1], ty[-1], y1, y2, b1, b2)
     tx.append(nx); ty.append(ny)
 
+# MLEM-3 trajectory (20 steps, same start point)
+tx3, ty3 = [x1_start], [x2_start]
+for _ in range(20):
+    nx, ny = mlem3_update(tx3[-1], ty3[-1], y1, y2, b1, b2, gamma)
+    tx3.append(nx); ty3.append(ny)
+
 fig, ax = plt.subplots(figsize=(5.5, 4.5))
 cs = ax.contourf(X1, X2, Z_plot, levels=levels, cmap="magma", alpha=0.85,
                  vmin=lmin, vmax=lmax)
 ax.axhline(0, color="black", lw=1.0)
 ax.axvline(0, color="black", lw=1.0)
-ax.plot(tx,    ty,    "k.-", ms=5,  zorder=5, label="MLEM trajectory")
-ax.plot(tx[0], ty[0], "ks",  ms=7,  zorder=6, label="MLEM start")
-ax.plot(xhat1, xhat2, "b^",  ms=9,  zorder=6, label=r"$\hat{\mathbf{x}}$ (constrained)")
-ax.plot(xml1,  xml2,  "r*",  ms=11, zorder=6, label="unconstrained max")
+ax.plot(tx,    ty,    "k.-",  ms=5,  zorder=5, label="MLEM")
+ax.plot(tx3,   ty3,   "c.-",  ms=5,  zorder=5, label=rf"MLEM-3 ($\gamma$={gamma:.2f})")
+ax.plot(tx[0], ty[0], "ks",   ms=7,  zorder=6, label="start")
+ax.plot(xhat1, xhat2, "b^",   ms=9,  zorder=6, label=r"$\hat{\mathbf{x}}$ (constrained)")
+ax.plot(xml1,  xml2,  "r*",   ms=11, zorder=6, label="unconstrained max")
 cb = plt.colorbar(cs, ax=ax, label=r"$\mathcal{L}(x_1,x_2)$",
                   fraction=0.046, pad=0.04)
 cb.ax.yaxis.set_major_formatter(FormatStrFormatter("%.1f"))

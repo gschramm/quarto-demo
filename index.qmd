@@ -17,9 +17,10 @@ bibliography: references.bib
 ## Introduction
 
 The MLEM (Maximum Likelihood Expectation Maximisation) algorithm is the
-standard reconstruction method in emission tomography (PET, SPECT). It
+standard reconstruction method in emission tomography (PET, SPECT)
+[@shepp1982; @lange1984]. It
 produces non-negative images and steadily improves the fit to the measured
-data at every iteration. But does it always find the non-negative image with 
+data at every iteration. But does it always find the non-negative image with
 highest Poisson log-likelihood? And if so, why?
 
 This document gives a complete, self-contained proof that MLEM converges to
@@ -99,9 +100,9 @@ by the voxel sensitivity $s_j$.
 We assume throughout that $A$ has **full column rank**, meaning no non-zero
 vector $\mathbf{v} \neq \mathbf{0}$ satisfies $A\mathbf{v} = \mathbf{0}$
 (the nullspace of $A$ is trivial).
-Assuming full column rank simplifies the convergence proof. 
-For the more general (and much more complex) case where $A$ does not have full column rank, 
-see [@salvo2019].
+Assuming full column rank simplifies the convergence proof.
+@salvo2019 prove convergence for the more general (and much more complex)
+rank-deficient case, and also cover **MLEM-3** proposed by @fessler1995 (see also the [online book chapter](https://web.eecs.umich.edu/~fessler/book/c-eml.pdf)).
 
 
 ### Two types of constrained optima
@@ -254,9 +255,9 @@ $$\mathcal{A} = \bigl\{j : {\textstyle\sum_i} a_{ij}y_i > 0\bigr\},
 ## Step 3: Each MLEM Update does not decrease the Log-Likelihood {#sec-monotone}
 
 This is the most important step. It uses the **EM (Expectation–Maximisation)
-framework**, a general-purpose strategy for maximum likelihood estimation
-whenever the observed data can be thought of as an *incomplete* version of
-some richer, easier-to-handle **complete data**.
+framework** [@dempster1977], a general-purpose strategy for maximum likelihood
+estimation whenever the observed data can be thought of as an *incomplete*
+version of some richer, easier-to-handle **complete data**.
 
 ::: {.callout-note icon=false}
 ## The EM algorithm — general idea
