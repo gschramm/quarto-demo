@@ -279,9 +279,6 @@ ax_map.set_ylabel(r"$x_2$")
 ax_map.set_xlim(xmin, xmax)
 ax_map.set_ylim(xmin, xmax)
 ax_map.set_aspect("equal", adjustable="box")
-ax_map.set_title(
-    rf"$y_1={y1},\; y_2={y2},\; b_1={b1:.1f},\; b_2={b2:.1f}$", fontsize="small"
-)
 ax_map.legend(loc="upper right", fontsize=7.5)
 
 # — L(x) vs iteration —
