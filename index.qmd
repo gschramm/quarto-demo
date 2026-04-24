@@ -773,71 +773,86 @@ boundary (some voxels zeroed out).
 
 ### The conditional expectation via Poisson splitting {#sec-condexp}
 
-**Setup.** In the complete-data model each voxel $j$ contributes independently
-to detector bin $i$: $n_{ij} \sim \operatorname{Poisson}(a_{ij}x_j)$, and the
-observed count is the total $y_i = \sum_j n_{ij}$.
+**Setup.** In the complete-data model, each detector bin $i$ receives
+contributions from $J$ image voxels and one background source, all
+independently Poisson distributed:
 
-**Poisson splitting property.** Let $N_1, \ldots, N_J$ be independent Poisson
-random variables with means $\lambda_1, \ldots, \lambda_J$, and let
-$N = N_1 + \cdots + N_J \sim \operatorname{Poisson}(\lambda)$,
-$\lambda = \sum_j \lambda_j$.
-Then the conditional distribution of $(N_1, \ldots, N_J)$ given $N = n$ is
-**multinomial**:
+$$n_{ij} \sim \operatorname{Poisson}(a_{ij}\,x_j), \quad j = 1,\ldots,J,
+\qquad
+n_{i0} \sim \operatorname{Poisson}(b_i),$$
 
-$$(N_1, \ldots, N_J) \mid N = n \;\sim\;
+where $n_{ij}$ is the (unobserved) number of events from voxel $j$ detected
+in bin $i$, and $n_{i0}$ is the (unobserved) background count. The observed
+total is
+
+$$y_i = n_{i0} + \sum_{j=1}^{J} n_{ij}.$$
+
+There are thus $J+1$ independent Poisson components summing to $y_i$, with
+total mean $\bar{y}_i(\mathbf{x}) = b_i + \sum_j a_{ij}x_j$.
+
+**Poisson splitting property.** Let $N_0, N_1, \ldots, N_J$ be independent
+Poisson random variables with means $\lambda_0, \lambda_1, \ldots, \lambda_J$,
+and let $N = \sum_{j=0}^{J} N_j \sim \operatorname{Poisson}(\lambda)$,
+$\lambda = \sum_{j=0}^{J} \lambda_j$.
+Then the conditional distribution of $(N_0, N_1, \ldots, N_J)$ given $N = n$
+is **multinomial**:
+
+$$(N_0, N_1, \ldots, N_J) \mid N = n \;\sim\;
 \operatorname{Multinomial}\!\left(n;\;
-\frac{\lambda_1}{\lambda}, \ldots, \frac{\lambda_J}{\lambda}\right).$$
+\frac{\lambda_0}{\lambda}, \frac{\lambda_1}{\lambda}, \ldots,
+\frac{\lambda_J}{\lambda}\right).$$
 
 ::: {.proof}
-The joint probability of $(N_1 = n_1, \ldots, N_J = n_J)$ with $\sum_j n_j = n$
-factors as a product of Poisson probabilities:
+The joint probability of $(N_0 = n_0, N_1 = n_1, \ldots, N_J = n_J)$ with
+$\sum_{j=0}^{J} n_j = n$ factors as a product of Poisson probabilities:
 
-$$P(N_1 = n_1, \ldots, N_J = n_J)
-= \prod_j \frac{e^{-\lambda_j} \lambda_j^{n_j}}{n_j!}
-= e^{-\lambda} \frac{\prod_j \lambda_j^{n_j}}{\prod_j n_j!}.$$
+$$P(N_0=n_0, \ldots, N_J=n_J)
+= \prod_{j=0}^{J} \frac{e^{-\lambda_j}\lambda_j^{n_j}}{n_j!}
+= e^{-\lambda}\frac{\prod_{j=0}^{J}\lambda_j^{n_j}}{\prod_{j=0}^{J}n_j!}.$$
 
-Dividing by $P(N = n) = e^{-\lambda}\lambda^n / n!$ gives:
+Dividing by $P(N=n) = e^{-\lambda}\lambda^n/n!$ gives:
 
-$$P(N_1 = n_1, \ldots, N_J = n_J \mid N = n)
-= \frac{n!}{\prod_j n_j!} \prod_j \left(\frac{\lambda_j}{\lambda}\right)^{n_j},$$
+$$P(N_0=n_0,\ldots,N_J=n_J \mid N=n)
+= \frac{n!}{\prod_{j=0}^{J} n_j!}
+  \prod_{j=0}^{J}\!\left(\frac{\lambda_j}{\lambda}\right)^{n_j},$$
 
-which is the $\operatorname{Multinomial}(n;\, \lambda_1/\lambda, \ldots, \lambda_J/\lambda)$
+which is the
+$\operatorname{Multinomial}(n;\,\lambda_0/\lambda,\ldots,\lambda_J/\lambda)$
 probability mass function.
 :::
 
-**Application.** At iteration $k$, set $\lambda_j = a_{ij}x_j^k$ as the
-predicted Poisson mean for the contribution of voxel $j$ to bin $i$.
-By the splitting property, conditioned on the observed count $y_i$:
+**Application.** At iteration $k$, identify $\lambda_0 = b_i$ and
+$\lambda_j = a_{ij}x_j^k$ for $j\geq 1$, so that
+$\lambda = \bar{y}_i(\mathbf{x}^k)$.
+By the splitting property, conditioned on the observed total $y_i$:
 
-$$(n_{i1}, \ldots, n_{iJ}) \mid y_i,\, \mathbf{x}^k
+$$(n_{i0},\, n_{i1}, \ldots, n_{iJ}) \mid y_i,\, \mathbf{x}^k
 \;\sim\;
 \operatorname{Multinomial}\!\left(y_i;\;
-\frac{a_{i1}x_1^k}{\bar{y}_i(\mathbf{x}^k)},
-\ldots,
-\frac{a_{iJ}x_J^k}{\bar{y}_i(\mathbf{x}^k)}\right),$$
+\frac{b_i}{\bar{y}_i(\mathbf{x}^k)},\,
+\frac{a_{i1}x_1^k}{\bar{y}_i(\mathbf{x}^k)},\,\ldots,\,
+\frac{a_{iJ}x_J^k}{\bar{y}_i(\mathbf{x}^k)}\right).$$
 
-where $\bar{y}_i(\mathbf{x}^k) = \sum_j a_{ij}x_j^k + b_i$.
-Using the fact that $E[N_j \mid N = n] = n \cdot p_j$ for a multinomial:
+Using $E[N_j \mid N=n] = n\cdot p_j$ for each component:
 
-$$\boxed{\hat{n}_{ij}^k \;:=\; E[n_{ij} \mid y_i,\, \mathbf{x}^k]
-\;=\; \frac{a_{ij}\,x_j^k}{\bar{y}_i(\mathbf{x}^k)}\,y_i.}$$
+$$\hat{n}_{i0}^k \;:=\; E[n_{i0}\mid y_i,\mathbf{x}^k]
+= \frac{b_i}{\bar{y}_i(\mathbf{x}^k)}\,y_i,
+\qquad
+\boxed{\hat{n}_{ij}^k \;:=\; E[n_{ij}\mid y_i,\mathbf{x}^k]
+= \frac{a_{ij}\,x_j^k}{\bar{y}_i(\mathbf{x}^k)}\,y_i.}$$
 
-::: {.callout-note}
-## Interpretation
+The observed count $y_i$ is thus apportioned among all $J+1$ sources in
+proportion to their predicted contributions: the background receives fraction
+$b_i/\bar{y}_i$, and voxel $j$ receives fraction $a_{ij}x_j^k/\bar{y}_i$.
 
-The formula apportions the observed count $y_i$ among voxels in proportion
-to their *predicted* contributions $a_{ij}x_j^k$.
-If voxel $j$ is predicted to account for 30 % of the expected signal in bin $i$,
-it is credited with 30 % of the observed photons — a probabilistic bookkeeping
-step that underpins every EM-type reconstruction algorithm.
-:::
+**Why $n_{i0}$ drops out of the M-step.** The Q function sums over all
+complete-data log-likelihood terms:
 
-::: {.callout-tip}
-## Background term $b_i$
+$$Q(\mathbf{x}\mid\mathbf{x}^k)
+= \underbrace{\sum_{j=1}^{J}\!\left[\hat{n}_j^k\log x_j - s_j x_j\right]}_{\text{depends on }\mathbf{x}}
++\underbrace{\sum_{i}\!\left[\hat{n}_{i0}^k\log b_i - b_i\right]}_{\text{constant w.r.t.\ }\mathbf{x}},
+\qquad \hat{n}_j^k = \sum_i \hat{n}_{ij}^k.$$
 
-If the background (scatter, randoms) is modelled as an additional independent
-Poisson source with known mean $b_i$, it simply adds one more component to the
-multinomial split. Because $b_i$ is a *known* constant rather than an unknown
-to be estimated, its component does not appear in $Q$, and the formula above
-for the image voxels is unchanged.
-:::
+Because $b_i$ is a known constant, the background term does not depend on
+$\mathbf{x}$ and plays no role in the M-step maximisation. The update formula
+for the image voxels is therefore unchanged by the presence of background.

@@ -720,57 +720,49 @@ Note
 <h2 data-number="10" class="anchored" data-anchor-id="appendix"><span class="header-section-number">10</span> Appendix</h2>
 <section id="sec-condexp" class="level3" data-number="10.1">
 <h3 data-number="10.1" class="anchored" data-anchor-id="sec-condexp"><span class="header-section-number">10.1</span> The conditional expectation via Poisson splitting</h3>
-<p><strong>Setup.</strong> In the complete-data model each voxel <span class="math inline">\(j\)</span> contributes independently to detector bin <span class="math inline">\(i\)</span>: <span class="math inline">\(n_{ij} \sim \operatorname{Poisson}(a_{ij}x_j)\)</span>, and the observed count is the total <span class="math inline">\(y_i = \sum_j n_{ij}\)</span>.</p>
-<p><strong>Poisson splitting property.</strong> Let <span class="math inline">\(N_1, \ldots, N_J\)</span> be independent Poisson random variables with means <span class="math inline">\(\lambda_1, \ldots, \lambda_J\)</span>, and let <span class="math inline">\(N = N_1 + \cdots + N_J \sim \operatorname{Poisson}(\lambda)\)</span>, <span class="math inline">\(\lambda = \sum_j \lambda_j\)</span>. Then the conditional distribution of <span class="math inline">\((N_1, \ldots, N_J)\)</span> given <span class="math inline">\(N = n\)</span> is <strong>multinomial</strong>:</p>
-<p><span class="math display">\[(N_1, \ldots, N_J) \mid N = n \;\sim\;
+<p><strong>Setup.</strong> In the complete-data model, each detector bin <span class="math inline">\(i\)</span> receives contributions from <span class="math inline">\(J\)</span> image voxels and one background source, all independently Poisson distributed:</p>
+<p><span class="math display">\[n_{ij} \sim \operatorname{Poisson}(a_{ij}\,x_j), \quad j = 1,\ldots,J,
+\qquad
+n_{i0} \sim \operatorname{Poisson}(b_i),\]</span></p>
+<p>where <span class="math inline">\(n_{ij}\)</span> is the (unobserved) number of events from voxel <span class="math inline">\(j\)</span> detected in bin <span class="math inline">\(i\)</span>, and <span class="math inline">\(n_{i0}\)</span> is the (unobserved) background count. The observed total is</p>
+<p><span class="math display">\[y_i = n_{i0} + \sum_{j=1}^{J} n_{ij}.\]</span></p>
+<p>There are thus <span class="math inline">\(J+1\)</span> independent Poisson components summing to <span class="math inline">\(y_i\)</span>, with total mean <span class="math inline">\(\bar{y}_i(\mathbf{x}) = b_i + \sum_j a_{ij}x_j\)</span>.</p>
+<p><strong>Poisson splitting property.</strong> Let <span class="math inline">\(N_0, N_1, \ldots, N_J\)</span> be independent Poisson random variables with means <span class="math inline">\(\lambda_0, \lambda_1, \ldots, \lambda_J\)</span>, and let <span class="math inline">\(N = \sum_{j=0}^{J} N_j \sim \operatorname{Poisson}(\lambda)\)</span>, <span class="math inline">\(\lambda = \sum_{j=0}^{J} \lambda_j\)</span>. Then the conditional distribution of <span class="math inline">\((N_0, N_1, \ldots, N_J)\)</span> given <span class="math inline">\(N = n\)</span> is <strong>multinomial</strong>:</p>
+<p><span class="math display">\[(N_0, N_1, \ldots, N_J) \mid N = n \;\sim\;
 \operatorname{Multinomial}\!\left(n;\;
-\frac{\lambda_1}{\lambda}, \ldots, \frac{\lambda_J}{\lambda}\right).\]</span></p>
+\frac{\lambda_0}{\lambda}, \frac{\lambda_1}{\lambda}, \ldots,
+\frac{\lambda_J}{\lambda}\right).\]</span></p>
 <div class="proof">
-<p><span class="proof-title"><em>Proof</em>. </span>The joint probability of <span class="math inline">\((N_1 = n_1, \ldots, N_J = n_J)\)</span> with <span class="math inline">\(\sum_j n_j = n\)</span> factors as a product of Poisson probabilities:</p>
-<p><span class="math display">\[P(N_1 = n_1, \ldots, N_J = n_J)
-= \prod_j \frac{e^{-\lambda_j} \lambda_j^{n_j}}{n_j!}
-= e^{-\lambda} \frac{\prod_j \lambda_j^{n_j}}{\prod_j n_j!}.\]</span></p>
-<p>Dividing by <span class="math inline">\(P(N = n) = e^{-\lambda}\lambda^n / n!\)</span> gives:</p>
-<p><span class="math display">\[P(N_1 = n_1, \ldots, N_J = n_J \mid N = n)
-= \frac{n!}{\prod_j n_j!} \prod_j \left(\frac{\lambda_j}{\lambda}\right)^{n_j},\]</span></p>
-<p>which is the <span class="math inline">\(\operatorname{Multinomial}(n;\, \lambda_1/\lambda, \ldots, \lambda_J/\lambda)\)</span> probability mass function.</p>
+<p><span class="proof-title"><em>Proof</em>. </span>The joint probability of <span class="math inline">\((N_0 = n_0, N_1 = n_1, \ldots, N_J = n_J)\)</span> with <span class="math inline">\(\sum_{j=0}^{J} n_j = n\)</span> factors as a product of Poisson probabilities:</p>
+<p><span class="math display">\[P(N_0=n_0, \ldots, N_J=n_J)
+= \prod_{j=0}^{J} \frac{e^{-\lambda_j}\lambda_j^{n_j}}{n_j!}
+= e^{-\lambda}\frac{\prod_{j=0}^{J}\lambda_j^{n_j}}{\prod_{j=0}^{J}n_j!}.\]</span></p>
+<p>Dividing by <span class="math inline">\(P(N=n) = e^{-\lambda}\lambda^n/n!\)</span> gives:</p>
+<p><span class="math display">\[P(N_0=n_0,\ldots,N_J=n_J \mid N=n)
+= \frac{n!}{\prod_{j=0}^{J} n_j!}
+  \prod_{j=0}^{J}\!\left(\frac{\lambda_j}{\lambda}\right)^{n_j},\]</span></p>
+<p>which is the <span class="math inline">\(\operatorname{Multinomial}(n;\,\lambda_0/\lambda,\ldots,\lambda_J/\lambda)\)</span> probability mass function.</p>
 </div>
-<p><strong>Application.</strong> At iteration <span class="math inline">\(k\)</span>, set <span class="math inline">\(\lambda_j = a_{ij}x_j^k\)</span> as the predicted Poisson mean for the contribution of voxel <span class="math inline">\(j\)</span> to bin <span class="math inline">\(i\)</span>. By the splitting property, conditioned on the observed count <span class="math inline">\(y_i\)</span>:</p>
-<p><span class="math display">\[(n_{i1}, \ldots, n_{iJ}) \mid y_i,\, \mathbf{x}^k
+<p><strong>Application.</strong> At iteration <span class="math inline">\(k\)</span>, identify <span class="math inline">\(\lambda_0 = b_i\)</span> and <span class="math inline">\(\lambda_j = a_{ij}x_j^k\)</span> for <span class="math inline">\(j\geq 1\)</span>, so that <span class="math inline">\(\lambda = \bar{y}_i(\mathbf{x}^k)\)</span>. By the splitting property, conditioned on the observed total <span class="math inline">\(y_i\)</span>:</p>
+<p><span class="math display">\[(n_{i0},\, n_{i1}, \ldots, n_{iJ}) \mid y_i,\, \mathbf{x}^k
 \;\sim\;
 \operatorname{Multinomial}\!\left(y_i;\;
-\frac{a_{i1}x_1^k}{\bar{y}_i(\mathbf{x}^k)},
-\ldots,
-\frac{a_{iJ}x_J^k}{\bar{y}_i(\mathbf{x}^k)}\right),\]</span></p>
-<p>where <span class="math inline">\(\bar{y}_i(\mathbf{x}^k) = \sum_j a_{ij}x_j^k + b_i\)</span>. Using the fact that <span class="math inline">\(E[N_j \mid N = n] = n \cdot p_j\)</span> for a multinomial:</p>
-<p><span class="math display">\[\boxed{\hat{n}_{ij}^k \;:=\; E[n_{ij} \mid y_i,\, \mathbf{x}^k]
-\;=\; \frac{a_{ij}\,x_j^k}{\bar{y}_i(\mathbf{x}^k)}\,y_i.}\]</span></p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Interpretation
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The formula apportions the observed count <span class="math inline">\(y_i\)</span> among voxels in proportion to their <em>predicted</em> contributions <span class="math inline">\(a_{ij}x_j^k\)</span>. If voxel <span class="math inline">\(j\)</span> is predicted to account for 30 % of the expected signal in bin <span class="math inline">\(i\)</span>, it is credited with 30 % of the observed photons — a probabilistic bookkeeping step that underpins every EM-type reconstruction algorithm.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Background term <span class="math inline">\(b_i\)</span>
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>If the background (scatter, randoms) is modelled as an additional independent Poisson source with known mean <span class="math inline">\(b_i\)</span>, it simply adds one more component to the multinomial split. Because <span class="math inline">\(b_i\)</span> is a <em>known</em> constant rather than an unknown to be estimated, its component does not appear in <span class="math inline">\(Q\)</span>, and the formula above for the image voxels is unchanged.</p>
-</div>
-</div>
+\frac{b_i}{\bar{y}_i(\mathbf{x}^k)},\,
+\frac{a_{i1}x_1^k}{\bar{y}_i(\mathbf{x}^k)},\,\ldots,\,
+\frac{a_{iJ}x_J^k}{\bar{y}_i(\mathbf{x}^k)}\right).\]</span></p>
+<p>Using <span class="math inline">\(E[N_j \mid N=n] = n\cdot p_j\)</span> for each component:</p>
+<p><span class="math display">\[\hat{n}_{i0}^k \;:=\; E[n_{i0}\mid y_i,\mathbf{x}^k]
+= \frac{b_i}{\bar{y}_i(\mathbf{x}^k)}\,y_i,
+\qquad
+\boxed{\hat{n}_{ij}^k \;:=\; E[n_{ij}\mid y_i,\mathbf{x}^k]
+= \frac{a_{ij}\,x_j^k}{\bar{y}_i(\mathbf{x}^k)}\,y_i.}\]</span></p>
+<p>The observed count <span class="math inline">\(y_i\)</span> is thus apportioned among all <span class="math inline">\(J+1\)</span> sources in proportion to their predicted contributions: the background receives fraction <span class="math inline">\(b_i/\bar{y}_i\)</span>, and voxel <span class="math inline">\(j\)</span> receives fraction <span class="math inline">\(a_{ij}x_j^k/\bar{y}_i\)</span>.</p>
+<p><strong>Why <span class="math inline">\(n_{i0}\)</span> drops out of the M-step.</strong> The Q function sums over all complete-data log-likelihood terms:</p>
+<p><span class="math display">\[Q(\mathbf{x}\mid\mathbf{x}^k)
+= \underbrace{\sum_{j=1}^{J}\!\left[\hat{n}_j^k\log x_j - s_j x_j\right]}_{\text{depends on }\mathbf{x}}
++\underbrace{\sum_{i}\!\left[\hat{n}_{i0}^k\log b_i - b_i\right]}_{\text{constant w.r.t.\ }\mathbf{x}},
+\qquad \hat{n}_j^k = \sum_i \hat{n}_{ij}^k.\]</span></p>
+<p>Because <span class="math inline">\(b_i\)</span> is a known constant, the background term does not depend on <span class="math inline">\(\mathbf{x}\)</span> and plays no role in the M-step maximisation. The update formula for the image voxels is therefore unchanged by the presence of background.</p>
 
 
 
