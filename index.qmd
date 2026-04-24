@@ -253,7 +253,38 @@ $$\mathcal{A} = \bigl\{j : {\textstyle\sum_i} a_{ij}y_i > 0\bigr\},
 
 ## Step 3: Each MLEM Update does not decrease the Log-Likelihood {#sec-monotone}
 
-This is the most important step, using the **EM framework**.
+This is the most important step. It uses the **EM (Expectation–Maximisation)
+framework**, a general-purpose strategy for maximum likelihood estimation
+whenever the observed data can be thought of as an *incomplete* version of
+some richer, easier-to-handle **complete data**.
+
+::: {.callout-note icon=false}
+## The EM algorithm — general idea
+
+Given observed data $\mathbf{y}$ and unknown parameters $\mathbf{x}$, suppose
+there exist hypothetical **complete data** $\mathbf{n}$ (never actually
+observed) such that the complete-data log-likelihood
+$\log p(\mathbf{n}\mid\mathbf{x})$ is much easier to maximise than the
+observed-data log-likelihood $\mathcal{L}(\mathbf{x}) = \log p(\mathbf{y}\mid\mathbf{x})$.
+Each EM iteration alternates two steps:
+
+- **E-step (Expectation):** Compute $Q(\mathbf{x}\mid\mathbf{x}^k) =
+  E[\log p(\mathbf{n}\mid\mathbf{x})\mid\mathbf{y},\mathbf{x}^k]$, the
+  expected complete-data log-likelihood under the current parameter estimate
+  $\mathbf{x}^k$.
+
+- **M-step (Maximisation):** Set
+  $\mathbf{x}^{k+1} = \arg\max_{\mathbf{x}} Q(\mathbf{x}\mid\mathbf{x}^k)$.
+
+The key guarantee — proved below — is that each EM iteration never decreases
+the observed-data log-likelihood: $\mathcal{L}(\mathbf{x}^{k+1})\geq\mathcal{L}(\mathbf{x}^k)$.
+
+EM applies broadly wherever a latent-variable structure makes direct
+maximisation of $\mathcal{L}$ intractable: Gaussian mixture models (hidden
+cluster assignments), hidden Markov models (hidden state sequences), factor
+analysis (hidden factors), and — as here — emission tomography (hidden
+per-voxel event counts).
+:::
 
 ### The complete-data idea
 

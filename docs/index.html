@@ -404,7 +404,27 @@ eyJhdHRyIjp7ImF1dG9ydW4iOnRydWUsImVkaXQiOnRydWUsImV2YWwiOnRydWUsIm1heC1saW5lcyI6
 </section>
 <section id="sec-monotone" class="level2" data-number="6">
 <h2 data-number="6" class="anchored" data-anchor-id="sec-monotone"><span class="header-section-number">6</span> Step 3: Each MLEM Update does not decrease the Log-Likelihood</h2>
-<p>This is the most important step, using the <strong>EM framework</strong>.</p>
+<p>This is the most important step. It uses the <strong>EM (Expectation–Maximisation) framework</strong>, a general-purpose strategy for maximum likelihood estimation whenever the observed data can be thought of as an <em>incomplete</em> version of some richer, easier-to-handle <strong>complete data</strong>.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>The EM algorithm — general idea
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Given observed data <span class="math inline">\(\mathbf{y}\)</span> and unknown parameters <span class="math inline">\(\mathbf{x}\)</span>, suppose there exist hypothetical <strong>complete data</strong> <span class="math inline">\(\mathbf{n}\)</span> (never actually observed) such that the complete-data log-likelihood <span class="math inline">\(\log p(\mathbf{n}\mid\mathbf{x})\)</span> is much easier to maximise than the observed-data log-likelihood <span class="math inline">\(\mathcal{L}(\mathbf{x}) = \log p(\mathbf{y}\mid\mathbf{x})\)</span>. Each EM iteration alternates two steps:</p>
+<ul>
+<li><p><strong>E-step (Expectation):</strong> Compute <span class="math inline">\(Q(\mathbf{x}\mid\mathbf{x}^k) =
+E[\log p(\mathbf{n}\mid\mathbf{x})\mid\mathbf{y},\mathbf{x}^k]\)</span>, the expected complete-data log-likelihood under the current parameter estimate <span class="math inline">\(\mathbf{x}^k\)</span>.</p></li>
+<li><p><strong>M-step (Maximisation):</strong> Set <span class="math inline">\(\mathbf{x}^{k+1} = \arg\max_{\mathbf{x}} Q(\mathbf{x}\mid\mathbf{x}^k)\)</span>.</p></li>
+</ul>
+<p>The key guarantee — proved below — is that each EM iteration never decreases the observed-data log-likelihood: <span class="math inline">\(\mathcal{L}(\mathbf{x}^{k+1})\geq\mathcal{L}(\mathbf{x}^k)\)</span>.</p>
+<p>EM applies broadly wherever a latent-variable structure makes direct maximisation of <span class="math inline">\(\mathcal{L}\)</span> intractable: Gaussian mixture models (hidden cluster assignments), hidden Markov models (hidden state sequences), factor analysis (hidden factors), and — as here — emission tomography (hidden per-voxel event counts).</p>
+</div>
+</div>
 <section id="the-complete-data-idea" class="level3" data-number="6.1">
 <h3 data-number="6.1" class="anchored" data-anchor-id="the-complete-data-idea"><span class="header-section-number">6.1</span> The complete-data idea</h3>
 <p>Maximising <span class="math inline">\(\mathcal{L}(\mathbf{x})\)</span> directly is hard because <span class="math inline">\(\log \bar{y}_i
