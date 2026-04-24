@@ -466,47 +466,100 @@ are bounded. $\square$
 
 ## Step 5: Convergence to the Constrained ML Solution {#sec-convergence}
 
-We now show $\mathbf{x}^k \to \hat{\mathbf{x}} = \arg\max_{\mathbf{x}\geq\mathbf{0}}\mathcal{L}(\mathbf{x})$.
+**The proof strategy.** We have established that the log-likelihood values
+$\mathcal{L}(\mathbf{x}^k)$ are non-decreasing (Step 3) and bounded above (Step
+1), so they converge to some limit $\mathcal{L}^*$. We have also established
+that the iterates $\mathbf{x}^k$ remain in a compact set $\mathcal{S}$ (Step 4).
+What we still need to show is that the *iterates themselves* — not just the
+likelihood values — converge, and that they converge to the right limit
+$\hat{\mathbf{x}}$.
+
+The argument proceeds in four stages:
+
+1. **Strict concavity** guarantees the constrained maximum $\hat{\mathbf{x}}$ is
+   *unique* — there is only one target to converge to.
+2. **$\hat{\mathbf{x}}$ is a fixed point** of MLEM — once the algorithm reaches
+   the answer, it stays there.
+3. **Bolzano–Weierstrass** (applied to the bounded sequence from Step 4) gives a
+   *subsequence* $\mathbf{x}^{k_m}$ converging to some accumulation point
+   $\mathbf{x}^*$.
+4. **KKT conditions** then force $\mathbf{x}^* = \hat{\mathbf{x}}$; since
+   every subsequence has the same limit, the full sequence converges too.
 
 ### Strict concavity and uniqueness of $\hat{\mathbf{x}}$
 
-The Hessian of $\mathcal{L}$ is:
+**Why this matters.** The proof hinges on there being a *unique* best image.
+If the log-likelihood had several equally good maxima, the iterates could
+oscillate between them and never settle. Strict concavity rules this out: the
+likelihood landscape is "bowl-shaped" — it has exactly one peak over the
+non-negative orthant, so there is only one target to converge to.
+
+Geometrically, strict concavity means the log-likelihood surface curves
+strictly downward in every direction — like a bowl turned upside down — so any
+two distinct points on the surface can share at most one maximum.
+
+**Formal argument.** The Hessian (the matrix of second derivatives, which
+describes the curvature) of $\mathcal{L}$ is:
 
 $$\nabla^2\mathcal{L}(\mathbf{x})
 = -A^\top D(\mathbf{x})\,A, \qquad
 D(\mathbf{x}) = \operatorname{diag}\!\left(\frac{y_i}{\bar{y}_i(\mathbf{x})^2}\right) > 0.$$
 
 Because $A$ has full column rank, $A^\top D A$ is **positive definite**
-for any diagonal $D > 0$, so $\nabla^2\mathcal{L}$ is **negative definite**:
-$\mathcal{L}$ is **strictly concave**. A strictly concave function over a
-convex set has **at most one** maximum, so $\hat{\mathbf{x}}$ is unique.
+for any diagonal $D > 0$: for any non-zero vector $\mathbf{v}$,
+$\mathbf{v}^\top A^\top D A \mathbf{v} = \|D^{1/2}A\mathbf{v}\|^2 > 0$
+(since $A\mathbf{v} \neq \mathbf{0}$ by the full column rank assumption).
+Therefore $\nabla^2\mathcal{L}$ is **negative definite** everywhere, which
+means $\mathcal{L}$ is **strictly concave**. A strictly concave function over
+a convex set has **at most one** maximum, so $\hat{\mathbf{x}}$ is unique.
 
 ### $\hat{\mathbf{x}}$ is a fixed point of MLEM
 
-We show $F(\hat{\mathbf{x}}) = \hat{\mathbf{x}}$, where $F$ denotes one MLEM step.
+**Why this matters.** A necessary condition for convergence is that the limit
+point is a *fixed point* — a point where one more MLEM step leaves the image
+unchanged. If running MLEM on the answer produced a different image, the
+sequence could never settle there. We need to verify that the answer
+$\hat{\mathbf{x}}$ is self-consistent in this sense.
+
+**Formal argument.** Let $F$ denote one MLEM step. We show $F(\hat{\mathbf{x}}) = \hat{\mathbf{x}}$.
 
 **Active voxels ($\hat{x}_j > 0$):** The KKT condition gives
-$\partial\mathcal{L}/\partial x_j\big|_{\hat{\mathbf{x}}} = 0$, so
-the gradient ascent step $(**)$ is zero: $F(\hat{\mathbf{x}})_j = \hat{x}_j$. $\checkmark$
+$\partial\mathcal{L}/\partial x_j\big|_{\hat{\mathbf{x}}} = 0$: we are at the
+gradient-zero point, so the gradient ascent step $(**)$ contributes zero
+correction: $F(\hat{\mathbf{x}})_j = \hat{x}_j + \frac{\hat{x}_j}{s_j}\cdot 0 = \hat{x}_j$. $\checkmark$
 
 **Inactive voxels ($\hat{x}_j = 0$):** The multiplicative structure gives
-$F(\hat{\mathbf{x}})_j = 0 \times (\ldots) = 0 = \hat{x}_j$, regardless
-of the gradient — MLEM cannot create activity from nothing. $\checkmark$
+$F(\hat{\mathbf{x}})_j = 0 \times (\ldots) = 0 = \hat{x}_j$ — MLEM cannot
+create activity from nothing, regardless of the gradient. $\checkmark$
 
 ### The log-likelihood values converge
 
-From Steps 1 and 3: $\{\mathcal{L}(\mathbf{x}^k)\}$ is monotonically increasing
-and bounded above. By the **monotone convergence theorem** it converges:
+**Why this matters.** Before we can talk about where the iterates go, we need
+to know where the likelihood values go. This is easier to establish — we only
+need to count and bound, not track the images themselves. Knowing $\mathcal{L}^*$
+gives us something concrete to aim at when we later argue about the images.
+
+**Formal argument.** From Steps 1 and 3: $\{\mathcal{L}(\mathbf{x}^k)\}$ is
+non-decreasing and bounded above. By the **monotone convergence theorem** — a
+non-decreasing sequence bounded above must converge — it converges:
 
 $$\mathcal{L}(\mathbf{x}^k) \;\longrightarrow\; \mathcal{L}^* \;\leq\; \mathcal{L}(\hat{\mathbf{x}}).$$
 
-We will show $\mathcal{L}^* = \mathcal{L}(\hat{\mathbf{x}})$.
+We will show $\mathcal{L}^* = \mathcal{L}(\hat{\mathbf{x}})$, i.e., the sequence
+actually achieves the maximum value, not just some smaller limit.
 
 ### A convergent subsequence exists
 
-Since all iterates lie in the compact set $\mathcal{S}$ (Step 4), the
-**Bolzano–Weierstrass theorem** (every bounded sequence in $\mathbb{R}^J$
-has a convergent subsequence) guarantees a subsequence:
+**Why this matters.** We cannot yet claim the full sequence $\mathbf{x}^k$
+converges — it could, in principle, bounce around within the compact set
+$\mathcal{S}$ without settling anywhere. Instead, we extract a *subsequence*
+that does converge (like identifying a train that stops at a fixed station even
+if the full timetable is complicated). Once we know what the subsequence
+converges to, we can work backward to conclude about the full sequence.
+
+**Formal argument.** Since all iterates lie in the compact set $\mathcal{S}$
+(Step 4), the **Bolzano–Weierstrass theorem** (every bounded sequence in
+$\mathbb{R}^J$ has a convergent subsequence) guarantees a subsequence:
 
 $$\mathbf{x}^{k_m} \;\longrightarrow\; \mathbf{x}^* \in \mathcal{S}.$$
 
@@ -516,12 +569,20 @@ $\mathcal{L}$ is continuous:
 $$\mathcal{L}(\mathbf{x}^*) = \lim_{m\to\infty}\mathcal{L}(\mathbf{x}^{k_m}) = \mathcal{L}^*.$$
 
 (Two facts combine: a subsequence of a convergent sequence shares its limit;
-$\mathcal{L}$ is continuous so the limit commutes with the function.)
+$\mathcal{L}$ is continuous so the limit commutes with the function evaluation.)
+The accumulation point $\mathbf{x}^*$ therefore achieves the limiting likelihood $\mathcal{L}^*$.
 
 ### Every accumulation point equals $\hat{\mathbf{x}}$
 
-Because $\mathcal{L}(\mathbf{x}^k)$ is non-decreasing and bounded above (Steps
-1 & 3), it converges and its increments vanish:
+**Why this matters.** We now know there *exists* a convergent subsequence with
+limit $\mathbf{x}^*$. But is $\mathbf{x}^*$ the correct answer $\hat{\mathbf{x}}$?
+We use two facts together: (i) the likelihood increments shrink to zero as the
+algorithm progresses, which means $\mathbf{x}^*$ must look like a fixed point
+of MLEM; and (ii) the only fixed point that satisfies the KKT optimality
+conditions is the unique maximiser $\hat{\mathbf{x}}$. This pins down the limit.
+
+**Formal argument.** Because $\mathcal{L}(\mathbf{x}^k)$ is non-decreasing and bounded above
+(Steps 1 & 3), it converges and its **increments vanish**:
 
 $$\mathcal{L}(\mathbf{x}^{k+1}) - \mathcal{L}(\mathbf{x}^k) \;\longrightarrow\; 0.$$
 
@@ -532,28 +593,40 @@ $$\mathcal{L}(F(\mathbf{x}^*)) - \mathcal{L}(\mathbf{x}^*) =
 \lim_{m\to\infty}\bigl[\mathcal{L}(\mathbf{x}^{k_m+1})
 - \mathcal{L}(\mathbf{x}^{k_m})\bigr] = 0. \tag{$*$}$$
 
-We verify the **KKT conditions** at $\mathbf{x}^*$ voxel by voxel,
-using the gradient ascent form $(**)$.
+In words: applying one more MLEM step to $\mathbf{x}^*$ does not change the
+likelihood. By Step 3, this is only possible if $\mathbf{x}^*$ is itself a
+fixed point of MLEM — a candidate maximum.
+
+We now verify the **KKT optimality conditions** at $\mathbf{x}^*$ voxel by
+voxel, using the gradient ascent form $(**)$. Meeting these conditions is both
+necessary and sufficient (by strict concavity) for $\mathbf{x}^*$ to be the
+constrained maximiser $\hat{\mathbf{x}}$.
 
 - **$j\in\mathcal{Z}$:** $x_j^*=0$ and $\partial\mathcal{L}/\partial x_j =
-  -s_j<0$ everywhere on the feasible set. KKT satisfied. $\checkmark$
+  -s_j<0$ everywhere on the feasible set — adding activity to this voxel
+  would only hurt the likelihood. KKT satisfied. $\checkmark$
 
 - **$j\in\mathcal{A},\; x_j^*>0$:** From $(*)$,
   $\mathcal{L}(F(\mathbf{x}^*))=\mathcal{L}(\mathbf{x}^*)$. By Step 3, MLEM
   strictly increases $\mathcal{L}$ unless at a fixed point, so
   $F(\mathbf{x}^*)=\mathbf{x}^*$. Since $x_j^*>0$, the gradient ascent step
-  $(**)$ is zero: $\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}=0$.
+  $(**)$ must be zero: $\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}=0$.
   KKT satisfied. $\checkmark$
 
-- **$j\in\mathcal{A},\; x_j^*=0$:** Since $x_j^{k_m}>0$ for all $m$ (Step 2)
-  and $x_j^{k_m}\to 0$, the MLEM update gives
+- **$j\in\mathcal{A},\; x_j^*=0$:** This is the trickiest case: $\mathbf{x}^*$
+  has a voxel driven to zero even though the observed data suggest some signal
+  there. Since $x_j^{k_m}>0$ for all $m$ (Step 2) and $x_j^{k_m}\to 0$, the
+  MLEM update gives
 
   $$x_j^{k_m+1} = x_j^{k_m}\cdot\frac{1}{s_j}\sum_i
   a_{ij}\frac{y_i}{\bar{y}_i(\mathbf{x}^{k_m})}.$$
 
-  If $\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}>0$, the ratio
-  exceeds $1$ near $\mathbf{x}^*$, so $x_j^{k_m+1}>x_j^{k_m}$ for large
-  $m$ — incompatible with $x_j^{k_m}\to 0$. Therefore
+  If the gradient were positive at $\mathbf{x}^*$, i.e.\
+  $\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}>0$, then close to
+  $\mathbf{x}^*$ the update factor would exceed 1, meaning
+  $x_j^{k_m+1}>x_j^{k_m}$ for large $m$ — the voxel would be *growing*, not
+  shrinking toward 0. This contradicts $x_j^{k_m}\to 0$. Therefore the
+  gradient must be $\leq 0$:
   $\partial\mathcal{L}/\partial x_j\big|_{\mathbf{x}^*}\leq 0$.
   KKT satisfied. $\checkmark$
 
@@ -574,11 +647,19 @@ $\square$
 
 ### The full sequence converges
 
-Every convergent subsequence of $\{\mathbf{x}^k\}$ shares the same limit
-$\hat{\mathbf{x}}$ by the argument above: any accumulation point achieves
-$\mathcal{L}^* = \mathcal{L}(\hat{\mathbf{x}})$, and strict concavity forces
-it to equal $\hat{\mathbf{x}}$. Since the sequence is bounded (Step 4), this
-single accumulation point forces the full sequence to converge:
+**Why this matters.** We have shown that *any* subsequence that converges must
+converge to $\hat{\mathbf{x}}$. Since the full sequence is bounded (Step 4),
+it cannot escape to infinity; and since every accumulation point is
+$\hat{\mathbf{x}}$, the sequence has no other place to go. Intuitively: if a
+sequence is trapped in a bounded region and every cluster point is the same
+single value, the sequence must converge to that value.
+
+**Formal argument.** Every convergent subsequence of $\{\mathbf{x}^k\}$ shares
+the same limit $\hat{\mathbf{x}}$ by the argument above: any accumulation point
+achieves $\mathcal{L}^* = \mathcal{L}(\hat{\mathbf{x}})$, and strict concavity
+forces it to equal $\hat{\mathbf{x}}$. Since the sequence is bounded (Step 4),
+it has at least one accumulation point — and they are all $\hat{\mathbf{x}}$.
+A bounded sequence with a unique accumulation point must converge to it:
 
 $$\mathbf{x}^k \;\longrightarrow\; \hat{\mathbf{x}} \quad \text{as } k \to \infty.
 \qquad \square$$
