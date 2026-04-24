@@ -277,6 +277,14 @@ $$\log p(\mathbf{n} \mid \mathbf{x})
 
 ### The $Q$ function
 
+**Intuition:** Since $\mathbf{n}$ is never observed, we cannot maximise
+$\log p(\mathbf{n}|\mathbf{x})$ directly. The E-step asks: given the current
+image $\mathbf{x}^k$ and the measured counts $\mathbf{y}$, what is the most
+reasonable imputation for the missing origin data $\mathbf{n}$? The answer
+— apportioning each measured count $y_i$ back to the voxels in proportion
+to their predicted contributions — converts the coupled optimisation over all
+voxels into $J$ independent one-voxel problems.
+
 Since $\mathbf{n}$ is not observed, EM replaces $\log p(\mathbf{n}\mid\mathbf{x})$
 by its **conditional expectation** given the data $\mathbf{y}$ and current
 estimate $\mathbf{x}^k$:
@@ -302,18 +310,47 @@ This is separable in $x_j$: each voxel can be updated independently.
 
 ### The fundamental identity
 
+**Intuition:** We care about $\mathcal{L}(\mathbf{x})$, but we can only
+easily optimise $Q(\mathbf{x}|\mathbf{x}^k)$. The fundamental identity
+$\mathcal{L} = Q - H$ is the bridge: it expresses the true log-likelihood
+as the surrogate $Q$ minus an "entropy" term $H$ that measures residual
+uncertainty about the missing data. As we will see, when we maximise $Q$,
+the term $H$ can only move in a favourable direction — so gains in $Q$ are
+never fully cancelled, and $\mathcal{L}$ cannot decrease.
+
 From $p(\mathbf{n}\mid\mathbf{x}) = p(\mathbf{y}\mid\mathbf{x})\cdot p(\mathbf{n}\mid\mathbf{y},\mathbf{x})$,
 taking logarithms and then the conditional expectation $E[\,\cdot\mid\mathbf{y},\mathbf{x}^k]$:
 
 $$Q(\mathbf{x}\mid\mathbf{x}^k)
 = \mathcal{L}(\mathbf{x}) + H(\mathbf{x}\mid\mathbf{x}^k),$$
 
-where $H(\mathbf{x}\mid\mathbf{x}^k) = E[\log p(\mathbf{n}\mid\mathbf{y},\mathbf{x})\mid\mathbf{y},\mathbf{x}^k]$.
+where
+
+$$H(\mathbf{x}\mid\mathbf{x}^k)
+= E\bigl[\log p(\mathbf{n}\mid\mathbf{y},\mathbf{x})\bigm|\mathbf{y},\mathbf{x}^k\bigr]
+= \sum_{\mathbf{n}} p(\mathbf{n}\mid\mathbf{y},\mathbf{x}^k)\,
+  \log p(\mathbf{n}\mid\mathbf{y},\mathbf{x}).$$
+
+In words: $H(\mathbf{x}\mid\mathbf{x}^k)$ is the expected log-probability of
+the (unobserved) complete-data pattern $\mathbf{n}$, where the expectation is
+taken over the distribution of $\mathbf{n}$ implied by the *current* estimate
+$\mathbf{x}^k$, but the log-probability itself is evaluated under the
+*candidate* image $\mathbf{x}$.  When $\mathbf{x}=\mathbf{x}^k$ this is the
+(negative) conditional entropy of the hidden data given the current model.
+
 Rearranging gives the **fundamental identity**:
 
 $$\boxed{\mathcal{L}(\mathbf{x}) = Q(\mathbf{x}\mid\mathbf{x}^k) - H(\mathbf{x}\mid\mathbf{x}^k).}$$
 
 ### The EM guarantee: $\mathcal{L}$ never decreases
+
+**Intuition:** The argument decomposes the change in $\mathcal{L}$ into two
+pieces, each guaranteed non-negative for a different reason. Term A is
+non-negative by construction: we *chose* $\mathbf{x}^{k+1}$ to maximise $Q$,
+so it cannot be worse than $\mathbf{x}^k$ at $Q$. Term B is non-negative
+because it equals a KL divergence — a measure of dissimilarity between two
+probability distributions that is always $\geq 0$. Neither term can hurt us,
+so every MLEM step is at least as good as the previous one.
 
 The M-step sets $\mathbf{x}^{k+1} = \arg\max_{\mathbf{x}\geq\mathbf{0}} Q(\mathbf{x}\mid\mathbf{x}^k)$.
 Using the fundamental identity at $\mathbf{x}^{k+1}$ and $\mathbf{x}^k$:
@@ -327,10 +364,18 @@ $$\mathcal{L}(\mathbf{x}^{k+1}) - \mathcal{L}(\mathbf{x}^k)
 **Term A $\geq 0$:** $\mathbf{x}^{k+1}$ maximises $Q(\cdot\mid\mathbf{x}^k)$
 by construction.
 
-**Term B $\geq 0$:** The difference equals
-$D_{\mathrm{KL}}\!\bigl(p(\mathbf{n}\mid\mathbf{y},\mathbf{x}^k)\,\|\,
-p(\mathbf{n}\mid\mathbf{y},\mathbf{x}^{k+1})\bigr) \geq 0$
-(KL divergence is always non-negative).
+**Term B $\geq 0$:** Expanding using the definition of $H$:
+
+$$H(\mathbf{x}^k\mid\mathbf{x}^k) - H(\mathbf{x}^{k+1}\mid\mathbf{x}^k)
+= \sum_{\mathbf{n}} p(\mathbf{n}\mid\mathbf{y},\mathbf{x}^k)\,
+  \log\frac{p(\mathbf{n}\mid\mathbf{y},\mathbf{x}^k)}{p(\mathbf{n}\mid\mathbf{y},\mathbf{x}^{k+1})}
+= D_{\mathrm{KL}}\!\bigl(p(\mathbf{n}\mid\mathbf{y},\mathbf{x}^k)\,\|\,
+  p(\mathbf{n}\mid\mathbf{y},\mathbf{x}^{k+1})\bigr) \geq 0.$$
+
+This is a KL divergence between two distributions over the hidden data: how
+likely the current model $\mathbf{x}^k$ thinks each origin pattern $\mathbf{n}$
+is, versus how likely the updated model $\mathbf{x}^{k+1}$ does. KL divergence
+is always non-negative (see callout below).
 
 Therefore **$\mathcal{L}(\mathbf{x}^{k+1}) \geq \mathcal{L}(\mathbf{x}^k)$**. $\square$
 
@@ -436,7 +481,7 @@ than the $y_i\log\bar{y}_i$ gain — because $t$ grows strictly faster than
 $\log t$.  So the log-likelihood must eventually decrease, and indeed go to
 $-\infty$, for any sequence of images with unbounded total activity.
 
-**Formal argument.**
+**Formal argument:**
 Each summand can be written as
 
 $$y_i \log \bar{y}_i - \bar{y}_i
@@ -488,7 +533,7 @@ The argument proceeds in four stages:
 
 ### Strict concavity and uniqueness of $\hat{\mathbf{x}}$
 
-**Why this matters.** The proof hinges on there being a *unique* best image.
+**Intuition:** The proof hinges on there being a *unique* best image.
 If the log-likelihood had several equally good maxima, the iterates could
 oscillate between them and never settle. Strict concavity rules this out: the
 likelihood landscape is "bowl-shaped" — it has exactly one peak over the
@@ -498,7 +543,7 @@ Geometrically, strict concavity means the log-likelihood surface curves
 strictly downward in every direction — like a bowl turned upside down — so any
 two distinct points on the surface can share at most one maximum.
 
-**Formal argument.** The Hessian (the matrix of second derivatives, which
+**Formal argument:** The Hessian (the matrix of second derivatives, which
 describes the curvature) of $\mathcal{L}$ is:
 
 $$\nabla^2\mathcal{L}(\mathbf{x})
@@ -515,13 +560,13 @@ a convex set has **at most one** maximum, so $\hat{\mathbf{x}}$ is unique.
 
 ### $\hat{\mathbf{x}}$ is a fixed point of MLEM
 
-**Why this matters.** A necessary condition for convergence is that the limit
+**Intuition:** A necessary condition for convergence is that the limit
 point is a *fixed point* — a point where one more MLEM step leaves the image
 unchanged. If running MLEM on the answer produced a different image, the
 sequence could never settle there. We need to verify that the answer
 $\hat{\mathbf{x}}$ is self-consistent in this sense.
 
-**Formal argument.** Let $F$ denote one MLEM step. We show $F(\hat{\mathbf{x}}) = \hat{\mathbf{x}}$.
+**Formal argument:** Let $F$ denote one MLEM step. We show $F(\hat{\mathbf{x}}) = \hat{\mathbf{x}}$.
 
 **Active voxels ($\hat{x}_j > 0$):** The KKT condition gives
 $\partial\mathcal{L}/\partial x_j\big|_{\hat{\mathbf{x}}} = 0$: we are at the
@@ -534,12 +579,12 @@ create activity from nothing, regardless of the gradient. $\checkmark$
 
 ### The log-likelihood values converge
 
-**Why this matters.** Before we can talk about where the iterates go, we need
+**Intuition:** Before we can talk about where the iterates go, we need
 to know where the likelihood values go. This is easier to establish — we only
 need to count and bound, not track the images themselves. Knowing $\mathcal{L}^*$
 gives us something concrete to aim at when we later argue about the images.
 
-**Formal argument.** From Steps 1 and 3: $\{\mathcal{L}(\mathbf{x}^k)\}$ is
+**Formal argument:** From Steps 1 and 3: $\{\mathcal{L}(\mathbf{x}^k)\}$ is
 non-decreasing and bounded above. By the **monotone convergence theorem** — a
 non-decreasing sequence bounded above must converge — it converges:
 
@@ -550,14 +595,14 @@ actually achieves the maximum value, not just some smaller limit.
 
 ### A convergent subsequence exists
 
-**Why this matters.** We cannot yet claim the full sequence $\mathbf{x}^k$
+**Intuition:** We cannot yet claim the full sequence $\mathbf{x}^k$
 converges — it could, in principle, bounce around within the compact set
 $\mathcal{S}$ without settling anywhere. Instead, we extract a *subsequence*
 that does converge (like identifying a train that stops at a fixed station even
 if the full timetable is complicated). Once we know what the subsequence
 converges to, we can work backward to conclude about the full sequence.
 
-**Formal argument.** Since all iterates lie in the compact set $\mathcal{S}$
+**Formal argument:** Since all iterates lie in the compact set $\mathcal{S}$
 (Step 4), the **Bolzano–Weierstrass theorem** (every bounded sequence in
 $\mathbb{R}^J$ has a convergent subsequence) guarantees a subsequence:
 
@@ -574,14 +619,14 @@ The accumulation point $\mathbf{x}^*$ therefore achieves the limiting likelihood
 
 ### Every accumulation point equals $\hat{\mathbf{x}}$
 
-**Why this matters.** We now know there *exists* a convergent subsequence with
+**Intuition:** We now know there *exists* a convergent subsequence with
 limit $\mathbf{x}^*$. But is $\mathbf{x}^*$ the correct answer $\hat{\mathbf{x}}$?
 We use two facts together: (i) the likelihood increments shrink to zero as the
 algorithm progresses, which means $\mathbf{x}^*$ must look like a fixed point
 of MLEM; and (ii) the only fixed point that satisfies the KKT optimality
 conditions is the unique maximiser $\hat{\mathbf{x}}$. This pins down the limit.
 
-**Formal argument.** Because $\mathcal{L}(\mathbf{x}^k)$ is non-decreasing and bounded above
+**Formal argument:** Because $\mathcal{L}(\mathbf{x}^k)$ is non-decreasing and bounded above
 (Steps 1 & 3), it converges and its **increments vanish**:
 
 $$\mathcal{L}(\mathbf{x}^{k+1}) - \mathcal{L}(\mathbf{x}^k) \;\longrightarrow\; 0.$$
@@ -647,14 +692,14 @@ $\square$
 
 ### The full sequence converges
 
-**Why this matters.** We have shown that *any* subsequence that converges must
+**Intuition:** We have shown that *any* subsequence that converges must
 converge to $\hat{\mathbf{x}}$. Since the full sequence is bounded (Step 4),
 it cannot escape to infinity; and since every accumulation point is
 $\hat{\mathbf{x}}$, the sequence has no other place to go. Intuitively: if a
 sequence is trapped in a bounded region and every cluster point is the same
 single value, the sequence must converge to that value.
 
-**Formal argument.** Every convergent subsequence of $\{\mathbf{x}^k\}$ shares
+**Formal argument:** Every convergent subsequence of $\{\mathbf{x}^k\}$ shares
 the same limit $\hat{\mathbf{x}}$ by the argument above: any accumulation point
 achieves $\mathcal{L}^* = \mathcal{L}(\hat{\mathbf{x}})$, and strict concavity
 forces it to equal $\hat{\mathbf{x}}$. Since the sequence is bounded (Step 4),
