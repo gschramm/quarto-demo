@@ -8,6 +8,8 @@ website:
     left:
       - text: "MLEM-FB full rank"
         href: index.qmd
+      - text: "logL demo"
+        href: logL_interactive.qmd
 
 format:
   html:

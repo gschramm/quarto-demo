@@ -2,7 +2,7 @@
 title: "MLEM-FB Convergence"
 subtitle: "A self-contained proof for $y \\sim \\operatorname{Poisson}(A\\mathbf{x} + \\mathbf{b})$ and $A$ having full column rank"
 format:
-  live-html:
+  html:
     toc: true
     toc-depth: 3
     number-sections: true
@@ -11,10 +11,6 @@ format:
     toc: true
     number-sections: true
     geometry: margin=2.5cm
-pyodide:
-  packages:
-    - matplotlib
-    - numpy
 bibliography: references.bib
 ---
 
@@ -148,23 +144,27 @@ Step 5), so in both cases $\hat{\mathbf{x}}$ is **unique**.
 
 ---
 
-### Interactive visualisation of the two cases
+### Visualisation of the two cases
 
-Below is an interactive plot of the log-likelihood landscape for a simple 2-voxel problem, showing the two cases. 
-In this example the forward model is
+The figure below shows the Poisson log-likelihood $\mathcal{L}(x_1, x_2)$
+for a simple 2-voxel forward model
 
-$$\bar{y}_1 = x_1 + b_1, \qquad \bar{y}_2 = x_1 + x_2 + b_2,$$ 
+$$\bar{y}_1 = x_1 + b_1, \qquad \bar{y}_2 = x_1 + x_2 + b_2.$$
 
-with $b_1 = 0.5$ and $b_2 = 0.5$. The plots show the log-likelihood $\mathcal{L}(x_1, x_2)$ as a function of $x_1$ and $x_2$ and
-three different measurements: (a) $y_1, y_2$, (b) $y_1, y_2$, (c) $y_1, y_2$.
-The blue triangle and red start show the contrained and unconstrained optima, respectively. 
-Moreover, 20 MLEM iterations starting at $x_1 = x_2 = 2.5$ are shown. 
-The top row shows to examples (with and without fixed background) where the constrained optimum is in the interior, while the bottom row shows examples where the constrained optimum is on the boundary.
-```{pyodide}
-{{< include logL_plot.py >}}
-#| autorun: true
-#| max-lines: 10
-```
+Each panel uses different measurements $(y_1, y_2)$ and background values
+$(b_1, b_2)$. The **blue triangle** marks the constrained maximum
+$\hat{\mathbf{x}}$, the **red star** the unconstrained maximum, and the
+**black dots** 20 MLEM iterations starting from $x_1 = x_2 = 2.5$.
+The top row shows interior solutions (all voxels active); the bottom row
+shows boundary solutions (one voxel zeroed out).
+
+![Log-likelihood landscape for four combinations of $(y_1,y_2,b_1,b_2)$.
+Blue triangle: constrained maximum $\hat{\mathbf{x}}$. Red star: unconstrained
+maximum. Black dots: 20 MLEM iterates.](logL_examples.png){width=90%}
+
+An [interactive version](logL_interactive.qmd) of this figure — where you can
+rerun the Python code and change the parameters — is available as a separate
+page.
 
 ---
 

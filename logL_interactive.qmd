@@ -1,0 +1,33 @@
+---
+title: "Interactive log-likelihood visualisation"
+format:
+  live-html:
+    toc: false
+    theme: cosmo
+pyodide:
+  packages:
+    - matplotlib
+    - numpy
+---
+
+## Log-likelihood landscape for a 2-voxel problem
+
+This page shows the Poisson log-likelihood $\mathcal{L}(x_1, x_2)$ for a
+simple 2-voxel forward model
+
+$$\bar{y}_1 = x_1 + b_1, \qquad \bar{y}_2 = x_1 + x_2 + b_2.$$
+
+Each panel uses different measurements $(y_1, y_2)$ and background values
+$(b_1, b_2)$. The **blue triangle** marks the constrained maximum
+$\hat{\mathbf{x}}$ (non-negative orthant), the **red star** marks the
+unconstrained maximum, and the **black dots** show 20 MLEM iterations
+starting from $x_1 = x_2 = 2.5$.
+
+The top row shows cases where the constrained optimum lies in the interior
+(all voxels active); the bottom row shows boundary cases where one voxel is
+driven to zero.
+
+```{pyodide}
+{{< include logL_plot.py >}}
+#| autorun: true
+```

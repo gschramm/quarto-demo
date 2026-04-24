@@ -62,8 +62,6 @@ div.csl-indent {
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-158031087360bce0ff56dc785ce39e06.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
-<script src="site_libs/quarto-contrib/live-runtime/live-runtime.js" type="module"></script>
-<link href="site_libs/quarto-contrib/live-runtime/live-runtime.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -91,8 +89,6 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script>
-<script type="module" src="site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
-<link href="site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -124,6 +120,7 @@ window.Quarto = {
 };
 </script>
 
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-fixed quarto-light">
@@ -146,6 +143,10 @@ window.Quarto = {
   <li class="nav-item">
     <a class="nav-link active" href="./index.html" aria-current="page"> 
 <span class="menu-text">MLEM-FB full rank</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./logL_interactive.html"> 
+<span class="menu-text">logL demo</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -171,7 +172,7 @@ window.Quarto = {
   <li><a href="#the-mlem-update" id="toc-the-mlem-update" class="nav-link" data-scroll-target="#the-mlem-update"><span class="header-section-number">2.3</span> The MLEM update</a></li>
   <li><a href="#the-full-rank-assumption" id="toc-the-full-rank-assumption" class="nav-link" data-scroll-target="#the-full-rank-assumption"><span class="header-section-number">2.4</span> The full-rank assumption</a></li>
   <li><a href="#two-types-of-constrained-optima" id="toc-two-types-of-constrained-optima" class="nav-link" data-scroll-target="#two-types-of-constrained-optima"><span class="header-section-number">2.5</span> Two types of constrained optima</a></li>
-  <li><a href="#interactive-visualisation-of-the-two-cases" id="toc-interactive-visualisation-of-the-two-cases" class="nav-link" data-scroll-target="#interactive-visualisation-of-the-two-cases"><span class="header-section-number">2.6</span> Interactive visualisation of the two cases</a></li>
+  <li><a href="#visualisation-of-the-two-cases" id="toc-visualisation-of-the-two-cases" class="nav-link" data-scroll-target="#visualisation-of-the-two-cases"><span class="header-section-number">2.6</span> Visualisation of the two cases</a></li>
   </ul></li>
   <li><a href="#sec-roadmap" id="toc-sec-roadmap" class="nav-link" data-scroll-target="#sec-roadmap"><span class="header-section-number">3</span> Proof Roadmap</a></li>
   <li><a href="#sec-bounded" id="toc-sec-bounded" class="nav-link" data-scroll-target="#sec-bounded"><span class="header-section-number">4</span> Step 1: The Log-Likelihood is Bounded Above</a></li>
@@ -322,19 +323,18 @@ window.Quarto = {
 <p>Under the full-rank assumption <span class="math inline">\(\mathcal{L}\)</span> is strictly concave (shown in Step 5), so in both cases <span class="math inline">\(\hat{\mathbf{x}}\)</span> is <strong>unique</strong>.</p>
 <hr>
 </section>
-<section id="interactive-visualisation-of-the-two-cases" class="level3" data-number="2.6">
-<h3 data-number="2.6" class="anchored" data-anchor-id="interactive-visualisation-of-the-two-cases"><span class="header-section-number">2.6</span> Interactive visualisation of the two cases</h3>
-<p>Below is an interactive plot of the log-likelihood landscape for a simple 2-voxel problem, showing the two cases. In this example the forward model is</p>
-<p><span class="math display">\[\bar{y}_1 = x_1 + b_1, \qquad \bar{y}_2 = x_1 + x_2 + b_2,\]</span></p>
-<p>with <span class="math inline">\(b_1 = 0.5\)</span> and <span class="math inline">\(b_2 = 0.5\)</span>. The plots show the log-likelihood <span class="math inline">\(\mathcal{L}(x_1, x_2)\)</span> as a function of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> and three different measurements: (a) <span class="math inline">\(y_1, y_2\)</span>, (b) <span class="math inline">\(y_1, y_2\)</span>, (c) <span class="math inline">\(y_1, y_2\)</span>. The blue triangle and red start show the contrained and unconstrained optima, respectively. Moreover, 20 MLEM iterations starting at <span class="math inline">\(x_1 = x_2 = 2.5\)</span> are shown. The top row shows to examples (with and without fixed background) where the constrained optimum is in the interior, while the bottom row shows examples where the constrained optimum is on the boundary.</p>
-<div>
-<div id="pyodide-1" class="exercise-cell">
-
+<section id="visualisation-of-the-two-cases" class="level3" data-number="2.6">
+<h3 data-number="2.6" class="anchored" data-anchor-id="visualisation-of-the-two-cases"><span class="header-section-number">2.6</span> Visualisation of the two cases</h3>
+<p>The figure below shows the Poisson log-likelihood <span class="math inline">\(\mathcal{L}(x_1, x_2)\)</span> for a simple 2-voxel forward model</p>
+<p><span class="math display">\[\bar{y}_1 = x_1 + b_1, \qquad \bar{y}_2 = x_1 + x_2 + b_2.\]</span></p>
+<p>Each panel uses different measurements <span class="math inline">\((y_1, y_2)\)</span> and background values <span class="math inline">\((b_1, b_2)\)</span>. The <strong>blue triangle</strong> marks the constrained maximum <span class="math inline">\(\hat{\mathbf{x}}\)</span>, the <strong>red star</strong> the unconstrained maximum, and the <strong>black dots</strong> 20 MLEM iterations starting from <span class="math inline">\(x_1 = x_2 = 2.5\)</span>. The top row shows interior solutions (all voxels active); the bottom row shows boundary solutions (one voxel zeroed out).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="logL_examples.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<figcaption>Log-likelihood landscape for four combinations of <span class="math inline">\((y_1,y_2,b_1,b_2)\)</span>. Blue triangle: constrained maximum <span class="math inline">\(\hat{\mathbf{x}}\)</span>. Red star: unconstrained maximum. Black dots: 20 MLEM iterates.</figcaption>
+</figure>
 </div>
-<script type="pyodide-1-contents">
-eyJhdHRyIjp7ImF1dG9ydW4iOnRydWUsImVkaXQiOnRydWUsImV2YWwiOnRydWUsIm1heC1saW5lcyI6MTB9LCJjb2RlIjoiIyBTQ1JPTEwgVE8gVEhFIEVORCBUTyBDSEFOR0UgVEhFIFBMT1QgUEFSQU1FVEVSUyAoWTEsWTEsQjEsQjIpIEZPUiBUSEUgRk9VUiBTVUJQTE9UUyBBTkQgUkVSVU5cbmltcG9ydCBudW1weSBhcyBucFxuaW1wb3J0IG1hdHBsb3RsaWIucHlwbG90IGFzIHBsdFxuZnJvbSBtYXRwbG90bGliLnRpY2tlciBpbXBvcnQgRm9ybWF0U3RyRm9ybWF0dGVyXG5cblxuZGVmIGxvZ0woeDEsIHgyLCB5MSwgeTIsIGIxLCBiMik6XG4gICAgeWJhcjEgPSB4MSArIGIxXG4gICAgeWJhcjIgPSB4MSArIHgyICsgYjJcbiAgICB3aXRoIG5wLmVycnN0YXRlKGRpdmlkZT1cImlnbm9yZVwiLCBpbnZhbGlkPVwiaWdub3JlXCIpOlxuICAgICAgICB0ZXJtMSA9IG5wLndoZXJlKFxuICAgICAgICAgICAgeTEgPiAwLFxuICAgICAgICAgICAgeTEgKiBucC5sb2cobnAud2hlcmUoeWJhcjEgPiAwLCB5YmFyMSwgbnAubmFuKSkgLSB5YmFyMSxcbiAgICAgICAgICAgIG5wLndoZXJlKHliYXIxID4gMCwgLXliYXIxLCAtbnAuaW5mKSxcbiAgICAgICAgKVxuICAgICAgICB0ZXJtMiA9IG5wLndoZXJlKFxuICAgICAgICAgICAgeTIgPiAwLFxuICAgICAgICAgICAgeTIgKiBucC5sb2cobnAud2hlcmUoeWJhcjIgPiAwLCB5YmFyMiwgbnAubmFuKSkgLSB5YmFyMixcbiAgICAgICAgICAgIG5wLndoZXJlKHliYXIyID4gMCwgLXliYXIyLCAtbnAuaW5mKSxcbiAgICAgICAgKVxuICAgIHJldHVybiB0ZXJtMSArIHRlcm0yXG5cblxuZGVmIG1sZW1fdXBkYXRlKHgxLCB4MiwgeTEsIHkyLCBiMSwgYjIpOlxuICAgIHliYXIxID0geDEgKyBiMVxuICAgIHliYXIyID0geDEgKyB4MiArIGIyXG5cbiAgICByMSA9IG5wLndoZXJlKHliYXIxID4gMCwgeTEgLyB5YmFyMSwgMClcbiAgICByMiA9IG5wLndoZXJlKHliYXIyID4gMCwgeTIgLyB5YmFyMiwgMClcblxuICAgIHgxX25ldyA9IGZsb2F0KCh4MSAvIDIpICogKHIxICsgcjIpKVxuICAgIHgyX25ldyA9IGZsb2F0KHgyICogcjIpXG5cbiAgICByZXR1cm4geDFfbmV3LCB4Ml9uZXdcblxuXG5kZWYgcGxvdF9sb2dMKGF4eCwgeTEsIHkyLCBiMSwgYjIsIFgxLCBYMiwgc2hvd19ncmFkPUZhbHNlLCBMbWluPU5vbmUsIExtYXg9Tm9uZSk6XG4gICAgWiA9IGxvZ0woWDEsIFgyLCB5MT15MSwgeTI9eTIsIGIxPWIxLCBiMj1iMilcbiAgICBmZWFzaWJsZSA9IChYMSArIGIxID49IDApICYgKFgxICsgWDIgKyBiMiA+PSAwKVxuICAgIGNvbnN0cmFpbiA9IChYMSA+PSAwKSAmIChYMiA+PSAwKVxuICAgIFpfcGxvdCA9IG5wLndoZXJlKGZlYXNpYmxlLCBaLCBucC5uYW4pXG5cbiAgICB4bWxfdW5jb25zdHJhaW5lZDEgPSB5MSAtIGIxXG4gICAgeG1sX3VuY29uc3RyYWluZWQyID0geTIgLSB4bWxfdW5jb25zdHJhaW5lZDEgLSBiMlxuXG4gICAgWl9jb25zdHJhaW5lZCA9IG5wLndoZXJlKGNvbnN0cmFpbiwgWl9wbG90LCBucC5uYW4pXG4gICAgZmxhdF9pZHggPSBucC5uYW5hcmdtYXgoWl9jb25zdHJhaW5lZClcbiAgICBpZHggPSBucC51bnJhdmVsX2luZGV4KGZsYXRfaWR4LCBaX2NvbnN0cmFpbmVkLnNoYXBlKVxuICAgIHhoYXRfMSA9IFgxW2lkeF1cbiAgICB4aGF0XzIgPSBYMltpZHhdXG5cbiAgICBpZiBMbWluIGlzIE5vbmU6XG4gICAgICAgIExtaW4gPSBaX3Bsb3RbY29uc3RyYWluXS5taW4oKVxuICAgIGlmIExtYXggaXMgTm9uZTpcbiAgICAgICAgTG1heCA9IFpfcGxvdFtmZWFzaWJsZV0ubWF4KClcblxuICAgIGxldmVscyA9IG5wLmxpbnNwYWNlKExtaW4sIExtYXgsIDMyKVxuICAgIGNzID0gYXh4LmNvbnRvdXJmKFgxLCBYMiwgWl9wbG90LCBsZXZlbHM9bGV2ZWxzLCBjbWFwPVwibWFnbWFcIiwgYWxwaGE9MC44NSlcbiAgICBheHguaGxpbmVzKDAsIDAsIFgxLm1heCgpLCBjb2xvcj1cImJsYWNrXCIsIGx3PTEuMCwgbHM9XCItXCIpXG4gICAgYXh4LnZsaW5lcygwLCAwLCBYMi5tYXgoKSwgY29sb3I9XCJibGFja1wiLCBsdz0xLjAsIGxzPVwiLVwiKVxuXG4gICAgIyBzaG93IDIwIE1MRU0gaXRlcmFpb25zIHN0YXJ0aW5nIGZyb20gKDIuNSwgMi41KSBhcyBhIGJsYWNrIGxpbmUgd2l0aCBkb3RzXG4gICAgeDFfdHJhaiA9IFsyLjVdXG4gICAgeDJfdHJhaiA9IFsyLjVdXG4gICAgZm9yIF8gaW4gcmFuZ2UoMjApOlxuICAgICAgICB4MV9uZXcsIHgyX25ldyA9IG1sZW1fdXBkYXRlKHgxX3RyYWpbLTFdLCB4Ml90cmFqWy0xXSwgeTEsIHkyLCBiMSwgYjIpXG4gICAgICAgIHgxX3RyYWouYXBwZW5kKHgxX25ldylcbiAgICAgICAgeDJfdHJhai5hcHBlbmQoeDJfbmV3KVxuICAgIGF4eC5wbG90KHgxX3RyYWosIHgyX3RyYWosIFwiay4tXCIsIG1zPTUsIHpvcmRlcj01LCBsYWJlbD1cIk1MRU0gdHJhamVjdG9yeVwiKVxuXG4gICAgIyBzaG93dCB0aGUgY29uc3RyYWluZWQgbWF4aW11bSB4aGF0IGFzIGEgYmx1ZSByZWN0YW5nbGVcbiAgICBheHgucGxvdChcbiAgICAgICAgeGhhdF8xLFxuICAgICAgICB4aGF0XzIsXG4gICAgICAgIFwiYl5cIixcbiAgICAgICAgbXM9NyxcbiAgICAgICAgem9yZGVyPTUsXG4gICAgKVxuXG4gICAgIyBzaG93IHRoZSB1bmNvbnN0cmFpbmVkIG1heGltdW0gYXMgYSByZWQgc3RhclxuICAgIGF4eC5wbG90KFxuICAgICAgICB4bWxfdW5jb25zdHJhaW5lZDEsXG4gICAgICAgIHhtbF91bmNvbnN0cmFpbmVkMixcbiAgICAgICAgXCJyKlwiLFxuICAgICAgICBtcz03LFxuICAgICAgICB6b3JkZXI9NSxcbiAgICApXG4gICAgY2IgPSBwbHQuY29sb3JiYXIoXG4gICAgICAgIGNzLCBheD1heHgsIGxhYmVsPXJcIiRcXGxvZyBMJFwiLCBmcmFjdGlvbj0wLjA0LCBsb2NhdGlvbj1cInJpZ2h0XCIsIHBhZD0wLjA0XG4gICAgKVxuICAgIGNiLmF4LnlheGlzLnNldF9tYWpvcl9mb3JtYXR0ZXIoRm9ybWF0U3RyRm9ybWF0dGVyKFwiJS4xZlwiKSlcblxuICAgIGF4eC5zZXRfeGxhYmVsKHJcIiR4XzEkXCIpXG4gICAgYXh4LnNldF95bGFiZWwoclwiJHhfMiRcIilcbiAgICBheHguc2V0X2FzcGVjdChcImVxdWFsXCIsIGFkanVzdGFibGU9XCJib3hcIilcblxuICAgIGlmIHNob3dfZ3JhZDpcbiAgICAgICAgIyBzaG93IHRoZSBncmFkaWVudCBhdCB0aGUgY29uc3RyYWluZWQgbWF4aW11bVxuICAgICAgICBncmFkX3gxID0gKHkxIC8gKHhoYXRfMSArIGIxKSAtIDEpICsgKHkyIC8gKHhoYXRfMSArIHhoYXRfMiArIGIyKSAtIDEpXG4gICAgICAgIGdyYWRfeDIgPSB5MiAvICh4aGF0XzEgKyB4aGF0XzIgKyBiMikgLSAxXG4gICAgICAgIGF4eC5xdWl2ZXIoXG4gICAgICAgICAgICB4aGF0XzEsXG4gICAgICAgICAgICB4aGF0XzIsXG4gICAgICAgICAgICBncmFkX3gxLFxuICAgICAgICAgICAgZ3JhZF94MixcbiAgICAgICAgICAgIHNjYWxlX3VuaXRzPVwid2lkdGhcIixcbiAgICAgICAgICAgIHNjYWxlPTEwLjAgKiBucC5zcXJ0KGdyYWRfeDEqKjIgKyBncmFkX3gyKioyKSxcbiAgICAgICAgICAgIGNvbG9yPVwiZ3JleVwiLFxuICAgICAgICApXG5cbiAgICBheHguc2V0X3RpdGxlKGZcIiR5XzE9e3kxfSQsICR5XzI9e3kyfSQsICRiXzE9e2IxfSQsICRiXzI9e2IyfSRcIiwgZm9udHNpemU9XCJtZWRpdW1cIilcblxuXG4jIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjI1xuIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyNcbiMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjXG5cblxueDEgPSBucC5saW5zcGFjZSgtMS4yLCAzLjUsIDEwMDEpXG54MiA9IG5wLmxpbnNwYWNlKC0xLjIsIDMuNSwgMTAwMSlcblgxLCBYMiA9IG5wLm1lc2hncmlkKHgxLCB4MilcblxuZmlnLCBheCA9IHBsdC5zdWJwbG90cygyLCAyLCBmaWdzaXplPSg3LjUsIDYpLCBsYXlvdXQ9XCJjb25zdHJhaW5lZFwiKVxuXG5sbWluID0gLTEwXG5sbWF4ID0gMFxuXG5wbG90X2xvZ0woYXhbMCwgMF0sIHkxPTEsIHkyPTIsIGIxPTAuNSwgYjI9MC41LCBYMT1YMSwgWDI9WDIsIExtaW49bG1pbiwgTG1heD1sbWF4KVxucGxvdF9sb2dMKGF4WzAsIDFdLCB5MT0xLCB5Mj0yLCBiMT0wLjAsIGIyPTAuMCwgWDE9WDEsIFgyPVgyLCBMbWluPWxtaW4sIExtYXg9bG1heClcbnBsb3RfbG9nTChcbiAgICBheFsxLCAwXSxcbiAgICB5MT0wLFxuICAgIHkyPTIsXG4gICAgYjE9MC41LFxuICAgIGIyPTAuNSxcbiAgICBYMT1YMSxcbiAgICBYMj1YMixcbiAgICBzaG93X2dyYWQ9VHJ1ZSxcbiAgICBMbWluPWxtaW4sXG4gICAgTG1heD1sbWF4LFxuKVxucGxvdF9sb2dMKFxuICAgIGF4WzEsIDFdLFxuICAgIHkxPTMsXG4gICAgeTI9MixcbiAgICBiMT0wLjAsXG4gICAgYjI9MC4wLFxuICAgIFgxPVgxLFxuICAgIFgyPVgyLFxuICAgIHNob3dfZ3JhZD1UcnVlLFxuICAgIExtaW49bG1pbixcbiAgICBMbWF4PWxtYXgsXG4pXG5cbnBsdC5zaG93KClcbiJ9
-</script>
-</div>
+<p>An <a href="./logL_interactive.html">interactive version</a> of this figure — where you can rerun the Python code and change the parameters — is available as a separate page.</p>
 <hr>
 </section>
 </section>
@@ -773,23 +773,6 @@ Note
 </div>
 
 
-<script type="pyodide-data">
-eyJvcHRpb25zIjp7ImVudiI6eyJQTE9UTFlfUkVOREVSRVIiOiJwbG90bHlfbWltZXR5cGUifSwiaW5kZXhVUkwiOiJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvcHlvZGlkZS92MC4yOC4xL2Z1bGwvIn0sInBhY2thZ2VzIjp7InBrZ3MiOlsicHlvZGlkZV9odHRwIiwibWljcm9waXAiLCJpcHl0aG9uIiwibWF0cGxvdGxpYiIsIm51bXB5Il19fQ==
-</script>
-<script type="ojs-module-contents">
-eyJjb250ZW50cyI6W3siY2VsbE5hbWUiOiJweW9kaWRlLTEiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0Iiwic291cmNlIjoidmlld29mIF9weW9kaWRlX2VkaXRvcl8xID0ge1xuICBjb25zdCB7IFB5b2RpZGVFeGVyY2lzZUVkaXRvciwgYjY0RGVjb2RlIH0gPSB3aW5kb3cuX2V4ZXJjaXNlX29qc19ydW50aW1lO1xuXG4gIGNvbnN0IHNjcmlwdENvbnRlbnQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKGBzY3JpcHRbdHlwZT1cXFwicHlvZGlkZS0xLWNvbnRlbnRzXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgYmxvY2sgPSBKU09OLnBhcnNlKGI2NERlY29kZShzY3JpcHRDb250ZW50KSk7XG5cbiAgY29uc3Qgb3B0aW9ucyA9IE9iamVjdC5hc3NpZ24oeyBpZDogYHB5b2RpZGUtMS1jb250ZW50c2AgfSwgYmxvY2suYXR0cik7XG4gIGNvbnN0IGVkaXRvciA9IG5ldyBQeW9kaWRlRXhlcmNpc2VFZGl0b3IoXG4gICAgcHlvZGlkZU9qcy5weW9kaWRlUHJvbWlzZSxcbiAgICBibG9jay5jb2RlLFxuICAgIG9wdGlvbnNcbiAgKTtcblxuICByZXR1cm4gZWRpdG9yLmNvbnRhaW5lcjtcbn1cbl9weW9kaWRlX3ZhbHVlXzEgPSBweW9kaWRlT2pzLnByb2Nlc3MoX3B5b2RpZGVfZWRpdG9yXzEsIHt9KTtcbiJ9LHsiY2VsbE5hbWUiOiJweW9kaWRlLXByZWx1ZGUiLCJpbmxpbmUiOmZhbHNlLCJtZXRob2ROYW1lIjoiaW50ZXJwcmV0UXVpZXQiLCJzb3VyY2UiOiJweW9kaWRlT2pzID0ge1xuICBjb25zdCB7XG4gICAgUHlvZGlkZUV2YWx1YXRvcixcbiAgICBQeW9kaWRlRW52aXJvbm1lbnRNYW5hZ2VyLFxuICAgIHNldHVwUHl0aG9uLFxuICAgIHN0YXJ0UHlvZGlkZVdvcmtlcixcbiAgICBiNjREZWNvZGUsXG4gICAgY29sbGFwc2VQYXRoLFxuICB9ID0gd2luZG93Ll9leGVyY2lzZV9vanNfcnVudGltZTtcblxuICBjb25zdCBzdGF0dXNDb250YWluZXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcImV4ZXJjaXNlLWxvYWRpbmctc3RhdHVzXCIpO1xuICBjb25zdCBpbmRpY2F0b3JDb250YWluZXIgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZChcImV4ZXJjaXNlLWxvYWRpbmctaW5kaWNhdG9yXCIpO1xuICBpbmRpY2F0b3JDb250YWluZXIuY2xhc3NMaXN0LnJlbW92ZShcImQtbm9uZVwiKTtcblxuICBsZXQgc3RhdHVzVGV4dCA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoXCJkaXZcIilcbiAgc3RhdHVzVGV4dC5jbGFzc0xpc3QgPSBcImV4ZXJjaXNlLWxvYWRpbmctZGV0YWlsc1wiO1xuICBzdGF0dXNUZXh0ID0gc3RhdHVzQ29udGFpbmVyLmFwcGVuZENoaWxkKHN0YXR1c1RleHQpO1xuICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYEluaXRpYWxpc2VgO1xuXG4gIC8vIEhvaXN0IGluZGljYXRvciBvdXQgZnJvbSBmaW5hbCBzbGlkZSB3aGVuIHJ1bm5pbmcgdW5kZXIgcmV2ZWFsXG4gIGNvbnN0IHJldmVhbFN0YXR1cyA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoXCIucmV2ZWFsIC5leGVyY2lzZS1sb2FkaW5nLWluZGljYXRvclwiKTtcbiAgaWYgKHJldmVhbFN0YXR1cykge1xuICAgIHJldmVhbFN0YXR1cy5yZW1vdmUoKTtcbiAgICBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKFwiLnJldmVhbCA+IC5zbGlkZXNcIikuYXBwZW5kQ2hpbGQocmV2ZWFsU3RhdHVzKTtcbiAgfVxuXG4gIC8vIE1ha2UgYW55IHJldmVhbCBzbGlkZXMgd2l0aCBsaXZlIGNlbGxzIHNjcm9sbGFibGVcbiAgZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbChcIi5yZXZlYWwgLmV4ZXJjaXNlLWNlbGxcIikuZm9yRWFjaCgoZWwpID0+IHtcbiAgICBlbC5jbG9zZXN0KCdzZWN0aW9uLnNsaWRlJykuY2xhc3NMaXN0LmFkZChcInNjcm9sbGFibGVcIik7XG4gIH0pXG5cbiAgLy8gUHlvZGlkZSBzdXBwbGVtZW50YWwgZGF0YSBhbmQgb3B0aW9uc1xuICBjb25zdCBkYXRhQ29udGVudCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoYHNjcmlwdFt0eXBlPVxcXCJweW9kaWRlLWRhdGFcXFwiXWApLnRleHRDb250ZW50O1xuICBjb25zdCBkYXRhID0gSlNPTi5wYXJzZShiNjREZWNvZGUoZGF0YUNvbnRlbnQpKTtcblxuICAvLyBHcmFiIGxpc3Qgb2YgcmVzb3VyY2VzIHRvIGJlIGRvd25sb2FkZWRcbiAgY29uc3QgZmlsZXNDb250ZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3Rvcihgc2NyaXB0W3R5cGU9XFxcInZmcy1maWxlXFxcIl1gKS50ZXh0Q29udGVudDtcbiAgY29uc3QgZmlsZXMgPSBKU09OLnBhcnNlKGI2NERlY29kZShmaWxlc0NvbnRlbnQpKTtcblxuICBsZXQgcHlvZGlkZVByb21pc2UgPSAoYXN5bmMgKCkgPT4ge1xuICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgUHlvZGlkZWA7XG4gICAgY29uc3QgcHlvZGlkZSA9IGF3YWl0IHN0YXJ0UHlvZGlkZVdvcmtlcihkYXRhLm9wdGlvbnMpO1xuXG4gICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBEb3dubG9hZGluZyBwYWNrYWdlOiBtaWNyb3BpcGA7XG4gICAgYXdhaXQgcHlvZGlkZS5sb2FkUGFja2FnZShcIm1pY3JvcGlwXCIpO1xuICAgIGNvbnN0IG1pY3JvcGlwID0gYXdhaXQgcHlvZGlkZS5weWltcG9ydChcIm1pY3JvcGlwXCIpO1xuICAgIGF3YWl0IGRhdGEucGFja2FnZXMucGtncy5tYXAoKHBrZykgPT4gKCkgPT4ge1xuICAgICAgc3RhdHVzVGV4dC50ZXh0Q29udGVudCA9IGBEb3dubG9hZGluZyBwYWNrYWdlOiAke3BrZ31gO1xuICAgICAgcmV0dXJuIG1pY3JvcGlwLmluc3RhbGwocGtnKTtcbiAgICB9KS5yZWR1Y2UoKGN1ciwgbmV4dCkgPT4gY3VyLnRoZW4obmV4dCksIFByb21pc2UucmVzb2x2ZSgpKTtcbiAgICBhd2FpdCBtaWNyb3BpcC5kZXN0cm95KCk7XG5cbiAgICAvLyBEb3dubG9hZCBhbmQgaW5zdGFsbCByZXNvdXJjZXNcbiAgICBhd2FpdCBmaWxlcy5tYXAoKGZpbGUpID0+IGFzeW5jICgpID0+IHtcbiAgICAgIGNvbnN0IG5hbWUgPSBmaWxlLnN1YnN0cmluZyhmaWxlLmxhc3RJbmRleE9mKCcvJykgKyAxKTtcbiAgICAgIHN0YXR1c1RleHQudGV4dENvbnRlbnQgPSBgRG93bmxvYWRpbmcgcmVzb3VyY2U6ICR7bmFtZX1gO1xuICAgICAgY29uc3QgcmVzcG9uc2UgPSBhd2FpdCBmZXRjaChmaWxlKTtcbiAgICAgIGlmICghcmVzcG9uc2Uub2spIHtcbiAgICAgICAgdGhyb3cgbmV3IEVycm9yKGBDYW4ndCBkb3dubG9hZCBcXGAke2ZpbGV9XFxgLiBFcnJvciAke3Jlc3BvbnNlLnN0YXR1c306IFwiJHtyZXNwb25zZS5zdGF0dXNUZXh0fVwiLmApO1xuICAgICAgfVxuICAgICAgY29uc3QgZGF0YSA9IGF3YWl0IHJlc3BvbnNlLmFycmF5QnVmZmVyKCk7XG5cbiAgICAgIC8vIFN0b3JlIFVSTHMgaW4gdGhlIGN3ZCB3aXRob3V0IGFueSBzdWJkaXJlY3Rvcnkgc3RydWN0dXJlXG4gICAgICBpZiAoZmlsZS5pbmNsdWRlcyhcIjovL1wiKSkge1xuICAgICAgICBmaWxlID0gbmFtZTtcbiAgICAgIH1cblxuICAgICAgLy8gQ29sbGFwc2UgaGlnaGVyIGRpcmVjdG9yeSBzdHJ1Y3R1cmVcbiAgICAgIGZpbGUgPSBjb2xsYXBzZVBhdGgoZmlsZSk7XG5cbiAgICAgIC8vIENyZWF0ZSBkaXJlY3RvcnkgdHJlZSwgaWdub3JpbmcgXCJkaXJlY3RvcnkgZXhpc3RzXCIgVkZTIGVycm9yc1xuICAgICAgY29uc3QgcGFydHMgPSBmaWxlLnNwbGl0KCcvJykuc2xpY2UoMCwgLTEpO1xuICAgICAgbGV0IHBhdGggPSAnJztcbiAgICAgIHdoaWxlIChwYXJ0cy5sZW5ndGggPiAwKSB7XG4gICAgICAgIHBhdGggKz0gcGFydHMuc2hpZnQoKSArICcvJztcbiAgICAgICAgdHJ5IHtcbiAgICAgICAgICBhd2FpdCBweW9kaWRlLkZTLm1rZGlyKHBhdGgpO1xuICAgICAgICB9IGNhdGNoIChlKSB7XG4gICAgICAgICAgaWYgKGUubmFtZSAhPT0gXCJFcnJub0Vycm9yXCIpIHRocm93IGU7XG4gICAgICAgICAgaWYgKGUuZXJybm8gIT09IDIwKSB7XG4gICAgICAgICAgICBjb25zdCBlcnJvclRleHRQdHIgPSBhd2FpdCBweW9kaWRlLl9tb2R1bGUuX3N0cmVycm9yKGUuZXJybm8pO1xuICAgICAgICAgICAgY29uc3QgZXJyb3JUZXh0ID0gYXdhaXQgcHlvZGlkZS5fbW9kdWxlLlVURjhUb1N0cmluZyhlcnJvclRleHRQdHIpO1xuICAgICAgICAgICAgdGhyb3cgbmV3IEVycm9yKGBGaWxlc3lzdGVtIEVycm9yICR7ZS5lcnJub30gXCIke2Vycm9yVGV4dH1cIi5gKTtcbiAgICAgICAgICB9XG4gICAgICAgIH1cbiAgICAgIH1cblxuICAgICAgLy8gV3JpdGUgdGhpcyBmaWxlIHRvIHRoZSBWRlNcbiAgICAgIHRyeSB7XG4gICAgICAgIHJldHVybiBhd2FpdCBweW9kaWRlLkZTLndyaXRlRmlsZShmaWxlLCBuZXcgVWludDhBcnJheShkYXRhKSk7XG4gICAgICB9IGNhdGNoIChlKSB7XG4gICAgICAgIGlmIChlLm5hbWUgIT09IFwiRXJybm9FcnJvclwiKSB0aHJvdyBlO1xuICAgICAgICBjb25zdCBlcnJvclRleHRQdHIgPSBhd2FpdCBweW9kaWRlLl9tb2R1bGUuX3N0cmVycm9yKGUuZXJybm8pO1xuICAgICAgICBjb25zdCBlcnJvclRleHQgPSBhd2FpdCBweW9kaWRlLl9tb2R1bGUuVVRGOFRvU3RyaW5nKGVycm9yVGV4dFB0cik7XG4gICAgICAgIHRocm93IG5ldyBFcnJvcihgRmlsZXN5c3RlbSBFcnJvciAke2UuZXJybm99IFwiJHtlcnJvclRleHR9XCIuYCk7XG4gICAgICB9XG4gICAgfSkucmVkdWNlKChjdXIsIG5leHQpID0+IGN1ci50aGVuKG5leHQpLCBQcm9taXNlLnJlc29sdmUoKSk7XG5cbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gYFB5b2RpZGUgZW52aXJvbm1lbnQgc2V0dXBgO1xuICAgIGF3YWl0IHNldHVwUHl0aG9uKHB5b2RpZGUpO1xuXG4gICAgc3RhdHVzVGV4dC5yZW1vdmUoKTtcbiAgICBpZiAoc3RhdHVzQ29udGFpbmVyLmNoaWxkcmVuLmxlbmd0aCA9PSAwKSB7XG4gICAgICBzdGF0dXNDb250YWluZXIucGFyZW50Tm9kZS5yZW1vdmUoKTtcbiAgICB9XG4gICAgcmV0dXJuIHB5b2RpZGU7XG4gIH0pKCkuY2F0Y2goKGVycikgPT4ge1xuICAgIHN0YXR1c1RleHQuc3R5bGUuY29sb3IgPSBcInZhcigtLWV4ZXJjaXNlLWVkaXRvci1obC1lciwgI0FEMDAwMClcIjtcbiAgICBzdGF0dXNUZXh0LnRleHRDb250ZW50ID0gZXJyLm1lc3NhZ2U7XG4gICAgLy9pbmRpY2F0b3JDb250YWluZXIucXVlcnlTZWxlY3RvcihcIi5zcGlubmVyLWdyb3dcIikuY2xhc3NMaXN0LmFkZChcImQtbm9uZVwiKTtcbiAgICB0aHJvdyBlcnI7XG4gIH0pO1xuXG4gIC8vIEtlZXAgdHJhY2sgb2YgaW5pdGlhbCBPSlMgYmxvY2sgcmVuZGVyXG4gIGNvbnN0IHJlbmRlcmVkT2pzID0ge307XG5cbiAgY29uc3QgcHJvY2VzcyA9IGFzeW5jIChjb250ZXh0LCBpbnB1dHMpID0+IHtcbiAgICBjb25zdCBweW9kaWRlID0gYXdhaXQgcHlvZGlkZVByb21pc2U7XG4gICAgY29uc3QgZXZhbHVhdG9yID0gbmV3IFB5b2RpZGVFdmFsdWF0b3IocHlvZGlkZSwgY29udGV4dCk7XG4gICAgYXdhaXQgZXZhbHVhdG9yLnByb2Nlc3MoaW5wdXRzKTtcbiAgICByZXR1cm4gZXZhbHVhdG9yLmNvbnRhaW5lcjtcbiAgfVxuXG4gIHJldHVybiB7XG4gICAgcHlvZGlkZVByb21pc2UsXG4gICAgcmVuZGVyZWRPanMsXG4gICAgcHJvY2VzcyxcbiAgfTtcbn1cbiJ9XX0=
-</script>
-<div id="exercise-loading-indicator" class="exercise-loading-indicator d-none d-flex align-items-center gap-2">
-<div id="exercise-loading-status" class="d-flex gap-2">
-
-</div>
-<div class="spinner-grow spinner-grow-sm">
-
-</div>
-</div>
-<script type="vfs-file">
-W10=
-</script>
 
 </section>
 </section>
@@ -799,17 +782,6 @@ W10=
 Salvo, Koen, and Michel Defrise. 2019. <span>“A <span>Convergence</span> <span>Proof</span> of <span>MLEM</span> and <span>MLEM</span>-3 <span>With</span> <span>Fixed</span> <span>Background</span>.”</span> <em>IEEE Transactions on Medical Imaging</em> 38 (3): 721–29. <a href="https://doi.org/10.1109/TMI.2018.2870968">https://doi.org/10.1109/TMI.2018.2870968</a>.
 </div>
 </div></section></div></main> <!-- /main -->
-<script type="ojs-module-contents">
-eyJjb250ZW50cyI6W119
-</script>
-<script type="module">
-if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
-window._ojs.paths.runtimeToDoc = "../..";
-window._ojs.paths.runtimeToRoot = "../..";
-window._ojs.paths.docToRoot = "";
-window._ojs.selfContained = false;
-window._ojs.runtime.interpretFromScriptTags();
-</script>
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
