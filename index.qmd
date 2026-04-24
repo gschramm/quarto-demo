@@ -251,7 +251,7 @@ $$\mathcal{A} = \bigl\{j : {\textstyle\sum_i} a_{ij}y_i > 0\bigr\},
 
 ---
 
-## Step 3: Each MLEM Update Increases the Log-Likelihood {#sec-monotone}
+## Step 3: Each MLEM Update does not decrease the Log-Likelihood {#sec-monotone}
 
 This is the most important step, using the **EM framework**.
 
@@ -406,23 +406,61 @@ on the boundary.
 
 ## Step 4: The Iterates Are Bounded {#sec-bounded-iterates}
 
-From Steps 1 and 3, $\mathcal{L}(\mathbf{x}^k)$ is monotonically increasing.
-All iterates therefore lie in the **super-level set**:
+**Why boundedness matters.** From Steps 1 and 3,
+$\{\mathcal{L}(\mathbf{x}^k)\}$ is monotonically non-decreasing and bounded above,
+so it converges to some limit $\mathcal{L}^*$.  However, knowing that the
+*values* $\mathcal{L}(\mathbf{x}^k)$ converge tells us nothing directly about
+where the *iterates* $\mathbf{x}^k$ end up — they could in principle drift to
+infinity while the likelihood still increases.  To extract a concrete limit
+point, we will apply the **Bolzano–Weierstrass theorem** in Step 5: every
+bounded sequence in $\mathbb{R}^J$ has a convergent subsequence.  This
+requires the iterates to stay in a bounded region, which we establish now.
 
-$$\mathcal{S} = \{\mathbf{x} \geq \mathbf{0} : \mathcal{L}(\mathbf{x}) \geq \mathcal{L}(\mathbf{x}^0)\}.$$
+**The super-level set.** Since $\mathcal{L}(\mathbf{x}^k)$ is non-decreasing,
+every iterate satisfies $\mathcal{L}(\mathbf{x}^k)\geq\mathcal{L}(\mathbf{x}^0)$
+and therefore lies in the **super-level set**
 
-We now show $\mathcal{S}$ is bounded (and hence compact, since it is also closed).
+$$\mathcal{S} = \{\mathbf{x} \geq \mathbf{0} :
+  \mathcal{L}(\mathbf{x}) \geq \mathcal{L}(\mathbf{x}^0)\}.$$
 
-**Why $\mathcal{L}(\mathbf{x}) \to -\infty$ as $\|\mathbf{x}\| \to \infty$:**
-$\mathcal{L}$ contains the term $-\sum_i \bar{y}_i(\mathbf{x}) = -\mathbf{1}^\top A\mathbf{x} - \mathbf{1}^\top\mathbf{b}$.
-When $\mathbf{x} \geq \mathbf{0}$ and $\|\mathbf{x}\| \to \infty$, at least one
-$x_j \to \infty$. Since $A$ has full column rank, $\sum_i a_{ij} = s_j > 0$,
-so $s_j x_j \to \infty$, driving $\mathcal{L}(\mathbf{x}) \to -\infty$.
+It suffices to show $\mathcal{S}$ is bounded (it is also closed, hence compact).
+The key insight is: if $\mathcal{L}(\mathbf{x})\to-\infty$ as
+$\|\mathbf{x}\|\to\infty$, then no sequence in $\mathcal{S}$ can escape to
+infinity — any such sequence would eventually violate the requirement
+$\mathcal{L}(\mathbf{x})\geq\mathcal{L}(\mathbf{x}^0)>-\infty$.
 
-Since $\mathcal{L}(\mathbf{x}) \to -\infty$ outside any ball but
-$\mathcal{S}$ requires $\mathcal{L}(\mathbf{x}) \geq \mathcal{L}(\mathbf{x}^0) > -\infty$,
-the set $\mathcal{S}$ must be bounded. All iterates $\mathbf{x}^k$ lie in $\mathcal{S}$.
-$\square$
+**Physical intuition.** As we place more and more activity into the image, the
+model predicts ever-larger expected counts $\bar{y}_i$.  The $-\bar{y}_i$ terms
+in $\mathcal{L}$ penalise this over-prediction, and this penalty grows faster
+than the $y_i\log\bar{y}_i$ gain — because $t$ grows strictly faster than
+$\log t$.  So the log-likelihood must eventually decrease, and indeed go to
+$-\infty$, for any sequence of images with unbounded total activity.
+
+**Formal argument.**
+Each summand can be written as
+
+$$y_i \log \bar{y}_i - \bar{y}_i
+= \bar{y}_i\!\left(\frac{y_i \log \bar{y}_i}{\bar{y}_i} - 1\right).$$
+
+Since $\log(t)/t \to 0$ as $t\to\infty$ (L'Hôpital:
+$\lim_{t\to\infty}\frac{\log t}{t} = \lim_{t\to\infty}\frac{1/t}{1} = 0$),
+the bracket tends to $-1$, so each summand is eventually $\leq -\bar{y}_i/2$.
+The finitely many remaining (small-$\bar{y}_i$) terms are bounded above by a
+constant $C$, giving
+
+$$\mathcal{L}(\mathbf{x}) \;\leq\; C - \tfrac{1}{2}\,\mathbf{1}^\top A\mathbf{x}.$$
+
+Since $A$ has full column rank, $s_j = \sum_i a_{ij} > 0$ for every $j$, so
+$\mathbf{1}^\top A\mathbf{x} = \sum_j s_j x_j \to \infty$ as
+$\|\mathbf{x}\|\to\infty$ with $\mathbf{x}\geq\mathbf{0}$.
+Therefore $\mathcal{L}(\mathbf{x})\to-\infty$.
+
+If $\mathcal{S}$ were unbounded there would exist a sequence
+$\mathbf{x}^{(n)}\in\mathcal{S}$ with $\|\mathbf{x}^{(n)}\|\to\infty$, but
+then $\mathcal{L}(\mathbf{x}^{(n)})\to-\infty$, contradicting
+$\mathcal{L}(\mathbf{x}^{(n)})\geq\mathcal{L}(\mathbf{x}^0)>-\infty$.
+Hence $\mathcal{S}$ is bounded, and all iterates $\mathbf{x}^k\in\mathcal{S}$
+are bounded. $\square$
 
 ---
 
@@ -466,7 +504,7 @@ We will show $\mathcal{L}^* = \mathcal{L}(\hat{\mathbf{x}})$.
 
 ### A convergent subsequence exists
 
-Since all iterates lie in the compact set $\mathcal{S}$, the
+Since all iterates lie in the compact set $\mathcal{S}$ (Step 4), the
 **Bolzano–Weierstrass theorem** (every bounded sequence in $\mathbb{R}^J$
 has a convergent subsequence) guarantees a subsequence:
 
@@ -564,7 +602,7 @@ over $\mathbf{x} \geq \mathbf{0}$.
 | 1 | $\mathcal{L}(\mathbf{x})$ bounded above by $\mathcal{L}_{\max}$ | $\log u \leq u-1$ (generalised KL) |
 | 2 | $\mathbf{x}^k > \mathbf{0}$ for all $k$ (from $\mathbf{x}^0 > \mathbf{0}$) | Multiplicative structure of MLEM |
 | 3 | $\mathcal{L}(\mathbf{x}^{k+1}) > \mathcal{L}(\mathbf{x}^k)$ for $\mathbf{x}^k \neq \hat{\mathbf{x}}$ | EM framework ($Q$ function + KL $\geq 0$) |
-| 4 | $\{\mathbf{x}^k\} \subset \mathcal{S}$ (compact) | Full rank $\Rightarrow$ coercivity of $\mathcal{L}$ |
+| 4 | $\{\mathbf{x}^k\} \subset \mathcal{S}$ (compact) | Coercivity of $\mathcal{L}$ via L'Hôpital ($\log t / t \to 0$) |
 | 5 | $\mathbf{x}^k \to \hat{\mathbf{x}}$ | Bolzano–Weierstrass + strict concavity + KKT |
 
 Step 3 is the heart of the proof: the EM framework guarantees progress at
